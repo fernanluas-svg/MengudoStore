@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "titulo": "Manto Sagrado Oficial Flamengo I 2024/25",
+    "titulo": "Manto Sagrado Flamengo Oficial I Titular 2024/25",
     "preco": "R$ 349,90",
     "avaliacao": 5.0,
     "imagem": "https://http2.mlstatic.com/D_NQ_NP_603831-MLA74673822187_022024-O.webp",
@@ -9,26 +9,74 @@
   },
   {
     "id": 2,
-    "titulo": "Camisa Flamengo Edição Especial Retrô Zico",
-    "preco": "R$ 189,90",
+    "titulo": "Camisa Oficial Flamengo II Reserva Branca 2024/25",
+    "preco": "R$ 349,90",
     "avaliacao": 4.9,
     "imagem": "https://http2.mlstatic.com/D_NQ_NP_898492-MLB72619711681_112023-O.webp",
     "linkMercadoLivre": "https://www.mercadolivre.com.br"
   },
   {
     "id": 3,
-    "titulo": "Casaco Agasalho Treino Flamengo Rubro-Negro",
-    "preco": "R$ 279,90",
-    "avaliacao": 4.8,
+    "titulo": "Camisa Flamengo Retrô Zico 1981 Campeão Mundial",
+    "preco": "R$ 189,90",
+    "avaliacao": 5.0,
     "imagem": "https://http2.mlstatic.com/D_NQ_NP_729451-MLB71689302198_092023-O.webp",
     "linkMercadoLivre": "https://www.mercadolivre.com.br"
   },
   {
     "id": 4,
-    "titulo": "Boné Aba Curva Oficial Flamengo CRF",
+    "titulo": "Casaco Agasalho Treino Flamengo Rubro-Negro",
+    "preco": "R$ 299,90",
+    "avaliacao": 4.8,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_918512-MLB70541298123_072023-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 5,
+    "titulo": "Boné Aba Curva Oficial Flamengo CRF Licenciado",
     "preco": "R$ 89,90",
     "avaliacao": 4.7,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_603831-MLA74673822187_022024-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 6,
+    "titulo": "Camisa Flamengo Goleiro Oficial 2024",
+    "preco": "R$ 329,90",
+    "avaliacao": 4.9,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_898492-MLB72619711681_112023-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 7,
+    "titulo": "Mochila Esportiva Flamengo CRF Escolar e Treino",
+    "preco": "R$ 159,90",
+    "avaliacao": 4.8,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_729451-MLB71689302198_092023-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 8,
+    "titulo": "Bermuda Treino Flamengo Oficial Adidas",
+    "preco": "R$ 179,90",
+    "avaliacao": 4.9,
     "imagem": "https://http2.mlstatic.com/D_NQ_NP_918512-MLB70541298123_072023-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 9,
+    "titulo": "Regata Flamengo Basquete / Treino Licenciada",
+    "preco": "R$ 139,90",
+    "avaliacao": 4.8,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_603831-MLA74673822187_022024-O.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 10,
+    "titulo": "Jaqueta Corta Vento Flamengo Impermeável",
+    "preco": "R$ 279,90",
+    "avaliacao": 5.0,
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_898492-MLB72619711681_112023-O.webp",
     "linkMercadoLivre": "https://www.mercadolivre.com.br"
   }
 ]
