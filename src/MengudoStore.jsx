@@ -7,15 +7,12 @@ export default function MengudoStore() {
       {/* Cabeçalho / Header */}
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="flex -space-x-2 overflow-hidden">
-              <span className="inline-block h-8 w-8 rounded-full bg-red-600 ring-2 ring-slate-900"></span>
-              <span className="inline-block h-8 w-8 rounded-full bg-slate-900 ring-2 ring-slate-900 border border-slate-700"></span>
-            </div>
-            <h1 className="text-2xl font-black tracking-wider text-red-600 uppercase">
-              Mengudo <span className="text-slate-100">Store</span>
-            </h1>
-          </div>
+        <div className="flex items-center space-x-3">
+        <img src="https://i.ibb.co/qYYkHGY7/Fundo-preto.png" alt="Escudo Mengudo Store" className="h-10 w-auto mr-2 object-contain" />
+          <h1 className="text-2xl font-black tracking-wider text-red-600 uppercase">
+            Mengudo <span className="text-slate-100">Store</span>
+          </h1>
+        </div>
           <p className="hidden md:block text-sm text-slate-400">
             As melhores ofertas e produtos do Mengão selecionados para você
           </p>
