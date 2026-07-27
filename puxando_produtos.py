@@ -1,52 +1,77 @@
 import json
 import os
+import requests
+from bs4 import BeautifulSoup
 
-# Lista de produtos da Mengudo Store
-# Você pode adicionar, remover ou alterar os produtos, links e imagens aqui!
-produtos_flamengo = [
-    {
-        "id": 1,
-        "titulo": "Manto Sagrado Oficial Flamengo I 2024/25",
-        "preco": "R$ 349,90",
-        "avaliacao": 5.0,
-        "imagem": "https://http2.mlstatic.com/D_NQ_NP_603831-MLA74673822187_022024-O.webp",
-        "linkMercadoLivre": "https://www.mercadolivre.com.br"
-    },
-    {
-        "id": 2,
-        "titulo": "Camisa Flamengo Edição Especial Retrô Zico",
-        "preco": "R$ 189,90",
-        "avaliacao": 4.9,
-        "imagem": "https://http2.mlstatic.com/D_NQ_NP_898492-MLB72619711681_112023-O.webp",
-        "linkMercadoLivre": "https://www.mercadolivre.com.br"
-    },
-    {
-        "id": 3,
-        "titulo": "Casaco Agasalho Treino Flamengo Rubro-Negro",
-        "preco": "R$ 279,90",
-        "avaliacao": 4.8,
-        "imagem": "https://http2.mlstatic.com/D_NQ_NP_729451-MLB71689302198_092023-O.webp",
-        "linkMercadoLivre": "https://www.mercadolivre.com.br"
-    },
-    {
-        "id": 4,
-        "titulo": "Boné Aba Curva Oficial Flamengo CRF",
-        "preco": "R$ 89,90",
-        "avaliacao": 4.7,
-        "imagem": "https://http2.mlstatic.com/D_NQ_NP_918512-MLB70541298123_072023-O.webp",
-        "linkMercadoLivre": "https://www.mercadolivre.com.br"
-    }
-]
+# URL de busca ou lista do Mercado Livre com os produtos do Flamengo
+# Você pode colar aqui o link de uma busca do Mercado Livre (ex: ofertas do Flamengo)
+URL_BUSCA = "https://lista.mercadolivre.com.br/flamengo"
 
-def gerar_json_produtos():
-    # Caminho onde o JSON será salvo (dentro da pasta src do React)
-    caminho_saida = os.path.join("src", "produtos.json")
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
+
+def raspar_produtos_mercadolivre():
+    print(f"🔎 Buscando produtos no Mercado Livre...")
+    response = requests.get(URL_BUSCA, headers=HEADERS)
     
-    # Salva os dados em formato JSON formatado
+    if response.status_code != 200:
+        print(f"❌ Erro ao acessar o site: Status {response.status_code}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    produtos = []
+    
+    # Encontra os cards de produtos no Mercado Livre
+    itens = soup.select(".ui-search-layout__item")
+    
+    for idx, item in enumerate(itens[:16], start=1):  # Pega os primeiros 16 produtos
+        try:
+            # Título
+            titulo_elem = item.select_one(".ui-search-item__title")
+            titulo = titulo_elem.text.strip() if titulo_elem else "Produto do Flamengo"
+            
+            # Link do produto
+            link_elem = item.select_one("a.ui-search-link")
+            link = link_elem["href"] if link_elem else "https://www.mercadolivre.com.br"
+            
+            # Imagem
+            img_elem = item.select_one("img.ui-search-result-image__element")
+            imagem = ""
+            if img_elem:
+                imagem = img_elem.get("data-src") or img_elem.get("src") or ""
+            
+            # Preço
+            preco_fraction = item.select_one(".poly-price__current .andaria-price-fraction, .price-tag-fraction")
+            if preco_fraction:
+                preco = f"R$ {preco_fraction.text.strip()}"
+            else:
+                preco = "R$ 199,90"
+
+            produtos.append({
+                "id": idx,
+                "titulo": titulo,
+                "preco": preco,
+                "avaliacao": 4.9,
+                "imagem": imagem,
+                "linkMercadoLivre": link
+            })
+        except Exception as e:
+            continue
+
+    return produtos
+
+def salvar_produtos(produtos):
+    if not produtos:
+        print("⚠️ Nenhum produto foi encontrado.")
+        return
+
+    caminho_saida = os.path.join("src", "produtos.json")
     with open(caminho_saida, "w", encoding="utf-8") as file:
-        json.dump(produtos_flamengo, file, ensure_ascii=False, indent=2)
+        json.dump(produtos, file, ensure_ascii=False, indent=2)
         
-    print(f"✅ Sucesso! {len(produtos_flamengo)} produtos gerados e salvos em: {caminho_saida}")
+    print(f"✅ SUCESSO! {len(produtos)} produtos raspados e salvos em: {caminho_saida}")
 
 if __name__ == "__main__":
-    gerar_json_produtos()
+    lista_produtos = raspar_produtos_mercadolivre()
+    salvar_produtos(lista_produtos)
