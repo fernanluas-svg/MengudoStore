@@ -24,7 +24,7 @@ export default function MengudoStore() {
   <img 
   src="/hero.png" 
   alt="Maracanã Nação Rubro-Negra" 
-  className="absolute inset-0 w-full h-full object-cover opacity-70"
+  className="absolute inset-0 w-full h-full object-cover opacity-90"
 />
 
   {/* Sombreamento escuro para destacar o texto */}
