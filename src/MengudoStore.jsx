@@ -36,8 +36,8 @@ export default function Mengudostore() {
               <span className="text-xl md:text-2xl font-black text-white tracking-wide">
                 MENGUDO <span className="text-red-500">STORE</span>
               </span>
-              <span className="text-[10px] text-gray-400 tracking-widest uppercase hidden md:block">
-                Nação Rubro-Negra
+              <span className="text-[10px] text-gray-400 tracking-widest hidden md:block">
+                Recomendações Canal do @MENGUDO1
               </span>
             </div>
             
