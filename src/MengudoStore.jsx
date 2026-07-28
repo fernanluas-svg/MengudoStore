@@ -1,9 +1,6 @@
 import React from 'react';
 import produtosData from './produtos.json';
-import taca1 from './assets/copa-libertadores-1.svg';
-import taca2 from './assets/copa-libertadores-2.svg';
-import taca3 from './assets/copa-libertadores-3.svg';
-import taca4 from './assets/copa-libertadores-4.svg';
+import tacasImg from './assets/tacas.png';
 
 export default function Mengudostore() {
   return (
@@ -42,13 +39,7 @@ export default function Mengudostore() {
                   MENGUDO <span className="text-red-500">STORE</span>
                 </span>
                 
-                {/* ⭐ AS 4 TAÇAS DA LIBERTADORES AQUI ⭐ */}
-                <div className="flex items-center gap-1">
-                  <img src={taca1} alt="Taça Libertadores dourada 1" className="h-6 w-auto" />
-                  <img src={taca2} alt="Taça Libertadores dourada 2" className="h-6 w-auto" />
-                  <img src={taca3} alt="Taça Libertadores dourada 3" className="h-6 w-auto" />
-                  <img src={taca4} alt="Taça Libertadores dourada 4" className="h-6 w-auto" />
-                </div>
+                <img src={tacasImg} alt="4x Campeão Libertadores" className="h-9 w-auto object-contain" />
               </div>
               
               <span className="text-[10px] text-gray-400 tracking-widest hidden md:block">
