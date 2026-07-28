@@ -18,6 +18,36 @@ export default function MengudoStore() {
           </p>
         </div>
       </header>
+      {/* Seção Hero / Destaque */}
+<div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden">
+  {/* Imagem de fundo do Maracanã */}
+  <img 
+    src="/hero.png" 
+    alt="Maracanã Nação Rubro-Negra" 
+    className="absolute inset-0 w-full h-full object-cover opacity-30"
+  />
+
+  {/* Sombreamento escuro para destacar o texto */}
+  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+
+  {/* Conteúdo de Texto */}
+  <div className="relative max-w-4xl mx-auto z-10 flex flex-col items-start gap-3">
+    <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-none uppercase">
+      OS MELHORES PRODUTOS SELECIONADOS PARA A{' '}
+      <span className="text-red-600 font-black">NAÇÃO RUBRO-NEGRA</span>
+    </h1>
+
+    <p className="text-base sm:text-lg text-slate-200 max-w-2xl font-medium mt-1">
+      Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
+    </p>
+
+    {/* Selo Mercado Livre */}
+    <div className="mt-2 flex items-center gap-2 bg-slate-900/80 backdrop-blur border border-slate-700/60 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-green-400">
+      <span>🛡️</span>
+      <span>Compra 100% segura via Mercado Livre</span>
+    </div>
+  </div>
+</div>
 
       {/* Conteúdo Principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
