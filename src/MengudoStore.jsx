@@ -38,8 +38,13 @@ export default function Mengudostore() {
                 <span className="text-xl md:text-3xl font-black text-white tracking-wide">
                   MENGUDO <span className="text-red-500">STORE</span>
                 </span>
-                
-                <img src={tacasImg} alt="4x Campeão Libertadores" className="h-9 w-auto object-contain" />
+
+                <div className="flex items-center gap-1">
+                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
+                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
+                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
+                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
+                </div>
               </div>
               
               <span className="text-[10px] text-gray-400 tracking-widest hidden md:block">
