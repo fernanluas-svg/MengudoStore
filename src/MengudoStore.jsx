@@ -4,12 +4,24 @@ import produtosData from './produtos.json';
 export default function MengudoStore() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Header / Navegação */}
+      {/* Estilo da Animação do Brilho Platinado */}
+      <style>{`
+        @keyframes sweep {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+        .animate-shine {
+          animation: sweep 3s infinite ease-in-out;
+        }
+      `}</style>
+
+      {/* Header / Navegação com Escudo do Mengão */}
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center font-black text-xl shadow-lg shadow-red-600/30">
-              M
+            {/* Escudo/Ícone Rubro-Negro */}
+            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 border border-red-500 rounded-lg flex items-center justify-center font-black text-xl text-white shadow-md shadow-red-600/30">
+              CRF
             </div>
             <span className="font-black text-xl tracking-wider text-white">
               MENGUDO <span className="text-red-500">STORE</span>
@@ -21,7 +33,7 @@ export default function MengudoStore() {
         </div>
       </header>
 
-      {/* Seção Hero / Destaque com Efeitos Neon e Brilhos */}
+      {/* Seção Hero / Destaque */}
       <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden">
         {/* Imagem de fundo do Maracanã */}
         <img
@@ -33,7 +45,7 @@ export default function MengudoStore() {
         {/* Sombreamento escuro */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
 
-        {/* Luz Neon Vermelha no Fundo (Glow Orb) */}
+        {/* Luz Neon Vermelha no Fundo */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-red-600/30 rounded-full blur-3xl pointer-events-none" />
 
         {/* Conteúdo de Texto */}
@@ -49,16 +61,16 @@ export default function MengudoStore() {
             Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
           </p>
 
-          {/* Selo Mercado Livre com Efeito Platinado / Brilho Varrendo */}
-          <div className="relative mt-2 overflow-hidden rounded-full p-[1px] bg-gradient-to-r from-slate-700 via-slate-300 to-slate-700 shadow-lg shadow-slate-900/50 group">
-            {/* Camada interna do selo */}
+          {/* Selo Mercado Livre com Brilho Platinado Cruzando de Ponta a Ponta */}
+          <div className="relative mt-2 overflow-hidden rounded-full border border-slate-600/80 shadow-lg shadow-black/50">
+            {/* Conteúdo do Selo */}
             <div className="relative flex items-center gap-2 bg-slate-900/90 backdrop-blur px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-100 z-10">
               <span className="text-amber-400">🛡️</span>
               <span>Compra 100% segura via Mercado Livre</span>
             </div>
 
-            {/* Raio Platinado passando por trás de ponta a ponta */}
-            <div className="absolute inset-0 z-20 pointer-events-none bg-[linear-gradient(110deg,transparent,35%,rgba(255,255,255,0.7),50%,transparent,65%)] animate-[shimmer_2.5s_infinite] bg-[length:200%_100%]" />
+            {/* Feixe Platinado que desliga do início ao fim */}
+            <div className="absolute inset-0 z-20 pointer-events-none w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 animate-shine" />
           </div>
         </div>
       </div>
