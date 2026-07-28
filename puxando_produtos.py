@@ -1,64 +1,75 @@
 import json
 import os
 import requests
-from bs4 import BeautifulSoup
+from datetime import datetime
 
-URL_BUSCA = "https://lista.mercadolivre.com.br/flamengo"
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+# URL da API com parâmetros
+URL_API = "https://api.mercadolibre.com/sites/MLB/search"
+PARAMS = {
+    "q": "flamengo",
+    "limit": 20,
+    "offset": 0
 }
 
-def raspar_produtos_mercadolivre():
-    print("🔎 Buscando produtos no Mercado Livre...")
+# Headers para parecer um navegador (o que pode evitar o 403)
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "X-Client-Id": "12345"  # <--- Adicione esta linha
+}
+
+def buscar_produtos_api():
+    print("🔎 Buscando produtos via API do Mercado Livre...")
+
     try:
-        response = requests.get(URL_BUSCA, headers=HEADERS, timeout=10)
+        # Faz a requisição com os headers de navegador
+        response = requests.get(URL_API, params=PARAMS, headers=HEADERS, timeout=15)
+
         if response.status_code != 200:
-            print(f"❌ Erro ao acessar o site: Status {response.status_code}")
+            print(f"❌ Erro na API: Status {response.status_code}")
+            print(f"   Mensagem: {response.text}")  # Mostra o que o ML devolveu
             return []
 
-        soup = BeautifulSoup(response.text, "html.parser")
+        dados = response.json()
+        resultados = dados.get("results", [])
+
+        if not resultados:
+            print("⚠️ Nenhum produto encontrado na API")
+            return []
+
         produtos = []
+        for idx, item in enumerate(resultados, start=1):
+            # Formata o preço
+            preco_float = item.get("price", 0)
+            preco = f"R$ {preco_float:.2f}".replace(".", ",")
 
-        # Seleciona os cards de produtos (compatível com os layouts novo e antigo)
-        cards = soup.select(".ui-search-layout__item") or soup.select(".poly-card") or soup.select(".ui-search-result__wrapper")
+            # Pega a imagem (thumbnail)
+            imagem = item.get("thumbnail", "")
+            if imagem and "http" not in imagem:
+                imagem = "https:" + imagem
 
-        for idx, item in enumerate(cards[:16], start=1):
-            try:
-                # Título
-                titulo_elem = item.select_one(".ui-search-item__title") or item.select_one(".poly-component__title") or item.select_one("h2")
-                titulo = titulo_elem.text.strip() if titulo_elem else f"Produto Flamengo #{idx}"
+            # Título
+            titulo = item.get("title", f"Produto #{idx}")
 
-                # Link
-                link_elem = item.select_one("a.ui-search-link") or item.select_one("a.poly-component__title") or item.select_one("a")
-                link = link_elem["href"] if link_elem and link_elem.has_attr("href") else "https://www.mercadolivre.com.br"
+            # Link
+            link = item.get("permalink", "https://www.mercadolivre.com.br")
 
-                # Imagem
-                img_elem = item.select_one("img")
-                imagem = ""
-                if img_elem:
-                    imagem = img_elem.get("data-src") or img_elem.get("src") or ""
+            produtos.append({
+                "id": idx,
+                "titulo": titulo,
+                "preco": preco,
+                "avaliacao": 4.5,
+                "imagem": imagem,
+                "linkMercadoLivre": link
+            })
 
-                # Preço
-                preco_elem = item.select_one(".poly-price__current .andaria-price-fraction") or item.select_one(".price-tag-fraction") or item.select_one(".ui-search-price__part")
-                preco = f"R$ {preco_elem.text.strip()}" if preco_elem else "R$ 199,90"
-
-                produtos.append({
-                    "id": idx,
-                    "titulo": titulo,
-                    "preco": preco,
-                    "avaliacao": 4.9,
-                    "imagem": imagem,
-                    "linkMercadoLivre": link
-                })
-            except Exception:
-                continue
+            print(f"  ✅ {idx}: {titulo[:40]}... - {preco}")
 
         return produtos
 
     except Exception as e:
-        print(f"❌ Ocorreu um erro durante a busca: {e}")
+        print(f"❌ Erro ao buscar da API: {e}")
         return []
 
 def salvar_produtos(produtos):
@@ -66,16 +77,30 @@ def salvar_produtos(produtos):
         print("⚠️ Nenhum produto foi encontrado. Verifique a conexão ou a estrutura da página.")
         return
 
-    caminho_saida = os.path.join("src", "produtos.json")
-    
-    # Cria a pasta src caso não exista
-    os.makedirs("src", exist_ok=True)
+    pasta_frontend = os.path.join("frontend")
+    os.makedirs(pasta_frontend, exist_ok=True)
 
-    with open(caminho_saida, "w", encoding="utf-8") as file:
+    caminho_json = os.path.join(pasta_frontend, "produtos.json")
+    caminho_js = os.path.join(pasta_frontend, "produtos.js")
+
+    with open(caminho_json, "w", encoding="utf-8") as file:
         json.dump(produtos, file, ensure_ascii=False, indent=2)
 
-    print(f"✅ SUCESSO! {len(produtos)} produtos raspados e salvos em: {caminho_saida}")
+    with open(caminho_js, "w", encoding="utf-8") as file:
+        file.write(f"// Produtos atualizados em {datetime.now().strftime('%d/%m/%Y %H:%M')}\n")
+        file.write(f"const produtos = {json.dumps(produtos, ensure_ascii=False, indent=2)};\n")
+
+    print(f"\n✅ SUCESSO! {len(produtos)} produtos salvos em:")
+    print(f"   📄 {caminho_json}")
+    print(f"   📄 {caminho_js}")
 
 if __name__ == "__main__":
-    lista = raspar_produtos_mercadolivre()
-    salvar_produtos(lista)
+    print("=" * 50)
+    print("🚀 MENGUDOSTORE - Buscador de Produtos (API)")
+    print("=" * 50)
+
+    produtos = buscar_produtos_api()
+    salvar_produtos(produtos)
+
+    print("=" * 50)
+    print("🏁 Processo finalizado!")
