@@ -22,10 +22,10 @@ export default function MengudoStore() {
 <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden">
   {/* Imagem de fundo do Maracanã */}
   <img 
-    src="/hero.png" 
-    alt="Maracanã Nação Rubro-Negra" 
-    className="absolute inset-0 w-full h-full object-cover opacity-30"
-  />
+  src="/hero.png" 
+  alt="Maracanã Nação Rubro-Negra" 
+  className="absolute inset-0 w-full h-full object-cover opacity-50"
+/>
 
   {/* Sombreamento escuro para destacar o texto */}
   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
