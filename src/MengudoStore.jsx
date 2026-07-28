@@ -1,5 +1,7 @@
 import React from 'react';
 import produtosData from './produtos.json';
+// Importando a imagem das taças que você colocou na pasta assets
+import tacasImg from './assets/tacas.png';
 
 export default function Mengudostore() {
   return (
@@ -21,7 +23,7 @@ export default function Mengudostore() {
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
-          {/* Container da Esquerda - Escudo e Nome */}
+          {/* Container da Esquerda - Escudo, Nome e Taças */}
           <div className="flex items-center gap-3">
             
             {/* Imagem do escudo */}
@@ -31,11 +33,21 @@ export default function Mengudostore() {
               className="h-16 w-auto object-contain drop-shadow-lg"
             />
 
-            {/* Nome da loja */}
+            {/* Nome da loja e Taças */}
             <div className="flex flex-col leading-tight">
-              <span className="text-xl md:text-3xl font-black text-white tracking-wide">
-                MENGUDO <span className="text-red-500">STORE</span>
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xl md:text-3xl font-black text-white tracking-wide">
+                  MENGUDO <span className="text-red-500">STORE</span>
+                </span>
+                
+                {/* ⭐ AS 4 TAÇAS DA LIBERTADORES AQUI ⭐ */}
+                <img 
+                  src={tacasImg} 
+                  alt="4x Campeão Libertadores" 
+                  className="h-9 w-auto object-contain" 
+                />
+              </div>
+              
               <span className="text-[10px] text-gray-400 tracking-widest hidden md:block">
                 Recomendações Canal do @MENGUDO1
               </span>
