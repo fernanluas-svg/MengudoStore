@@ -1,0 +1,42 @@
+import requests
+import base64
+
+# SUA CHAVE DA API DO IMGBB (JÁ COLOQUEI AQUI)
+API_KEY = "f3d8bddf095bfb533ceb1fd069595b7e"
+
+# ATENÇÃO: Troque o caminho abaixo pelo caminho de uma imagem REAL no seu PC
+CAMINHO_IMAGEM = "taça da liberta"
+
+def upload_para_imgbb(caminho_arquivo):
+    try:
+        # Lê a imagem e converte para base64
+        with open(caminho_arquivo, "rb") as file:
+            imagem_base64 = base64.b64encode(file.read()).decode("utf-8")
+
+        # Faz a requisição para o ImgBB
+        url = "https://api.imgbb.com/1/upload"
+        payload = {
+            "key": API_KEY,
+            "image": imagem_base64,
+        }
+        
+        resposta = requests.post(url, data=payload)
+        dados = resposta.json()
+
+        if dados["success"]:
+            print(f"✅ Upload feito com sucesso!")
+            print(f"🔗 Link da imagem: {dados['data']['url']}")
+            return dados['data']['url']
+        else:
+            print("❌ Erro no upload:", dados)
+            return None
+
+    except FileNotFoundError:
+        print("❌ ERRO: O caminho da imagem está errado ou o arquivo não existe.")
+        print(f"   Verifique se o arquivo realmente existe em: {caminho_arquivo}")
+    except Exception as e:
+        print(f"❌ Erro inesperado: {e}")
+
+if __name__ == "__main__":
+    print("🚀 Iniciando teste de upload para o ImgBB...")
+    upload_para_imgbb(CAMINHO_IMAGEM)
