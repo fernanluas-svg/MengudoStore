@@ -49,10 +49,16 @@ export default function MengudoStore() {
             Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
           </p>
 
-          {/* Selo Mercado Livre Pulsante e Iluminado */}
-          <div className="mt-2 flex items-center gap-2 bg-slate-900/90 backdrop-blur border border-red-500/50 shadow-lg shadow-red-600/30 animate-pulse px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white">
-            <span>🛡️</span>
-            <span>Compra 100% segura via Mercado Livre</span>
+          {/* Selo Mercado Livre com Efeito Platinado / Brilho Varrendo */}
+          <div className="relative mt-2 overflow-hidden rounded-full p-[1px] bg-gradient-to-r from-slate-700 via-slate-300 to-slate-700 shadow-lg shadow-slate-900/50 group">
+            {/* Camada interna do selo */}
+            <div className="relative flex items-center gap-2 bg-slate-900/90 backdrop-blur px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-100 z-10">
+              <span className="text-amber-400">🛡️</span>
+              <span>Compra 100% segura via Mercado Livre</span>
+            </div>
+
+            {/* Raio Platinado passando por trás de ponta a ponta */}
+            <div className="absolute inset-0 z-20 pointer-events-none bg-[linear-gradient(110deg,transparent,35%,rgba(255,255,255,0.7),50%,transparent,65%)] animate-[shimmer_2.5s_infinite] bg-[length:200%_100%]" />
           </div>
         </div>
       </div>
