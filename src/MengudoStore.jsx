@@ -1,6 +1,59 @@
 import React from 'react';
 import produtosData from './produtos.json';
+import acessoriosData from './acessorios.json';
 import tacasImg from './assets/tacas.png';
+
+function ProdutoCard({ produto }) {
+  return (
+    <div className="group bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300">
+      <div className="relative h-48 bg-slate-800 overflow-hidden">
+        <img
+          src={produto.imagem}
+          alt={produto.titulo}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
+          ⭐ {produto.avaliacao}
+        </div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight group-hover:text-red-400 transition-colors">
+          {produto.titulo}
+        </h3>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-lg font-bold text-white">{produto.preco}</span>
+          <a
+            href={produto.linkMercadoLivre}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20"
+          >
+            Ver Oferta
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SecaoProdutos({ titulo, descricao, produtos }) {
+  return (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-1 h-8 bg-red-600 rounded-full"></div>
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">{titulo}</h2>
+          <p className="text-sm text-slate-400 mt-1">{descricao}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {produtos.map((produto) => (
+          <ProdutoCard key={produto.id} produto={produto} />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function Mengudostore() {
   return (
@@ -128,60 +181,19 @@ export default function Mengudostore() {
       </div>
 
       {/* ========================================= */}
-      {/* Seção: Produtos em Destaque */}
+      {/* Seções de Produtos */}
       {/* ========================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-1 h-8 bg-red-600 rounded-full"></div>
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Produtos em Destaque</h2>
-            <p className="text-sm text-slate-400 mt-1">Links diretos e seguros para compra no Mercado Livre</p>
-          </div>
-        </div>
+      <SecaoProdutos
+        titulo="Produtos em Destaque"
+        descricao="Links diretos e seguros para compra no Mercado Livre"
+        produtos={produtosData.slice(0, 8)}
+      />
 
-        {/* Grid de Produtos - Usando dados do JSON */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {produtosData.map((produto) => (
-            <div 
-              key={produto.id} 
-              className="group bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300"
-            >
-              {/* Imagem do Produto */}
-              <div className="relative h-48 bg-slate-800 overflow-hidden">
-                <img 
-                  src={produto.imagem} 
-                  alt={produto.titulo} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {/* Badge de Avaliação */}
-                <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
-                  ⭐ {produto.avaliacao}
-                </div>
-              </div>
-
-              {/* Informações */}
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight group-hover:text-red-400 transition-colors">
-                  {produto.titulo}
-                </h3>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-lg font-bold text-white">{produto.preco}</span>
-                  <a 
-                    href={produto.linkMercadoLivre} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20"
-                  >
-                    Ver Oferta
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-      </section>
+      <SecaoProdutos
+        titulo="Acessórios do Mengão"
+        descricao="Bonés, mochilas, chaveiros, copos, canecas, bandeiras e muito mais."
+        produtos={acessoriosData}
+      />
     </div>
   );
 }

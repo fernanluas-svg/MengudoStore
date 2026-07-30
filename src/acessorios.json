@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "titulo": "Boné Flamengo Original Aba Curva Licenciado Ajustável",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "/produtos/produto_16.png",
+    "linkMercadoLivre": "https://meli.la/14CqzDD"
+  },
+  {
+    "id": 2,
+    "titulo": "Caneca Térmica Parede Dupla Inox Times Futebol Oficial 450ml",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "/produtos/produto_3.png",
+    "linkMercadoLivre": "https://meli.la/1HDVUmc"
+  },
+  {
+    "id": 3,
+    "titulo": "Copo Térmico Emborrachado Inox Com Tampa 450 Ml",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "/produtos/produto_14.png",
+    "linkMercadoLivre": "https://meli.la/2T2QrYp"
+  },
+  {
+    "id": 4,
+    "titulo": "Copo Térmico Original Premium 473 Ml Com Parede Dupla Inox",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "/produtos/produto_15.png",
+    "linkMercadoLivre": "https://meli.la/182sbtF"
+  },
+  {
+    "id": 5,
+    "titulo": "Mochila Flamengo Oficial Rubro-Negra Resistente",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Mochila+Flamengo",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 6,
+    "titulo": "Chaveiro Flamengo Metal Dourado Escudo Oficial",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Chaveiro+Flamengo",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 7,
+    "titulo": "Bandeira Flamengo 2x1,5m Tecido Oficial Rubro-Negro",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Bandeira+Flamengo",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 8,
+    "titulo": "Kit 3 Canecas Flamengo Porcelana 300ml Rubro-Negro",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Caneca+Flamengo",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  }
+]
