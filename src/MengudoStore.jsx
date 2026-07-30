@@ -31,11 +31,11 @@ export default function Mengudostore() {
             transparent 100%
           );
           transform: skewX(-18deg);
-          animation: sheen 2s ease-in-out 1s infinite;
+          animation: sheen 3.5s ease-in-out 2s infinite;
         }
         @keyframes sheen {
           0% { left: -100%; }
-          25% { left: 100%; }
+          85% { left: 100%; }
           100% { left: 100%; }
         }
       `}</style>
