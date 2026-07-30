@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "titulo": "Microfone Condensador Profissional",
+    "descricao": "Gravação nítida e qualidade de áudio broadcast para o canal.",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Microfone",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 2,
+    "titulo": "Iluminação LED Painel Vídeo",
+    "descricao": "Luz contínua ajustável para gravações com qualidade profissional.",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Iluminacao",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 3,
+    "titulo": "Suporte Articulado para Câmera",
+    "descricao": "Braço articulado resistente para enquadramentos precisos no estúdio.",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Suporte",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  }
+]
