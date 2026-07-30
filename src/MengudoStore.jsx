@@ -226,22 +226,37 @@ export default function Mengudostore() {
           animation: fade-in-up 0.6s ease-out forwards;
           opacity: 0;
         }
-        @keyframes orb-float {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -40px) scale(1.05); }
-          66% { transform: translate(-20px, 20px) scale(0.95); }
-          100% { transform: translate(0, 0) scale(1); }
+        .stars-layer {
+          background-image:
+            radial-gradient(1px 1px, rgba(255,255,255,0.3) 100%, transparent 100%),
+            radial-gradient(1.5px 1.5px, rgba(255,255,255,0.15) 100%, transparent 100%),
+            radial-gradient(2px 2px, rgba(127,29,29,0.2) 100%, transparent 100%),
+            radial-gradient(1px 1px, rgba(180,60,60,0.12) 100%, transparent 100%);
+          background-size:
+            50px 50px,
+            80px 80px,
+            120px 120px,
+            160px 160px;
+          background-position:
+            0 0,
+            25px 25px,
+            60px 10px,
+            90px 70px;
+          animation: stars-drift 90s linear infinite;
         }
-        @keyframes orb-float-2 {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(-40px, -30px) scale(0.95); }
-          66% { transform: translate(20px, 40px) scale(1.05); }
-          100% { transform: translate(0, 0) scale(1); }
+        .stars-layer-pulse {
+          background-image: radial-gradient(1.5px 1.5px, rgba(255,255,255,0.2) 100%, transparent 100%);
+          background-size: 100px 100px;
+          background-position: 45px 55px;
+          animation: stars-pulse 8s ease-in-out infinite;
         }
-        @keyframes orb-float-3 {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(40px, 30px) scale(1.08); }
-          100% { transform: translate(0, 0) scale(1); }
+        @keyframes stars-drift {
+          0% { background-position: 0 0, 25px 25px, 60px 10px, 90px 70px; }
+          100% { background-position: 50px 50px, 105px 105px, 180px 130px, 250px 230px; }
+        }
+        @keyframes stars-pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
         }
       `}</style>
 
@@ -336,40 +351,15 @@ export default function Mengudostore() {
       {/* Conteúdo com Fundo Gradiente Sutil */}
       {/* ========================================= */}
       <div className="relative">
-        {/* Orbes de gradiente animados */}
+        {/* Camada de estrelas/partículas */}
         <div
-          className="pointer-events-none absolute inset-0 overflow-hidden"
+          className="pointer-events-none absolute inset-0 overflow-hidden stars-layer"
           style={{ zIndex: 0 }}
-        >
-          <div
-            className="absolute -left-32 -top-32 h-96 w-96 rounded-full opacity-10"
-            style={{
-              background: 'radial-gradient(circle, rgba(127,29,29,0.4) 0%, transparent 70%)',
-              animation: 'orb-float 20s ease-in-out infinite',
-            }}
-          />
-          <div
-            className="absolute -bottom-40 -right-32 h-[30rem] w-[30rem] rounded-full opacity-8"
-            style={{
-              background: 'radial-gradient(circle, rgba(69,10,10,0.5) 0%, transparent 70%)',
-              animation: 'orb-float-2 25s ease-in-out infinite',
-            }}
-          />
-          <div
-            className="absolute left-1/3 top-1/3 h-80 w-80 rounded-full opacity-8"
-            style={{
-              background: 'radial-gradient(circle, rgba(28,25,23,0.6) 0%, transparent 70%)',
-              animation: 'orb-float-3 18s ease-in-out infinite',
-            }}
-          />
-          <div
-            className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full opacity-10"
-            style={{
-              background: 'radial-gradient(circle, rgba(127,29,29,0.3) 0%, transparent 70%)',
-              animation: 'orb-float 22s ease-in-out infinite reverse',
-            }}
-          />
-        </div>
+        />
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden stars-layer-pulse"
+          style={{ zIndex: 0 }}
+        />
 
         {/* Seções com z-index acima do fundo */}
         <div className="relative z-10">
