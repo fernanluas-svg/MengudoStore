@@ -93,6 +93,76 @@ function EquipamentoCard({ produto }) {
   );
 }
 
+const confiançaCards = [
+  {
+    titulo: "Compra 100% Segura",
+    descricao: "Todos os links levam para o Mercado Livre, onde sua compra é protegida.",
+    icone: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    )
+  },
+  {
+    titulo: "Pagamento Seguro",
+    descricao: "Pague utilizando os métodos oficiais da plataforma, com total segurança.",
+    icone: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
+    )
+  },
+  {
+    titulo: "Entrega para Todo o Brasil",
+    descricao: "Os produtos são enviados conforme a logística do Mercado Livre.",
+    icone: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+      </svg>
+    )
+  },
+  {
+    titulo: "Compra com Confiança",
+    descricao: "Escolha entre vendedores bem avaliados e acompanhe seu pedido diretamente pela plataforma.",
+    icone: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    )
+  }
+];
+
+function SecaoConfianca() {
+  return (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-1 h-8 bg-red-600 rounded-full"></div>
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Compre com Segurança</h2>
+          <p className="text-sm text-slate-400 mt-1">
+            Todos os produtos deste site direcionam para o Mercado Livre, uma das maiores plataformas de e-commerce da América Latina.
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {confiançaCards.map((card, i) => (
+          <div
+            key={card.titulo}
+            className="group bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300 animate-fade-in"
+            style={{ animationDelay: `${i * 0.15}s` }}
+          >
+            <div className="w-12 h-12 rounded-lg bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 mb-4 group-hover:bg-red-600/20 group-hover:scale-110 transition-all duration-300">
+              {card.icone}
+            </div>
+            <h3 className="text-base font-semibold text-slate-100 mb-2">{card.titulo}</h3>
+            <p className="text-sm text-slate-400 leading-relaxed">{card.descricao}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function SecaoEquipamentos({ titulo, descricao, produtos }) {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
@@ -147,6 +217,14 @@ export default function Mengudostore() {
           0% { left: -100%; }
           85% { left: 100%; }
           100% { left: 100%; }
+        }
+        @keyframes fade-in-up {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in-up 0.6s ease-out forwards;
+          opacity: 0;
         }
       `}</style>
 
@@ -263,6 +341,8 @@ export default function Mengudostore() {
         descricao="Do estúdio."
         produtos={equipamentosData}
       />
+
+      <SecaoConfianca />
     </div>
   );
 }
