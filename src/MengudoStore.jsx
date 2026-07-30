@@ -226,6 +226,23 @@ export default function Mengudostore() {
           animation: fade-in-up 0.6s ease-out forwards;
           opacity: 0;
         }
+        @keyframes orb-float {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -40px) scale(1.05); }
+          66% { transform: translate(-20px, 20px) scale(0.95); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes orb-float-2 {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-40px, -30px) scale(0.95); }
+          66% { transform: translate(20px, 40px) scale(1.05); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes orb-float-3 {
+          0% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(40px, 30px) scale(1.08); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
       `}</style>
 
       {/* ========================================= */}
@@ -316,33 +333,73 @@ export default function Mengudostore() {
       </div>
 
       {/* ========================================= */}
-      {/* Seções de Produtos */}
+      {/* Conteúdo com Fundo Gradiente Sutil */}
       {/* ========================================= */}
-      <SecaoProdutos
-        titulo="Produtos em Destaque"
-        descricao="Links diretos e seguros para compra no Mercado Livre"
-        produtos={produtosData.slice(0, 8)}
-      />
+      <div className="relative">
+        {/* Orbes de gradiente animados */}
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          style={{ zIndex: 0 }}
+        >
+          <div
+            className="absolute -left-32 -top-32 h-96 w-96 rounded-full opacity-10"
+            style={{
+              background: 'radial-gradient(circle, rgba(127,29,29,0.4) 0%, transparent 70%)',
+              animation: 'orb-float 20s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="absolute -bottom-40 -right-32 h-[30rem] w-[30rem] rounded-full opacity-8"
+            style={{
+              background: 'radial-gradient(circle, rgba(69,10,10,0.5) 0%, transparent 70%)',
+              animation: 'orb-float-2 25s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="absolute left-1/3 top-1/3 h-80 w-80 rounded-full opacity-8"
+            style={{
+              background: 'radial-gradient(circle, rgba(28,25,23,0.6) 0%, transparent 70%)',
+              animation: 'orb-float-3 18s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full opacity-10"
+            style={{
+              background: 'radial-gradient(circle, rgba(127,29,29,0.3) 0%, transparent 70%)',
+              animation: 'orb-float 22s ease-in-out infinite reverse',
+            }}
+          />
+        </div>
 
-      <SecaoProdutos
-        titulo="Acessórios do Mengão"
-        descricao="Bonés, mochilas, chaveiros, copos, canecas, bandeiras e muito mais."
-        produtos={acessoriosData}
-      />
+        {/* Seções com z-index acima do fundo */}
+        <div className="relative z-10">
+          <SecaoProdutos
+            titulo="Produtos em Destaque"
+            descricao="Links diretos e seguros para compra no Mercado Livre"
+            produtos={produtosData.slice(0, 8)}
+          />
 
-      <SecaoProdutos
-        titulo="Linha Infantil"
-        descricao="Rubro-negro desde pequeno."
-        produtos={linhaInfantilData}
-      />
+          <SecaoProdutos
+            titulo="Acessórios do Mengão"
+            descricao="Bonés, mochilas, chaveiros, copos, canecas, bandeiras e muito mais."
+            produtos={acessoriosData}
+          />
 
-      <SecaoEquipamentos
-        titulo="Equipamentos que uso no canal"
-        descricao="Do estúdio."
-        produtos={equipamentosData}
-      />
+          <SecaoProdutos
+            titulo="Linha Infantil"
+            descricao="Rubro-negro desde pequeno."
+            produtos={linhaInfantilData}
+          />
 
-      <SecaoConfianca />
+          <SecaoEquipamentos
+            titulo="Equipamentos que uso no canal"
+            descricao="Do estúdio."
+            produtos={equipamentosData}
+          />
+
+          <SecaoConfianca />
+        </div>
+      </div>
     </div>
   );
 }
