@@ -5,14 +5,38 @@ import tacasImg from './assets/tacas.png';
 export default function Mengudostore() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Estilo da Animação do Brilho Platinado */}
+      {/* Estilo do Brilho Metálico (Sheen) - faixa diagonal como reflexo de lâmina */}
       <style>{`
-        @keyframes sweep {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
+        .btn-shine {
+          position: relative;
+          overflow: hidden;
         }
-        .animate-shine {
-          animation: sweep 3s infinite ease-in-out;
+        .btn-shine::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -100%;
+          width: 50%;
+          height: 200%;
+          background: linear-gradient(
+            115deg,
+            transparent 0%,
+            transparent 30%,
+            rgba(255,255,255,0.15) 40%,
+            rgba(255,255,255,0.5) 45%,
+            rgba(255,255,255,0.8) 50%,
+            rgba(255,255,255,0.5) 55%,
+            rgba(255,255,255,0.15) 60%,
+            transparent 70%,
+            transparent 100%
+          );
+          transform: skewX(-18deg);
+          animation: sheen 2s ease-in-out 1s infinite;
+        }
+        @keyframes sheen {
+          0% { left: -100%; }
+          25% { left: 100%; }
+          100% { left: 100%; }
         }
       `}</style>
 
@@ -93,8 +117,8 @@ export default function Mengudostore() {
             Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
           </p>
 
-          {/* Botão de Compra Segura */}
-          <button className="mt-4 flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
+          {/* Botão de Compra Segura com Brilho Metálico */}
+          <button className="btn-shine mt-4 flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
             <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
             Compra 100% segura via Mercado Livre
             <span className="group-hover:translate-x-1 transition-transform">→</span>
