@@ -151,7 +151,7 @@ function SecaoConfianca() {
             className="group bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300 animate-fade-in"
             style={{ animationDelay: `${i * 0.15}s` }}
           >
-            <div className="w-12 h-12 rounded-lg bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 mb-4 group-hover:bg-red-600/20 group-hover:scale-110 transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-600/20 group-hover:scale-110 transition-all duration-300">
               {card.icone}
             </div>
             <h3 className="text-base font-semibold text-slate-100 mb-2">{card.titulo}</h3>
