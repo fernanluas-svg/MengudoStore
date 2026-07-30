@@ -182,7 +182,7 @@ function SecaoEquipamentos({ titulo, descricao, produtos }) {
   );
 }
 
-const particulas = Array.from({ length: 20 }, (_, i) => {
+const particulas = Array.from({ length: 24 }, (_, i) => {
   const variants = ['particle-1', 'particle-2', 'particle-3', 'particle-4', 'particle-5', 'particle-6'];
   const cores = [
     'rgba(255,255,255,',
@@ -193,16 +193,21 @@ const particulas = Array.from({ length: 20 }, (_, i) => {
     'rgba(200,200,210,',
   ];
   const idx = i % cores.length;
-  const opacidade = (0.15 + Math.random() * 0.2).toFixed(2);
+  const isDestaque = i % 3 === 0;
+  const opacidade = isDestaque ? (0.5 + Math.random() * 0.1).toFixed(2) : (0.35 + Math.random() * 0.15).toFixed(2);
   return {
     top: `${(Math.random() * 90 + 5).toFixed(1)}%`,
     left: `${(Math.random() * 90 + 5).toFixed(1)}%`,
-    tamanho: `${(2 + Math.random() * 3).toFixed(1)}px`,
+    tamanho: `${(3 + Math.random() * 4).toFixed(1)}px`,
     cor: `${cores[idx]}${opacidade})`,
     animacao: variants[i % variants.length],
-    duracao: `${(18 + Math.random() * 18).toFixed(1)}s`,
-    atraso: `${(Math.random() * 10).toFixed(1)}s`,
-    brilho: Math.random() > 0.5 ? `drop-shadow(0 0 ${(2 + Math.random() * 4).toFixed(1)}px ${cores[idx]}${(0.1 + Math.random() * 0.15).toFixed(2)})` : 'none',
+    duracao: `${(20 + Math.random() * 20).toFixed(1)}s`,
+    atraso: `${(Math.random() * 12).toFixed(1)}s`,
+    brilho: isDestaque
+      ? `drop-shadow(0 0 ${(3 + Math.random() * 5).toFixed(1)}px ${cores[idx]}${(0.25 + Math.random() * 0.2).toFixed(2)})`
+      : Math.random() > 0.5
+        ? `drop-shadow(0 0 ${(2 + Math.random() * 3).toFixed(1)}px ${cores[idx]}${(0.12 + Math.random() * 0.13).toFixed(2)})`
+        : 'none',
   };
 });
 
