@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "titulo": "Kit Conjunto Infantil Flamengo 2026",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+1",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 2,
+    "titulo": "Camisa Flamengo Infantil Torcedor Rubro-Negro",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+2",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 3,
+    "titulo": "Tênis Infantil Flamengo Rubro-Negro",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+3",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 4,
+    "titulo": "Boné Infantil Flamengo Aba Curva Ajustável",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+4",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 5,
+    "titulo": "Mochila Infantil Flamengo Rubro-Negra",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+5",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 6,
+    "titulo": "Chinelo Infantil Flamengo Dedo Rubro-Negro",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+6",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 7,
+    "titulo": "Conjunto Moletom Infantil Flamengo",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+7",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 8,
+    "titulo": "Garrafa Térmica Infantil Flamengo 350ml",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Infantil+Flamengo+8",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  }
+]

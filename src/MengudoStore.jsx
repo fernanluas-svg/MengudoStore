@@ -1,6 +1,7 @@
 import React from 'react';
 import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
+import linhaInfantilData from './linhaInfantil.json';
 import tacasImg from './assets/tacas.png';
 
 function ProdutoCard({ produto }) {
@@ -193,6 +194,12 @@ export default function Mengudostore() {
         titulo="Acessórios do Mengão"
         descricao="Bonés, mochilas, chaveiros, copos, canecas, bandeiras e muito mais."
         produtos={acessoriosData}
+      />
+
+      <SecaoProdutos
+        titulo="Linha Infantil"
+        descricao="Rubro-negro desde pequeno."
+        produtos={linhaInfantilData}
       />
     </div>
   );
