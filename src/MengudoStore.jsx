@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
@@ -182,6 +182,52 @@ function SecaoEquipamentos({ titulo, descricao, produtos }) {
   );
 }
 
+const particulas = Array.from({ length: 20 }, (_, i) => {
+  const variants = ['particle-1', 'particle-2', 'particle-3', 'particle-4', 'particle-5', 'particle-6'];
+  const cores = [
+    'rgba(255,255,255,',
+    'rgba(255,255,255,',
+    'rgba(220,200,200,',
+    'rgba(127,29,29,',
+    'rgba(180,60,60,',
+    'rgba(200,200,210,',
+  ];
+  const idx = i % cores.length;
+  const opacidade = (0.15 + Math.random() * 0.2).toFixed(2);
+  return {
+    top: `${(Math.random() * 90 + 5).toFixed(1)}%`,
+    left: `${(Math.random() * 90 + 5).toFixed(1)}%`,
+    tamanho: `${(2 + Math.random() * 3).toFixed(1)}px`,
+    cor: `${cores[idx]}${opacidade})`,
+    animacao: variants[i % variants.length],
+    duracao: `${(18 + Math.random() * 18).toFixed(1)}s`,
+    atraso: `${(Math.random() * 10).toFixed(1)}s`,
+    brilho: Math.random() > 0.5 ? `drop-shadow(0 0 ${(2 + Math.random() * 4).toFixed(1)}px ${cores[idx]}${(0.1 + Math.random() * 0.15).toFixed(2)})` : 'none',
+  };
+});
+
+function ParticulasFundo() {
+  return (
+    <>
+      {particulas.map((p, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            top: p.top,
+            left: p.left,
+            width: p.tamanho,
+            height: p.tamanho,
+            background: p.cor,
+            filter: p.brilho,
+            animation: `${p.animacao} ${p.duracao} ease-in-out ${p.atraso} infinite`,
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
 export default function Mengudostore() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -226,37 +272,43 @@ export default function Mengudostore() {
           animation: fade-in-up 0.6s ease-out forwards;
           opacity: 0;
         }
-        .stars-layer {
-          background-image:
-            radial-gradient(1px 1px, rgba(255,255,255,0.3) 100%, transparent 100%),
-            radial-gradient(1.5px 1.5px, rgba(255,255,255,0.15) 100%, transparent 100%),
-            radial-gradient(2px 2px, rgba(127,29,29,0.2) 100%, transparent 100%),
-            radial-gradient(1px 1px, rgba(180,60,60,0.12) 100%, transparent 100%);
-          background-size:
-            50px 50px,
-            80px 80px,
-            120px 120px,
-            160px 160px;
-          background-position:
-            0 0,
-            25px 25px,
-            60px 10px,
-            90px 70px;
-          animation: stars-drift 90s linear infinite;
+        @keyframes particle-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          20% { transform: translate(40px, -50px) scale(1.2); }
+          40% { transform: translate(80px, -10px) scale(0.9); }
+          60% { transform: translate(50px, 30px) scale(1.1); }
+          80% { transform: translate(10px, -20px) scale(0.95); }
         }
-        .stars-layer-pulse {
-          background-image: radial-gradient(1.5px 1.5px, rgba(255,255,255,0.2) 100%, transparent 100%);
-          background-size: 100px 100px;
-          background-position: 45px 55px;
-          animation: stars-pulse 8s ease-in-out infinite;
+        @keyframes particle-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(-60px, 30px) scale(1.15); }
+          50% { transform: translate(-20px, 70px) scale(0.85); }
+          75% { transform: translate(-40px, 10px) scale(1.05); }
         }
-        @keyframes stars-drift {
-          0% { background-position: 0 0, 25px 25px, 60px 10px, 90px 70px; }
-          100% { background-position: 50px 50px, 105px 105px, 180px 130px, 250px 230px; }
+        @keyframes particle-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          20% { transform: translate(30px, 40px) scale(0.9); }
+          40% { transform: translate(-30px, 80px) scale(1.1); }
+          60% { transform: translate(-10px, 30px) scale(1.15); }
+          80% { transform: translate(20px, -10px) scale(0.95); }
         }
-        @keyframes stars-pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 1; }
+        @keyframes particle-4 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-70px, -40px) scale(1.1); }
+          66% { transform: translate(-30px, 20px) scale(0.9); }
+        }
+        @keyframes particle-5 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(50px, 60px) scale(0.85); }
+          50% { transform: translate(90px, 20px) scale(1.2); }
+          75% { transform: translate(40px, -30px) scale(1); }
+        }
+        @keyframes particle-6 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          20% { transform: translate(-40px, -60px) scale(1.15); }
+          40% { transform: translate(-80px, -20px) scale(0.9); }
+          60% { transform: translate(-50px, 40px) scale(1.05); }
+          80% { transform: translate(-10px, -30px) scale(0.95); }
         }
       `}</style>
 
@@ -351,15 +403,10 @@ export default function Mengudostore() {
       {/* Conteúdo com Fundo Gradiente Sutil */}
       {/* ========================================= */}
       <div className="relative">
-        {/* Camada de estrelas/partículas */}
-        <div
-          className="pointer-events-none absolute inset-0 overflow-hidden stars-layer"
-          style={{ zIndex: 0 }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 overflow-hidden stars-layer-pulse"
-          style={{ zIndex: 0 }}
-        />
+        {/* Partículas flutuantes */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+          <ParticulasFundo />
+        </div>
 
         {/* Seções com z-index acima do fundo */}
         <div className="relative z-10">
