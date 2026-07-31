@@ -57,11 +57,11 @@
   },
   {
     "id": 8,
-    "titulo": "Produto Flamengo #8",
+    "titulo": "Camisa Flamengo Pairar",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "/produtos/escudo.png",
-    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_937589-MLB111689479413_052026-F-camisa-flamengo-pairar.webp",
+    "linkMercadoLivre": "https://meli.la/1rrmATC"
   },
   {
     "id": 9,
