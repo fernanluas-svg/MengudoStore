@@ -29,7 +29,7 @@ function ProdutoCard({ produto }) {
             rel="noopener noreferrer"
             className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
-            VER OFERTA ➔
+            VER PREÇO NA LOJA ➔
           </a>
         </div>
       </div>
@@ -83,7 +83,7 @@ function EquipamentoCard({ produto }) {
             rel="noopener noreferrer"
             className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
-            VER OFERTA ➔
+            VER PREÇO NA LOJA ➔
           </a>
         </div>
       </div>
