@@ -442,6 +442,36 @@ export default function Mengudostore() {
           <SecaoConfianca />
         </div>
       </div>
+
+      <a
+        href="https://www.youtube.com/@mengudo1"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block bg-black pt-12 pb-8"
+      >
+        <div className="flex flex-col items-center justify-center gap-6">
+          <div className="flex items-center gap-4">
+            <img
+              src="https://i.ibb.co/WvsR3rBX/Fundo-preto.png"
+              alt="Canal do Mengudo"
+              className="h-16 w-auto object-contain"
+            />
+            <div>
+              <p className="text-white font-bold text-2xl underline decoration-2 underline-offset-4">Canal do Mengudo</p>
+              <p className="text-white font-bold text-2xl underline decoration-2 underline-offset-4">Recomenda</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-white font-bold text-lg tracking-wider">INSCREVA-SE NO CANAL</span>
+            <svg className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#FF0000"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+      <div className="bg-black text-center pb-8">
+        <p className="text-slate-500 text-xs">© 2026 Canal do Mengudo. Todos os direitos reservados.</p>
+      </div>
     </div>
   );
 }
