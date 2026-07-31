@@ -22,15 +22,14 @@ function ProdutoCard({ produto }) {
         <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight group-hover:text-red-400 transition-colors">
           {produto.titulo}
         </h3>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-lg font-bold text-white">{produto.preco}</span>
+        <div className="mt-3">
           <a
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
+            className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
-            Ver Oferta
+            VER OFERTA ➔
           </a>
         </div>
       </div>
@@ -77,15 +76,14 @@ function EquipamentoCard({ produto }) {
         {produto.descricao && (
           <p className="text-sm text-slate-400 mt-2 leading-relaxed">{produto.descricao}</p>
         )}
-        <div className="mt-auto pt-4 flex items-center justify-between">
-          <span className="text-lg font-bold text-white">{produto.preco}</span>
+        <div className="mt-auto pt-4">
           <a
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
+            className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
-            Ver Oferta
+            VER OFERTA ➔
           </a>
         </div>
       </div>
