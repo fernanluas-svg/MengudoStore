@@ -28,7 +28,7 @@ function ProdutoCard({ produto }) {
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20"
+            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
             Ver Oferta
           </a>
@@ -83,7 +83,7 @@ function EquipamentoCard({ produto }) {
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20"
+            className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
           >
             Ver Oferta
           </a>
@@ -276,6 +276,16 @@ export default function Mengudostore() {
         .animate-fade-in {
           animation: fade-in-up 0.6s ease-out forwards;
           opacity: 0;
+        }
+        @keyframes btn-pulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+          50% { transform: scale(1.06); box-shadow: 0 0 20px 4px rgba(220,38,38,0.35); }
+        }
+        .animate-btn-pulse {
+          animation: btn-pulse 2s ease-in-out infinite;
+        }
+        .animate-btn-pulse:hover {
+          animation-play-state: paused;
         }
         @keyframes particle-1 {
           0%, 100% { transform: translate(0, 0) scale(1); }
