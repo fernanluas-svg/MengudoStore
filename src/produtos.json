@@ -17,11 +17,11 @@
   },
   {
     "id": 3,
-    "titulo": "Produto Flamengo #3",
+    "titulo": "Camisa do Flamengo Masculina I CR 26 Adidas",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "/produtos/escudo.png",
-    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_822706-MLB106266959693_012026-F-camisa-do-flamengo-masculina-i-cr-26-adidas.webp",
+    "linkMercadoLivre": "https://meli.la/1HDVUmc"
   },
   {
     "id": 4,
