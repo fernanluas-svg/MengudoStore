@@ -33,11 +33,11 @@
   },
   {
     "id": 5,
-    "titulo": "Produto Flamengo #5",
+    "titulo": "Camisa Flamengo Blood Rubro-Negro Masculino Oficial",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "/produtos/produto_5.webp",
-    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_635899-MLB80229443587_102024-F-camisa-flamengo-blood-rubro-negro-masculino-oficial.webp",
+    "linkMercadoLivre": "https://meli.la/1drXuek"
   },
   {
     "id": 6,
