@@ -8,11 +8,11 @@ import tacasImg from './assets/tacas.png';
 function ProdutoCard({ produto }) {
   return (
     <div className="group bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300">
-      <div className="relative h-48 bg-slate-800 overflow-hidden">
+      <div className="relative h-64 bg-slate-800 overflow-hidden">
         <img
           src={produto.imagem}
           alt={produto.titulo}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
           ⭐ {produto.avaliacao}
@@ -59,11 +59,11 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
 function EquipamentoCard({ produto }) {
   return (
     <div className="group bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300 flex flex-col">
-      <div className="relative h-56 bg-slate-800 overflow-hidden">
+      <div className="relative h-64 bg-slate-800 overflow-hidden">
         <img
           src={produto.imagem}
           alt={produto.titulo}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
           ⭐ {produto.avaliacao}
