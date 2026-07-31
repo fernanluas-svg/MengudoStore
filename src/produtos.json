@@ -49,11 +49,11 @@
   },
   {
     "id": 7,
-    "titulo": "Produto Flamengo #7",
+    "titulo": "Camiseta Flamengo Original Camisa Time Masculina Mengo",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "/produtos/produto_7.webp",
-    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_763537-MLB114661932729_072026-F-camiseta-flamengo-original-camisa-time-masculina-mengo.webp",
+    "linkMercadoLivre": "https://meli.la/2aVZeUL"
   },
   {
     "id": 8,
