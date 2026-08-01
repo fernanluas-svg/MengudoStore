@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
@@ -233,6 +233,8 @@ function ParticulasFundo() {
 }
 
 export default function Mengudostore() {
+  const [politicaAberta, setPoliticaAberta] = useState(false);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* Estilo do Brilho Metálico (Sheen) - faixa diagonal como reflexo de lâmina */}
@@ -343,6 +345,13 @@ export default function Mengudostore() {
           animation: heroFadeIn 0.9s ease-out forwards;
           animation-delay: 0.4s;
           opacity: 0;
+        }
+        @keyframes modal-pop {
+          from { opacity: 0; transform: scale(0.95) translateY(10px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-pop {
+          animation: modal-pop 0.25s ease-out forwards;
         }
       `}</style>
 
@@ -504,9 +513,62 @@ export default function Mengudostore() {
           </div>
         </div>
       </a>
-      <div className="bg-black text-center pb-8">
+      <div className="bg-black text-center pb-8 flex flex-col items-center gap-2">
         <p className="text-slate-500 text-xs">© 2026 Canal do Mengudo. Todos os direitos reservados.</p>
+        <button
+          onClick={() => setPoliticaAberta(true)}
+          className="text-slate-400 text-xs hover:text-slate-200 underline underline-offset-2 transition-colors"
+        >
+          Política de Privacidade
+        </button>
       </div>
+
+      {politicaAberta && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          onClick={() => setPoliticaAberta(false)}
+        >
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+          <div
+            className="modal-pop relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-white">Política de Privacidade</h2>
+              <button
+                onClick={() => setPoliticaAberta(false)}
+                aria-label="Fechar"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-3 text-sm text-slate-300 leading-relaxed">
+              <p>
+                Respeitamos a sua privacidade. Este site utiliza cookies básicos para melhorar a experiência de navegação.
+              </p>
+              <p>
+                Alguns dos links exibidos em nosso site são links de afiliados de plataformas como Shopee e Mercado Livre.
+                Quando você clica nesses links e realiza uma compra, podemos receber uma comissão sem nenhum custo
+                adicional para você.
+              </p>
+              <p>
+                Não coletamos, armazenamos ou vendemos dados pessoais sensíveis dos usuários.
+              </p>
+            </div>
+            <div className="mt-6 text-right">
+              <button
+                onClick={() => setPoliticaAberta(false)}
+                className="bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
