@@ -25,5 +25,14 @@
     "avaliacao": 5.0,
     "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Suporte",
     "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 4,
+    "titulo": "Equipamento #4",
+    "descricao": "Em breve.",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Equipamento+4",
+    "linkMercadoLivre": "#"
   }
 ]
