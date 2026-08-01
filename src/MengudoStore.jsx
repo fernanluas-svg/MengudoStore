@@ -324,6 +324,26 @@ export default function Mengudostore() {
           60% { transform: translate(-50px, 40px) scale(1.05); }
           80% { transform: translate(-10px, -30px) scale(0.95); }
         }
+        @keyframes heroFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(25px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .hero-title {
+          animation: heroFadeIn 0.9s ease-out forwards;
+          animation-delay: 0.1s;
+          opacity: 0;
+        }
+        .hero-subtitle {
+          animation: heroFadeIn 0.9s ease-out forwards;
+          animation-delay: 0.4s;
+          opacity: 0;
+        }
       `}</style>
 
       {/* ========================================= */}
@@ -392,14 +412,14 @@ export default function Mengudostore() {
 
         {/* Conteúdo de Texto */}
         <div className="relative max-w-4xl mx-auto z-10 flex flex-col items-start gap-3">
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+          <h1 className="hero-title text-3xl sm:text-5xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
             OS MELHORES PRODUTOS SELECIONADOS PARA A <br />
             <span className="text-red-500 font-black drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]">
               NAÇÃO <br /> RUBRO-NEGRA
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-200 max-w-2xl font-medium mt-1 drop-shadow-md">
+          <p className="hero-subtitle text-base sm:text-lg text-slate-200 max-w-2xl font-medium mt-1 drop-shadow-md">
             Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
           </p>
 
