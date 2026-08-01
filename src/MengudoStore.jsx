@@ -406,7 +406,7 @@ export default function Mengudostore() {
           {/* Botão de Compra Segura com Brilho Metálico */}
           <button className="btn-shine mt-4 flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
             <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-            Compra 100% segura via Mercado Livre
+            Compra 100% Segura Via Shopee e Mercado Livre
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </button>
         </div>
