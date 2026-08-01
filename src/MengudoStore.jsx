@@ -426,7 +426,7 @@ export default function Mengudostore() {
         <div className="relative z-10">
           <SecaoProdutos
             titulo="Produtos em Destaque"
-            descricao="Links diretos e seguros para compra no Mercado Livre"
+            descricao="Os Produtos Mais Procurados"
             produtos={produtosData.slice(0, 8)}
           />
 
