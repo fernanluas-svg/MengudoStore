@@ -62,5 +62,37 @@
     "avaliacao": 5.0,
     "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Caneca+Flamengo",
     "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 9,
+    "titulo": "Produto Acessório #9",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Acessorio+9",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 10,
+    "titulo": "Produto Acessório #10",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Acessorio+10",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 11,
+    "titulo": "Produto Acessório #11",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Acessorio+11",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 12,
+    "titulo": "Produto Acessório #12",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Acessorio+12",
+    "linkMercadoLivre": "#"
   }
 ]
