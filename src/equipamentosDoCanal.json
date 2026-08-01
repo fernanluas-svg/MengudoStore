@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "titulo": "Microfone Condensador Profissional",
-    "descricao": "Gravação nítida e qualidade de áudio broadcast para o canal.",
+    "titulo": "Equipamento de Estúdio de Gravação",
+    "descricao": "Equipamento profissional para o estúdio do canal.",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "https://via.placeholder.com/600x400/1e293b/ffffff?text=Microfone",
-    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_815916-MLA95648094482_102025-F.webp",
+    "linkMercadoLivre": "https://meli.la/2bvCo5m"
   },
   {
     "id": 2,
