@@ -73,11 +73,11 @@
   },
   {
     "id": 10,
-    "titulo": "Produto Acessório #10",
+    "titulo": "Copo de Cerâmica Flamengo Oficial",
     "preco": "R$ 0,00",
     "avaliacao": 5.0,
-    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Acessorio+10",
-    "linkMercadoLivre": "#"
+    "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_629209-MLA114976232515_072026-F.webp",
+    "linkMercadoLivre": "https://meli.la/1JNZsYX"
   },
   {
     "id": 11,
