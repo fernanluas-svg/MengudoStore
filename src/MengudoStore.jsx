@@ -181,7 +181,7 @@ function SecaoEquipamentos({ titulo, descricao, produtos }) {
   );
 }
 
-const particulas = Array.from({ length: 36 }, (_, i) => {
+const particulas = Array.from({ length: 48 }, (_, i) => {
   const variants = ['particle-1', 'particle-2', 'particle-3', 'particle-4', 'particle-5', 'particle-6'];
   const cores = [
     'rgba(255,255,255,',
