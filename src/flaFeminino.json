@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "titulo": "Produto Feminino #1",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+1",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 2,
+    "titulo": "Produto Feminino #2",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+2",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 3,
+    "titulo": "Produto Feminino #3",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+3",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 4,
+    "titulo": "Produto Feminino #4",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+4",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 5,
+    "titulo": "Produto Feminino #5",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+5",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 6,
+    "titulo": "Produto Feminino #6",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+6",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 7,
+    "titulo": "Produto Feminino #7",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+7",
+    "linkMercadoLivre": "#"
+  },
+  {
+    "id": 8,
+    "titulo": "Produto Feminino #8",
+    "preco": "R$ 0,00",
+    "avaliacao": 5.0,
+    "imagem": "https://via.placeholder.com/400x400/1e293b/ffffff?text=Feminino+8",
+    "linkMercadoLivre": "#"
+  }
+]

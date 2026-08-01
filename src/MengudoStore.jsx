@@ -3,6 +3,7 @@ import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
 import equipamentosData from './equipamentosDoCanal.json';
+import flaFemininoData from './flaFeminino.json';
 import tacasImg from './assets/tacas.png';
 
 function ProdutoCard({ produto }) {
@@ -427,6 +428,12 @@ export default function Mengudostore() {
             titulo="Produtos em Destaque"
             descricao="Links diretos e seguros para compra no Mercado Livre"
             produtos={produtosData.slice(0, 8)}
+          />
+
+          <SecaoProdutos
+            titulo="FLA Feminino"
+            descricao="Para As Nossas Rubro-Negras"
+            produtos={flaFemininoData}
           />
 
           <SecaoProdutos
