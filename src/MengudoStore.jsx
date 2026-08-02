@@ -469,7 +469,7 @@ export default function Mengudostore() {
           </button>
 
           {/* Prova Social */}
-          <div className="social-proof self-center mt-6 flex flex-col items-center gap-1.5">
+          <div className="social-proof self-center mt-4 flex flex-col items-center gap-1.5">
             <div className="flex items-center gap-1">
               {[0, 1, 2, 3, 4].map((i) => (
                 <svg
@@ -483,7 +483,7 @@ export default function Mengudostore() {
               ))}
             </div>
             <p className="text-sm sm:text-base text-slate-200 font-medium tracking-wide">
-              4.9/5 • Mais de 1.500 torcedores satisfeitos
+              4.9/5 • Mais de 1.500 rubro-negros satisfeitos
             </p>
           </div>
         </div>
