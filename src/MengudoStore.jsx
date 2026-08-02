@@ -457,34 +457,36 @@ export default function Mengudostore() {
             Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
           </p>
 
-          {/* Botão de Compra Segura com Brilho Metálico */}
-          <button className="security-badge btn-shine mt-4 flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
-            <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-            Compra 100% Segura Via Shopee e Mercado Livre
-            <span className="security-badge-icon flex items-center">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-              </svg>
-            </span>
-          </button>
-
-          {/* Prova Social */}
-          <div className="social-proof self-center mt-4 flex flex-col items-center gap-1.5">
-            <div className="flex items-center gap-1">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <svg
-                  key={i}
-                  className="social-proof-star w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          {/* Grupo de Confiança: Botão de Compra Segura + Prova Social */}
+          <div className="mt-4 flex flex-col items-center">
+            <button className="security-badge btn-shine flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
+              <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+              Compra 100% Segura Via Shopee e Mercado Livre
+              <span className="security-badge-icon flex items-center">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                 </svg>
-              ))}
+              </span>
+            </button>
+
+            {/* Prova Social */}
+            <div className="social-proof mt-3 flex flex-col items-center gap-1.5">
+              <div className="flex items-center gap-1">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <svg
+                    key={i}
+                    className="social-proof-star w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-sm sm:text-base text-slate-200 font-medium tracking-wide">
+                4.9/5 • Mais de 1.500 rubro-negros satisfeitos
+              </p>
             </div>
-            <p className="text-sm sm:text-base text-slate-200 font-medium tracking-wide">
-              4.9/5 • Mais de 1.500 rubro-negros satisfeitos
-            </p>
           </div>
         </div>
 
