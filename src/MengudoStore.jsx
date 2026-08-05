@@ -235,10 +235,25 @@ function ParticulasFundo() {
 export default function Mengudostore() {
   const [politicaAberta, setPoliticaAberta] = useState(false);
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
+  const [headerVisivel, setHeaderVisivel] = useState(true);
 
   useEffect(() => {
+    let ultimaPosicao = window.scrollY;
+
     const aoRolar = () => {
-      setMostrarBotaoTopo(window.scrollY > 300);
+      const posicaoAtual = window.scrollY;
+
+      setMostrarBotaoTopo(posicaoAtual > 300);
+
+      if (posicaoAtual <= 0) {
+        setHeaderVisivel(true);
+      } else {
+        const diferenca = posicaoAtual - ultimaPosicao;
+        if (Math.abs(diferenca) > 8) {
+          setHeaderVisivel(diferenca < 0);
+        }
+      }
+      ultimaPosicao = posicaoAtual;
     };
     window.addEventListener('scroll', aoRolar, { passive: true });
     aoRolar();
@@ -397,7 +412,11 @@ export default function Mengudostore() {
       {/* ========================================= */}
       {/* Header / Navegação com Escudo do Mengão */}
       {/* ========================================= */}
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-slate-800 bg-slate-900/80 backdrop-blur transition-transform duration-300 ease-in-out ${
+          headerVisivel ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Container da Esquerda - Escudo, Nome e Taças */}
@@ -443,7 +462,7 @@ export default function Mengudostore() {
       {/* ========================================= */}
       {/* Seção Hero / Destaque */}
       {/* ========================================= */}
-      <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden">
+      <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden pt-28">
         
         {/* Imagem de fundo do Maracanã */}
         <img
