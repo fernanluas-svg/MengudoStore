@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
@@ -234,6 +234,20 @@ function ParticulasFundo() {
 
 export default function Mengudostore() {
   const [politicaAberta, setPoliticaAberta] = useState(false);
+  const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
+
+  useEffect(() => {
+    const aoRolar = () => {
+      setMostrarBotaoTopo(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', aoRolar, { passive: true });
+    aoRolar();
+    return () => window.removeEventListener('scroll', aoRolar);
+  }, []);
+
+  const voltarAoTopo = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -619,6 +633,19 @@ export default function Mengudostore() {
           </div>
         </div>
       )}
+
+      {/* Botão Voltar ao Topo */}
+      <button
+        onClick={voltarAoTopo}
+        aria-label="Voltar ao topo"
+        className={`fixed bottom-6 right-6 z-[200] w-12 h-12 rounded-full bg-black border-2 border-red-600/60 shadow-[0_0_20px_rgba(218,41,28,0.35)] flex items-center justify-center text-[#DA291C] hover:bg-red-600 hover:text-white hover:border-red-500 transition-all duration-300 ${
+          mostrarBotaoTopo ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
     </div>
   );
 }
