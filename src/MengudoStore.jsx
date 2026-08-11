@@ -647,7 +647,7 @@ export default function Mengudostore() {
           </button>
           <span className="text-slate-600">•</span>
           <button
-            onClick={() => setFaqAberto(true)}
+            onClick={() => setFaqAberta(true)}
             className="text-slate-400 text-xs hover:text-slate-200 underline underline-offset-2 transition-colors"
           >
             Perguntas Frequentes (FAQ)
