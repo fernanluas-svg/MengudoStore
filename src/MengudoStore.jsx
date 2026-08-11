@@ -131,6 +131,10 @@ const confiançaCards = [
   }
 ];
 
+const palavrasChaveSEO = [
+  "Camisa do Flamengo", "Manto Sagrado", "Jaqueta Corta Vento Flamengo", "Agasalho do Flamengo", "Blusa do Flamengo", "Regata do Flamengo", "Shorts do Flamengo", "Calça Treino Flamengo", "Moletom Flamengo", "Uniforme Flamengo", "Camisa Oficial Flamengo", "Camisa Retrô Flamengo", "Kit Infantil Flamengo", "Camisa Feminina Flamengo", "Chinelo do Flamengo", "Boné do Flamengo", "Meião Flamengo", "Roupas do Flamengo", "Manto 1 Flamengo", "Manto 2 Flamengo", "Manto 3 Flamengo", "Coleção Licenciada Flamengo", "Moda Esportiva Rubro-Negra", "Acessórios do Flamengo", "Moda Rubro-Negra", "Loja do Flamengo", "Mengão Stores", "Produtos do Flamengo Shopee", "Comprar Camisa do Flamengo", "Promoção Manto Sagrado", "Desconto Roupas do Flamengo", "Manto Sagrado Barato", "Ofertas Flamengo", "Loja Rubro-Negra Online", "Produtos Licenciados Flamengo", "Camisa Flamengo Promoção", "Melhores Ofertas Flamengo", "Cupom Desconto Flamengo", "Artigos Esportivos Flamengo", "Presentes do Flamengo", "Comprar Corta Vento Flamengo", "Preço Camisa do Flamengo", "Loja Virtual Flamengo", "Melhores Preços Mengão", "Achadinhos do Flamengo", "Produtos Torcedor Flamengo", "Vitrine Rubro-Negra", "E-commerce Flamengo", "Colecionáveis Flamengo", "Roupas Baratas do Flamengo", "Mengão", "Mengudo", "Flamengo", "Clube de Regatas do Flamengo", "CR Flamengo", "Rubro-Negro", "Mais Querido", "Nação Rubro-Negra", "Maracanã", "Urubu", "Mengão do Meu Coração", "Raça Rubro-Negra", "Torcida do Flamengo", "Maior Torcida do Mundo", "Garotos do Ninho", "Fla", "Ninho do Urubu", "Raça Amor e Paixão", "SRN", "Vamos Flamengo", "Zico", "Gabigol", "Bruno Henrique", "Arrascaeta", "Libertadores da América", "Bi da Libertadores", "Tri da Libertadores", "Campeão Mundial 1981", "Brasileirão Flamengo", "Octacampeão", "Copa do Brasil Flamengo", "Cariocão Flamengo", "Ídolos do Flamengo", "Títulos do Flamengo", "Jogos do Flamengo", "Mengão Campeão", "História do Flamengo", "Conquistas Rubro-Negras", "Elenco do Flamengo", "Jogadores do Flamengo", "Futebol Brasileiro", "Paixão Rubro-Negra", "Estilo Torcedor", "Orgulho Rubro-Negro", "Vestir o Manto", "Dia de Flamengo", "Coleção Flamengo 2026", "Lançamento Manto Flamengo", "Modinha Rubro-Negra", "Nação Rubro-Negra Online"
+];
+
 function SecaoConfianca() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
@@ -234,6 +238,7 @@ function ParticulasFundo() {
 
 export default function Mengudostore() {
   const [politicaAberta, setPoliticaAberta] = useState(false);
+  const [seoAberto, setSeoAberto] = useState(false);
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
   const [headerVisivel, setHeaderVisivel] = useState(true);
 
@@ -598,12 +603,21 @@ export default function Mengudostore() {
       </a>
       <div className="bg-black text-center pb-8 flex flex-col items-center gap-2">
         <p className="text-slate-500 text-xs">© 2026 Canal do Mengudo. Todos os direitos reservados.</p>
-        <button
-          onClick={() => setPoliticaAberta(true)}
-          className="text-slate-400 text-xs hover:text-slate-200 underline underline-offset-2 transition-colors"
-        >
-          Política de Privacidade
-        </button>
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <button
+            onClick={() => setPoliticaAberta(true)}
+            className="text-slate-400 text-xs hover:text-slate-200 underline underline-offset-2 transition-colors"
+          >
+            Política de Privacidade
+          </button>
+          <span className="text-slate-600">•</span>
+          <button
+            onClick={() => setSeoAberto(true)}
+            className="text-slate-400 text-xs hover:text-slate-200 underline underline-offset-2 transition-colors"
+          >
+            Termos & Tags (SEO)
+          </button>
+        </div>
       </div>
 
       {politicaAberta && (
@@ -644,6 +658,56 @@ export default function Mengudostore() {
             <div className="mt-6 text-right">
               <button
                 onClick={() => setPoliticaAberta(false)}
+                className="bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal SEO / Palavras-chave */}
+      {seoAberto && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          onClick={() => setSeoAberto(false)}
+        >
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+          <div
+            className="modal-pop relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-white">Palavras-Chave e Termos de Busca - Mengudo Stores</h2>
+              <button
+                onClick={() => setSeoAberto(false)}
+                aria-label="Fechar"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="mb-4">
+              <p className="text-sm text-slate-400 mb-2 leading-relaxed">
+                Confira as principais tags e termos relacionados aos nossos produtos e ao Mengão:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {palavrasChaveSEO.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs hover:bg-slate-700 hover:text-white transition-colors cursor-default"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6 text-right">
+              <button
+                onClick={() => setSeoAberto(false)}
                 className="bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors"
               >
                 Fechar
