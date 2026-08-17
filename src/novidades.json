@@ -1,0 +1,50 @@
+[
+  {
+    "id": 101,
+    "titulo": "Camisa Oficial Flamengo 2025 - Torcedor",
+    "preco": "R$ 249,90",
+    "avaliacao": 4.9,
+    "imagem": "/produtos/produto_1.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 102,
+    "titulo": "Boné Rubro-Negro Flamengo Flex Fit",
+    "preco": "R$ 79,90",
+    "avaliacao": 4.8,
+    "imagem": "/produtos/produto_2.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 103,
+    "titulo": "Bola Oficial Flamengo Torcedor",
+    "preco": "R$ 119,90",
+    "avaliacao": 4.7,
+    "imagem": "/produtos/produto_4.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 104,
+    "titulo": "Moletom Flamengo Acolchoado",
+    "preco": "R$ 189,90",
+    "avaliacao": 4.9,
+    "imagem": "/produtos/produto_5.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 105,
+    "titulo": "Chaveiro Escudo Flamengo 3D",
+    "preco": "R$ 29,90",
+    "avaliacao": 4.6,
+    "imagem": "/produtos/produto_6.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  },
+  {
+    "id": 106,
+    "titulo": "Caneca Nação Rubro-Negra",
+    "preco": "R$ 49,90",
+    "avaliacao": 4.8,
+    "imagem": "/produtos/produto_7.webp",
+    "linkMercadoLivre": "https://www.mercadolivre.com.br"
+  }
+]

@@ -4,7 +4,9 @@ import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
 import equipamentosData from './equipamentosDoCanal.json';
 import flaFemininoData from './flaFeminino.json';
+import novidadesData from './novidades.json';
 import tacasImg from './assets/tacas.png';
+import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
 function ProdutoCard({ produto }) {
   return (
@@ -557,6 +559,23 @@ export default function Mengudostore() {
         </div>
 
       </div>
+
+      {/* ========================================= */}
+      {/* Seção: Novidades do Mengão */}
+      {/* ========================================= */}
+      <section className="w-full py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-1 h-8 bg-red-600 rounded-full"></div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white">Novidades do Mengão</h2>
+              <p className="text-sm text-slate-400 mt-1">As últimas novidades e lançamentos do Mengão em primeira mão</p>
+            </div>
+          </div>
+        </div>
+
+        <NovidadesCarrossel produtos={novidadesData} />
+      </section>
 
       {/* ========================================= */}
       {/* Conteúdo com Fundo Gradiente Sutil */}
