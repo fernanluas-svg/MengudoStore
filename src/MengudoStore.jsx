@@ -527,14 +527,18 @@ export default function Mengudostore() {
       {/* ========================================= */}
       <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden pt-28">
         
-        {/* Imagem de fundo do Maracanã */}
-        <img
-          src="/hero.png"
-          alt="Maracanã Nação Rubro-Negra"
-          className="absolute inset-0 w-full h-full object-cover opacity-100"
-        />
+        {/* Vídeo de fundo da Nação Rubro-Negra */}
+        <video
+          src="/hero-bg.mov"
+          poster="/hero.png"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        ></video>
 
-        {/* Sombreamento escuro */}
+        {/* Sombreamento escuro para garantir contraste */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
 
         {/* Luz Neon Vermelha no Fundo */}
