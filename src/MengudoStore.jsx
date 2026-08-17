@@ -593,7 +593,7 @@ export default function Mengudostore() {
       {/* ========================================= */}
       <section className="w-full py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={novidadesTituloRef}>
-          <div className="flex items-center justify-center gap-4 mb-10 text-center">
+          <div className="flex items-center justify-center gap-4 mb-12 text-center">
             <div className="w-1 h-8 bg-red-600 rounded-full shrink-0 relative z-10"></div>
             <div className="novidades-reveal-mask">
               <div className={`novidades-reveal ${novidadesVisivel ? '' : 'novidades-reveal-hidden'}`}>

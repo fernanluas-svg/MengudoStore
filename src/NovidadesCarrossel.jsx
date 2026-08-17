@@ -63,7 +63,7 @@ export default function NovidadesCarrossel({ produtos }) {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden py-8 select-none"
+      className="relative overflow-x-clip overflow-y-visible pt-10 pb-8 select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
