@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import produtosData from './produtos.json';
 import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
@@ -271,6 +271,24 @@ export default function Mengudostore() {
   const [faqAberto, setFaqAberta] = useState(false);
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
   const [headerVisivel, setHeaderVisivel] = useState(true);
+  const [novidadesVisivel, setNovidadesVisivel] = useState(false);
+  const novidadesTituloRef = useRef(null);
+
+  useEffect(() => {
+    const el = novidadesTituloRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNovidadesVisivel(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     let ultimaPosicao = window.scrollY;
@@ -442,6 +460,16 @@ export default function Mengudostore() {
           0%, 100% { opacity: 0.9; text-shadow: 0 0 5px rgba(255,215,0,0.2); }
           50% { opacity: 1; text-shadow: 0 0 10px rgba(255,215,0,0.45); }
         }
+        .novidades-reveal {
+          transform: translateX(0);
+          transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .novidades-reveal-hidden {
+          transform: translateX(-108%);
+        }
+        .novidades-reveal-mask {
+          overflow: hidden;
+        }
       `}</style>
 
       {/* ========================================= */}
@@ -564,12 +592,14 @@ export default function Mengudostore() {
       {/* Seção: Novidades do Mengão */}
       {/* ========================================= */}
       <section className="w-full py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-1 h-8 bg-red-600 rounded-full"></div>
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">Novidades do Mengão</h2>
-              <p className="text-sm text-slate-400 mt-1">As últimas novidades e lançamentos do Mengão em primeira mão</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={novidadesTituloRef}>
+          <div className="flex items-center justify-center gap-4 mb-10 text-center">
+            <div className="w-1 h-8 bg-red-600 rounded-full shrink-0 relative z-10"></div>
+            <div className="novidades-reveal-mask">
+              <div className={`novidades-reveal ${novidadesVisivel ? '' : 'novidades-reveal-hidden'}`}>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">Novidades do Mengão</h2>
+                <p className="text-sm text-slate-400 mt-1">As últimas novidades e lançamentos do Mengão em primeira mão</p>
+              </div>
             </div>
           </div>
         </div>

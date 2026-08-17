@@ -49,6 +49,17 @@ export default function NovidadesCarrossel({ produtos }) {
 
   const containerCenter = containerW / 2;
 
+  let activeIdx = 0;
+  let minDist = Infinity;
+  for (let i = 0; i < items.length; i++) {
+    const cardCenter = i * STEP + CARD_W / 2 - offset;
+    const d = Math.abs(cardCenter - containerCenter);
+    if (d < minDist) {
+      minDist = d;
+      activeIdx = i;
+    }
+  }
+
   return (
     <div
       ref={containerRef}
@@ -70,12 +81,13 @@ export default function NovidadesCarrossel({ produtos }) {
           const t = Math.min(dist / (CARD_W * 1.6), 1);
 
           const isHovered = hoveredId === produto.id;
-          const isFocused = isHovered;
+          const isCentered = i === activeIdx;
+          const isFocused = hoveredId !== null ? isHovered : isCentered;
 
-          const scale = isFocused ? 1.1 : 1.1 - 0.1 * t;
+          const scale = isFocused ? 1.18 : 1.18 - 0.18 * t;
           const opacity = isFocused ? 1 : 1 - 0.3 * t;
-          const lift = isFocused ? -10 : -10 * (1 - t);
-          const zIndex = isFocused ? 30 : Math.round((1 - t) * 20);
+          const lift = isFocused ? -15 : -15 * (1 - t);
+          const zIndex = isFocused ? 40 : Math.round((1 - t) * 20);
 
           return (
             <div
@@ -95,7 +107,7 @@ export default function NovidadesCarrossel({ produtos }) {
               <div
                 className={`group bg-slate-900/90 border rounded-xl overflow-hidden transition-all duration-300 ${
                   isFocused
-                    ? 'border-red-500/80 shadow-[0_0_45px_rgba(218,41,28,0.65)] shadow-red-600/40'
+                    ? 'border-red-500 shadow-[0_0_55px_rgba(218,41,28,0.9),0_25px_60px_rgba(218,41,28,0.45)] shadow-red-600/50'
                     : 'border-slate-800 hover:border-red-500/40'
                 }`}
               >
