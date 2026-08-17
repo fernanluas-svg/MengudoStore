@@ -529,7 +529,7 @@ export default function Mengudostore() {
         
         {/* Vídeo de fundo da Nação Rubro-Negra */}
         <video
-          src="/hero-bg.mov"
+          src="/hero-bg.mp4"
           poster="/hero.png"
           autoPlay
           loop
