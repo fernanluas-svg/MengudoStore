@@ -4,7 +4,6 @@ import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
 import equipamentosData from './equipamentosDoCanal.json';
 import flaFemininoData from './flaFeminino.json';
-import novidadesData from './novidades.json';
 import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
@@ -608,7 +607,7 @@ export default function Mengudostore() {
           </div>
         </div>
 
-        <NovidadesCarrossel produtos={novidadesData} />
+        <NovidadesCarrossel />
       </section>
 
       {/* ========================================= */}

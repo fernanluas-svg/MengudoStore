@@ -1,6 +1,51 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-export default function NovidadesCarrossel({ produtos }) {
+const PRODUCTS = [
+  {
+    id: 1,
+    name: "COPO TÉRMICO EMBORRACHADO - FLAMENGO",
+    image: "https://down-br.img.susercontent.com/file/br-11134207-820m5-mrb1f3b60c9247@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/8pl4E4pT9u",
+    rating: 4.8
+  },
+  {
+    id: 2,
+    name: "Faca para Churrasco Oficial do Flamengo – Licenciada BrasFoot",
+    image: "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mg85u1di6qyo8c@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/9ANucmLNVC",
+    rating: 4.9
+  },
+  {
+    id: 3,
+    name: "Camisa Flamengo Stick Masculina Oficial",
+    image: "https://down-br.img.susercontent.com/file/br-11134207-7r98o-ltax1oa3l1q4ea@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/30nHHhKiuL",
+    rating: 4.7
+  },
+  {
+    id: 4,
+    name: "Taça Dublin Cerveja 400ml Flamengo Série Ouro",
+    image: "https://down-br.img.susercontent.com/file/br-11134207-820lc-moa08b94uyv79e@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/W5wJDekXS",
+    rating: 4.8
+  },
+  {
+    id: 5,
+    name: "Manto Flamengo Masculina Jogo 3 Adidas 2026",
+    image: "https://down-br.img.susercontent.com/file/sg-11134201-7rbkk-llu5lizbeghx08@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/1Lf3IqqcEX",
+    rating: 5.0
+  },
+  {
+    id: 6,
+    name: "Chinelo Havaianas Top Times Flamengo",
+    image: "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mh9hl9okbl6o65@resize_w900_nl.webp",
+    link: "https://s.shopee.com.br/112CuMxadU",
+    rating: 4.8
+  }
+];
+
+export default function NovidadesCarrossel() {
   const containerRef = useRef(null);
   const firstCardRef = useRef(null);
   const [offset, setOffset] = useState(0);
@@ -13,8 +58,8 @@ export default function NovidadesCarrossel({ produtos }) {
   const [hoveredId, setHoveredId] = useState(null);
 
   const step = cardW + gap;
-  const setWidth = produtos.length * step;
-  const items = [...produtos, ...produtos, ...produtos];
+  const setWidth = PRODUCTS.length * step;
+  const items = [...PRODUCTS, ...PRODUCTS, ...PRODUCTS];
 
   useEffect(() => {
     let raf;
@@ -85,12 +130,12 @@ export default function NovidadesCarrossel({ produtos }) {
         className="flex items-center will-change-transform"
         style={{ transform: `translateX(${-offset}px)` }}
       >
-        {items.map((produto, i) => {
+        {items.map((product, i) => {
           const cardCenter = i * step + cardW / 2 - offset;
           const dist = Math.abs(cardCenter - containerCenter);
           const t = Math.min(dist / (cardW * 1.6), 1);
 
-          const isHovered = hoveredId === produto.id;
+          const isHovered = hoveredId === product.id;
           const isCentered = i === activeIdx;
           const isFocused = hoveredId !== null ? isHovered : isCentered;
 
@@ -101,9 +146,9 @@ export default function NovidadesCarrossel({ produtos }) {
 
           return (
             <div
-              key={`${produto.id}-${i}`}
+              key={`${product.id}-${i}`}
               ref={i === 0 ? firstCardRef : undefined}
-              onMouseEnter={() => setHoveredId(produto.id)}
+              onMouseEnter={() => setHoveredId(product.id)}
               onMouseLeave={() => setHoveredId(null)}
               className="shrink-0 w-[220px] md:w-[280px] transition-opacity duration-300"
               style={{
@@ -123,22 +168,22 @@ export default function NovidadesCarrossel({ produtos }) {
               >
                 <div className="relative h-40 md:h-48 bg-slate-800 overflow-hidden">
                   <img
-                    src={produto.imagem}
-                    alt={produto.titulo}
+                    src={product.image}
+                    alt={product.name}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
-                    {produto.avaliacao ? `⭐ ${produto.avaliacao}` : 'NOVO'}
+                    {product.rating ? `⭐ ${product.rating}` : 'NOVO'}
                   </div>
                 </div>
 
                 <div className="p-3 md:p-4">
                   <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight">
-                    {produto.titulo}
+                    {product.name}
                   </h3>
                   <div className="mt-3">
                     <a
-                      href={produto.linkMercadoLivre}
+                      href={product.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full flex items-center justify-center text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-3 md:px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 whitespace-nowrap"
