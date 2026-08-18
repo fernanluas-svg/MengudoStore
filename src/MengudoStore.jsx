@@ -17,12 +17,12 @@ function ProdutoCard({ produto }) {
           loading="lazy"
           className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
+        <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-1.5 py-0.5 rounded-full flex items-center gap-1 border border-slate-700">
           ⭐ {produto.avaliacao}
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight group-hover:text-red-400 transition-colors">
+      <div className="p-3 sm:p-4">
+        <h3 className="text-xs sm:text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight group-hover:text-red-400 transition-colors">
           {produto.titulo}
         </h3>
         <div className="mt-3">
@@ -30,9 +30,9 @@ function ProdutoCard({ produto }) {
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
+            className="w-full flex items-center justify-center gap-1 sm:gap-2 text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-2 py-2 sm:text-sm sm:px-4 sm:py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse whitespace-nowrap"
           >
-            VER OFERTA ➔
+            VER OFERTA <span className="text-[0.75em] leading-none">➔</span>
           </a>
         </div>
       </div>
@@ -50,7 +50,7 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
           <p className="text-sm text-slate-400 mt-1">{descricao}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         {produtos.map((produto) => (
           <ProdutoCard key={produto.id} produto={produto} />
         ))}
