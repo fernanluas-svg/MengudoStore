@@ -123,8 +123,8 @@ export default function NovidadesCarrossel() {
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Sombras laterais para dar profundidade */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-32 z-20 bg-gradient-to-r from-slate-950 to-transparent"></div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-32 z-20 bg-gradient-to-l from-slate-950 to-transparent"></div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-6 md:w-16 z-20 bg-gradient-to-r from-slate-950/40 to-transparent"></div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-6 md:w-16 z-20 bg-gradient-to-l from-slate-950/40 to-transparent"></div>
 
       <div
         className="flex items-center will-change-transform"
@@ -162,7 +162,7 @@ export default function NovidadesCarrossel() {
               <div
                 className={`group bg-slate-900/90 border rounded-xl overflow-hidden transition-all duration-300 ${
                   isFocused
-                    ? 'border-red-500 shadow-[0_0_55px_rgba(218,41,28,0.9),0_25px_60px_rgba(218,41,28,0.45)] shadow-red-600/50'
+                    ? 'border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.25)] md:shadow-[0_0_55px_rgba(218,41,28,0.9),0_25px_60px_rgba(218,41,28,0.45)]'
                     : 'border-slate-800 hover:border-red-500/40'
                 }`}
               >
