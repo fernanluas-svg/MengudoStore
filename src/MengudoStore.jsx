@@ -7,15 +7,15 @@ import flaFemininoData from './flaFeminino.json';
 import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
-const FLAMENGO_ESCUDO_URL = 'https://i.ibb.co/WvsR3rBX/Fundo-preto.png';
+const FLAMENGO_ESCUDO_URL = 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
 const FLAMENGO_API_ID = 318;
 
 const NEXT_MATCH = {
-  opponent: 'Adversário',
+  opponent: 'Cruzeiro',
   opponentLogo:
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5L90 20v30c0 25-17 40-40 45C27 90 10 75 10 50V20z' fill='%231e293b' stroke='%23334155' stroke-width='3'/%3E%3Ctext x='50' y='65' font-size='34' text-anchor='middle' fill='%23e2e8f0' font-family='Arial' font-weight='bold'%3E%3F%3C/text%3E%3C/svg%3E",
-  date: '2026-08-25T21:30:00', // Data/Hora ISO para o Timer
-  competition: 'Campeonato Brasileiro',
+    'https://upload.wikimedia.org/wikipedia/commons/9/90/Cruzeiro_Esporte_Clube_%28logo%29.svg',
+  date: '2026-08-19T21:30:00-03:00', // Data/Hora ISO para o Timer
+  competition: 'Copa Libertadores',
   stadium: 'Maracanã - Rio de Janeiro, RJ'
 };
 
@@ -140,7 +140,10 @@ function ProximoJogoWidget() {
           stadium: [venue?.name, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium
         });
       })
-      .catch(() => {})
+      .catch((error) => {
+        if (!ativo) return;
+        console.log('Erro na API Futebol:', error);
+      })
       .finally(() => {
         ativo = false;
       });
