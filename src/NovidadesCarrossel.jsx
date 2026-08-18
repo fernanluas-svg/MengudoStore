@@ -45,7 +45,7 @@ const PRODUCTS = [
   }
 ];
 
-const RESUME_DELAY = 7000;
+const RESUME_DELAY = 5000;
 
 export default function NovidadesCarrossel() {
   const containerRef = useRef(null);
