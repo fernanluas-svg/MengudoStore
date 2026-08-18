@@ -136,13 +136,12 @@ export default function NovidadesCarrossel({ produtos }) {
                   <h3 className="text-sm font-semibold text-slate-100 line-clamp-2 h-10 leading-tight">
                     {produto.titulo}
                   </h3>
-                  <div className="mt-3 flex items-center justify-between gap-2">
-                    <span className="text-base md:text-lg font-bold text-white">{produto.preco}</span>
+                  <div className="mt-3">
                     <a
                       href={produto.linkMercadoLivre}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-3 md:px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 whitespace-nowrap"
+                      className="w-full flex items-center justify-center text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-3 md:px-4 py-2 rounded-full transition-colors shadow-lg shadow-red-900/20 whitespace-nowrap"
                     >
                       Comprar
                     </a>
