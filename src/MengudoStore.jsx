@@ -11,7 +11,7 @@ const FLAMENGO_ESCUDO_URL =
   'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
 const FLAMENGO_ESCUDO_FALLBACK =
   'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
-const FLAMENGO_API_ID = 318;
+const FLAMENGO_API_ID = 1024;
 
 const NEXT_MATCH = {
   opponent: 'Cruzeiro',
