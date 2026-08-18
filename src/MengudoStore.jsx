@@ -7,6 +7,17 @@ import flaFemininoData from './flaFeminino.json';
 import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
+const FLAMENGO_ESCUDO_URL = 'https://i.ibb.co/WvsR3rBX/Fundo-preto.png';
+
+const NEXT_MATCH = {
+  opponent: 'Adversário',
+  opponentLogo:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5L90 20v30c0 25-17 40-40 45C27 90 10 75 10 50V20z' fill='%231e293b' stroke='%23334155' stroke-width='3'/%3E%3Ctext x='50' y='65' font-size='34' text-anchor='middle' fill='%23e2e8f0' font-family='Arial' font-weight='bold'%3E%3F%3C/text%3E%3C/svg%3E",
+  date: '2026-08-25T21:30:00', // Data/Hora ISO para o Timer
+  competition: 'Campeonato Brasileiro',
+  stadium: 'Maracanã - Rio de Janeiro, RJ'
+};
+
 function ProdutoCard({ produto }) {
   return (
     <div className="group bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300">
@@ -56,6 +67,97 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
         ))}
       </div>
     </section>
+  );
+}
+
+function ProximoJogoWidget() {
+  const calcularTempo = () => {
+    const diff = new Date(NEXT_MATCH.date).getTime() - Date.now();
+    if (diff <= 0) {
+      return { dias: 0, horas: 0, minutos: 0, segundos: 0, encerrado: true };
+    }
+    return {
+      dias: Math.floor(diff / 86400000),
+      horas: Math.floor((diff / 3600000) % 24),
+      minutos: Math.floor((diff / 60000) % 60),
+      segundos: Math.floor((diff / 1000) % 60),
+      encerrado: false
+    };
+  };
+
+  const [tempo, setTempo] = useState(calcularTempo);
+
+  useEffect(() => {
+    const id = setInterval(() => setTempo(calcularTempo()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const unidades = [
+    { label: 'Dias', value: tempo.dias },
+    { label: 'Horas', value: tempo.horas },
+    { label: 'Min', value: tempo.minutos },
+    { label: 'Seg', value: tempo.segundos }
+  ];
+
+  return (
+    <div className="bg-slate-900/80 backdrop-blur-md border border-red-600/30 rounded-2xl p-6 text-center shadow-xl">
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+        <h3 className="text-xs sm:text-sm font-bold tracking-widest text-red-400 uppercase">Próximo Jogo do Mengão</h3>
+      </div>
+
+      {tempo.encerrado ? (
+        <p className="text-sm text-slate-300 mb-4">O jogo já começou!</p>
+      ) : (
+        <div className="flex justify-center gap-2 sm:gap-3 mb-5">
+          {unidades.map((u) => (
+            <div
+              key={u.label}
+              className="bg-slate-950/60 border border-slate-700/60 rounded-xl px-2 py-2 sm:px-3 min-w-[62px]"
+            >
+              <div className="text-xl sm:text-2xl font-black text-white tabular-nums">
+                {String(u.value).padStart(2, '0')}
+              </div>
+              <div className="text-[10px] text-slate-400 uppercase tracking-wider mt-1">{u.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex items-center justify-center gap-3 sm:gap-4 mb-5">
+        <div className="flex flex-col items-center gap-2 flex-1">
+          <img
+            src={FLAMENGO_ESCUDO_URL}
+            alt="Flamengo"
+            className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-[0_0_12px_rgba(220,38,38,0.5)]"
+          />
+          <span className="text-xs sm:text-sm font-bold text-white">Flamengo</span>
+        </div>
+        <span className="text-2xl sm:text-3xl font-black text-red-500">X</span>
+        <div className="flex flex-col items-center gap-2 flex-1">
+          <img
+            src={NEXT_MATCH.opponentLogo}
+            alt={NEXT_MATCH.opponent}
+            className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
+          />
+          <span className="text-xs sm:text-sm font-bold text-white">{NEXT_MATCH.opponent}</span>
+        </div>
+      </div>
+
+      <div className="space-y-1.5 pt-4 border-t border-slate-800">
+        <p className="text-xs sm:text-sm font-medium text-slate-200">{NEXT_MATCH.competition}</p>
+        <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center gap-1.5">
+          <svg className="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
+            />
+          </svg>
+          {NEXT_MATCH.stadium}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -546,48 +648,54 @@ export default function Mengudostore() {
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-red-600/30 rounded-full blur-[120px]"></div>
 
         {/* Conteúdo de Texto */}
-        <div className="relative max-w-4xl mx-auto z-10 flex flex-col items-start gap-3">
-          <h1 className="hero-title text-3xl sm:text-5xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-            OS MELHORES PRODUTOS SELECIONADOS PARA A <br />
-            <span className="text-red-500 font-black drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]">
-              NAÇÃO <br /> RUBRO-NEGRA
-            </span>
-          </h1>
-
-          <p className="hero-subtitle text-base sm:text-lg text-slate-200 max-w-2xl font-medium mt-1 drop-shadow-md">
-            Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
-          </p>
-
-          {/* Grupo de Confiança: Botão de Compra Segura + Prova Social */}
-          <div className="mt-4 flex flex-col items-center">
-            <button className="security-badge btn-shine flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
-              <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-              Compra 100% Segura Via Shopee e Mercado Livre
-              <span className="security-badge-icon flex items-center">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-                </svg>
+        <div className="relative max-w-7xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7 flex flex-col items-start gap-3">
+            <h1 className="hero-title text-3xl sm:text-5xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+              OS MELHORES PRODUTOS SELECIONADOS PARA A <br />
+              <span className="text-red-500 font-black drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]">
+                NAÇÃO <br /> RUBRO-NEGRA
               </span>
-            </button>
+            </h1>
 
-            {/* Prova Social */}
-            <div className="social-proof mt-3 flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-1">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <svg
-                    key={i}
-                    className="social-proof-star w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            <p className="hero-subtitle text-base sm:text-lg text-slate-200 max-w-2xl font-medium mt-1 drop-shadow-md">
+              Os melhores produtos do Flamengo, futebol e equipamentos que eu uso no canal. Todos testados e aprovados.
+            </p>
+
+            {/* Grupo de Confiança: Botão de Compra Segura + Prova Social */}
+            <div className="mt-4 flex flex-col items-center">
+              <button className="security-badge btn-shine flex items-center gap-2 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium transition-all backdrop-blur-sm shadow-lg group">
+                <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                Compra 100% Segura Via Shopee e Mercado Livre
+                <span className="security-badge-icon flex items-center">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                   </svg>
-                ))}
+                </span>
+              </button>
+
+              {/* Prova Social */}
+              <div className="social-proof mt-3 flex flex-col items-center gap-1.5">
+                <div className="flex items-center gap-1">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <svg
+                      key={i}
+                      className="social-proof-star w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-slate-200 font-medium tracking-wide">
+                  4.9/5 • Mais de 1.500 rubro-negros satisfeitos
+                </p>
               </div>
-              <p className="text-sm sm:text-base text-slate-200 font-medium tracking-wide">
-                4.9/5 • Mais de 1.500 rubro-negros satisfeitos
-              </p>
             </div>
+          </div>
+
+          <div className="lg:col-span-5">
+            <ProximoJogoWidget />
           </div>
         </div>
 
