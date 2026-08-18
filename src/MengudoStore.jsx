@@ -174,10 +174,10 @@ function ProximoJogoWidget() {
     : { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK };
 
   return (
-    <div className="bg-slate-900/80 backdrop-blur-md border border-red-600/30 rounded-2xl p-6 text-center shadow-xl">
+    <div className="bg-slate-900/80 backdrop-blur-md border border-white/30 rounded-2xl p-6 text-center shadow-xl">
       <div className="flex items-center justify-center gap-2 mb-4">
-        <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
-        <h3 className="text-xs sm:text-sm font-bold tracking-widest text-red-400 uppercase">Próximo Jogo do Mengão</h3>
+        <span className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
+        <h3 className="text-xs sm:text-sm font-bold tracking-widest text-white uppercase">Próximo Jogo do Mengão</h3>
       </div>
 
       {tempo.encerrado ? (
@@ -234,7 +234,7 @@ function ProximoJogoWidget() {
         </div>
         <p className="text-xs sm:text-sm font-medium text-slate-200">{match.competition}</p>
         <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center gap-1.5">
-          <svg className="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-green-700 shrink-0" fill="currentColor" viewBox="0 0 24 24">
             <path
               fillRule="evenodd"
               clipRule="evenodd"
