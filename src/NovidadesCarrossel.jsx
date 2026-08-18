@@ -170,6 +170,7 @@ export default function NovidadesCarrossel() {
                   <img
                     src={product.image}
                     alt={product.name}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">

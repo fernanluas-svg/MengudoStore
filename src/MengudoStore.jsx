@@ -14,6 +14,7 @@ function ProdutoCard({ produto }) {
         <img
           src={produto.imagem}
           alt={produto.titulo}
+          loading="lazy"
           className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
@@ -65,6 +66,7 @@ function EquipamentoCard({ produto }) {
         <img
           src={produto.imagem}
           alt={produto.titulo}
+          loading="lazy"
           className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
