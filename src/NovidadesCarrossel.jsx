@@ -45,6 +45,8 @@ const PRODUCTS = [
   }
 ];
 
+const RESUME_DELAY = 7000;
+
 export default function NovidadesCarrossel() {
   const containerRef = useRef(null);
   const firstCardRef = useRef(null);
@@ -57,9 +59,40 @@ export default function NovidadesCarrossel() {
   isPausedRef.current = isPaused;
   const [hoveredId, setHoveredId] = useState(null);
 
+  const offsetRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartOffsetRef = useRef(0);
+  const resumeTimerRef = useRef(null);
+
   const step = cardW + gap;
   const setWidth = PRODUCTS.length * step;
   const items = [...PRODUCTS, ...PRODUCTS, ...PRODUCTS];
+
+  const applyOffset = (value) => {
+    offsetRef.current = value;
+    setOffset(value);
+  };
+
+  const clearResumeTimer = () => {
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current);
+      resumeTimerRef.current = null;
+    }
+  };
+
+  const startResumeTimer = () => {
+    clearResumeTimer();
+    resumeTimerRef.current = setTimeout(() => {
+      resumeTimerRef.current = null;
+      setIsPaused(false);
+    }, RESUME_DELAY);
+  };
+
+  const pauseInteracao = () => {
+    clearResumeTimer();
+    setIsPaused(true);
+  };
 
   useEffect(() => {
     let raf;
@@ -68,11 +101,10 @@ export default function NovidadesCarrossel() {
     const tick = (now) => {
       const delta = now - last;
       last = now;
-      if (!isPausedRef.current) {
-        setOffset((prev) => {
-          const next = prev + 0.055 * delta;
-          return next >= setWidth ? next - setWidth : next;
-        });
+      if (!isPausedRef.current && !isDraggingRef.current) {
+        const next = offsetRef.current + 0.055 * delta;
+        offsetRef.current = next >= setWidth ? next - setWidth : next;
+        setOffset(offsetRef.current);
       }
       raf = requestAnimationFrame(tick);
     };
@@ -115,10 +147,48 @@ export default function NovidadesCarrossel() {
     }
   }
 
+  const handlePointerDown = (e) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.clientX;
+    dragStartOffsetRef.current = offsetRef.current;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+    pauseInteracao();
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDraggingRef.current) return;
+    const deltaX = e.clientX - dragStartXRef.current;
+    const next = dragStartOffsetRef.current - deltaX;
+    applyOffset(Math.max(0, Math.min(next, setWidth)));
+  };
+
+  const handlePointerUp = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    startResumeTimer();
+  };
+
+  const handlePointerCancel = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    startResumeTimer();
+  };
+
+  const handleCardClick = () => {
+    pauseInteracao();
+    startResumeTimer();
+  };
+
   return (
     <div
       ref={containerRef}
-      className="relative overflow-x-clip overflow-y-visible pt-10 pb-8 select-none"
+      className="relative overflow-x-clip overflow-y-visible pt-10 pb-8 select-none touch-pan-y"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -150,7 +220,8 @@ export default function NovidadesCarrossel() {
               ref={i === 0 ? firstCardRef : undefined}
               onMouseEnter={() => setHoveredId(product.id)}
               onMouseLeave={() => setHoveredId(null)}
-              className="shrink-0 w-[220px] md:w-[280px] transition-opacity duration-300"
+              onClick={handleCardClick}
+              className="shrink-0 w-[220px] md:w-[280px] transition-opacity duration-300 cursor-grab active:cursor-grabbing"
               style={{
                 marginRight: gap,
                 opacity,
@@ -171,7 +242,7 @@ export default function NovidadesCarrossel() {
                     src={product.image}
                     alt={product.name}
                     loading="lazy"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover pointer-events-none"
                   />
                   <div className="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
                     {product.rating ? `⭐ ${product.rating}` : 'NOVO'}
