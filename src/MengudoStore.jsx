@@ -8,6 +8,7 @@ import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
 const FLAMENGO_ESCUDO_URL = 'https://i.ibb.co/WvsR3rBX/Fundo-preto.png';
+const FLAMENGO_API_ID = 197;
 
 const NEXT_MATCH = {
   opponent: 'Adversário',
@@ -71,8 +72,10 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
 }
 
 function ProximoJogoWidget() {
-  const calcularTempo = () => {
-    const diff = new Date(NEXT_MATCH.date).getTime() - Date.now();
+  const [match, setMatch] = useState(NEXT_MATCH);
+
+  const calcularTempo = (dateStr) => {
+    const diff = new Date(dateStr).getTime() - Date.now();
     if (diff <= 0) {
       return { dias: 0, horas: 0, minutos: 0, segundos: 0, encerrado: true };
     }
@@ -85,11 +88,58 @@ function ProximoJogoWidget() {
     };
   };
 
-  const [tempo, setTempo] = useState(calcularTempo);
+  const [tempo, setTempo] = useState(() => calcularTempo(NEXT_MATCH.date));
 
   useEffect(() => {
-    const id = setInterval(() => setTempo(calcularTempo()), 1000);
+    const atualizarTempo = () => setTempo(calcularTempo(match.date));
+    atualizarTempo();
+    const id = setInterval(atualizarTempo, 1000);
     return () => clearInterval(id);
+  }, [match.date]);
+
+  useEffect(() => {
+    const key = import.meta.env.VITE_FOOTBALL_API_KEY;
+    if (!key) return;
+
+    const controlador = new AbortController();
+    let ativo = true;
+
+    fetch(`https://v3.football.api-sports.io/fixtures?team=${FLAMENGO_API_ID}&next=1`, {
+      headers: { 'x-apisports-key': key },
+      signal: controlador.signal
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (!ativo) return;
+        if (data.errors && Object.keys(data.errors).length > 0) return;
+        const partida = data.response?.[0];
+        if (!partida) return;
+        const timeCasa = partida.teams?.home;
+        const timeFora = partida.teams?.away;
+        const flaEmCasa = Number(timeCasa?.id) === FLAMENGO_API_ID;
+        const adversario = flaEmCasa ? timeFora : timeCasa;
+        const venue = partida.fixture?.venue?.name;
+        const cidade = partida.fixture?.venue?.city;
+        setMatch({
+          opponent: adversario?.name || NEXT_MATCH.opponent,
+          opponentLogo: adversario?.logo || NEXT_MATCH.opponentLogo,
+          date: partida.fixture?.date || NEXT_MATCH.date,
+          competition: partida.league?.name || NEXT_MATCH.competition,
+          stadium: [venue, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium
+        });
+      })
+      .catch(() => {})
+      .finally(() => {
+        ativo = false;
+      });
+
+    return () => {
+      ativo = false;
+      controlador.abort();
+    };
   }, []);
 
   const unidades = [
@@ -136,16 +186,16 @@ function ProximoJogoWidget() {
         <span className="text-2xl sm:text-3xl font-black text-red-500">X</span>
         <div className="flex flex-col items-center gap-2 flex-1">
           <img
-            src={NEXT_MATCH.opponentLogo}
-            alt={NEXT_MATCH.opponent}
+            src={match.opponentLogo}
+            alt={match.opponent}
             className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
           />
-          <span className="text-xs sm:text-sm font-bold text-white">{NEXT_MATCH.opponent}</span>
+          <span className="text-xs sm:text-sm font-bold text-white">{match.opponent}</span>
         </div>
       </div>
 
       <div className="space-y-1.5 pt-4 border-t border-slate-800">
-        <p className="text-xs sm:text-sm font-medium text-slate-200">{NEXT_MATCH.competition}</p>
+        <p className="text-xs sm:text-sm font-medium text-slate-200">{match.competition}</p>
         <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center gap-1.5">
           <svg className="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -154,7 +204,7 @@ function ProximoJogoWidget() {
               d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
             />
           </svg>
-          {NEXT_MATCH.stadium}
+          {match.stadium}
         </p>
       </div>
     </div>
