@@ -7,15 +7,18 @@ import flaFemininoData from './flaFeminino.json';
 import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 
-const FLAMENGO_ESCUDO_URL = 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
+const FLAMENGO_ESCUDO_URL =
+  'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
+const FLAMENGO_ESCUDO_FALLBACK =
+  'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
 const FLAMENGO_API_ID = 318;
 
 const NEXT_MATCH = {
   opponent: 'Cruzeiro',
   opponentLogo:
-    'https://upload.wikimedia.org/wikipedia/commons/9/90/Cruzeiro_Esporte_Clube_%28logo%29.svg',
+    'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/Tcv9X__nIh-6wFNJPMwIXQ_500x500.png',
   date: '2026-08-19T21:30:00-03:00', // Data/Hora ISO para o Timer
-  competition: 'Copa Libertadores',
+  competition: 'CONMEBOL Libertadores',
   stadium: 'Maracanã - Rio de Janeiro, RJ'
 };
 
@@ -161,6 +164,11 @@ function ProximoJogoWidget() {
     { label: 'Seg', value: tempo.segundos }
   ];
 
+  const trocarParaFallback = (e, fallback) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = fallback;
+  };
+
   return (
     <div className="bg-slate-900/80 backdrop-blur-md border border-red-600/30 rounded-2xl p-6 text-center shadow-xl">
       <div className="flex items-center justify-center gap-2 mb-4">
@@ -191,6 +199,7 @@ function ProximoJogoWidget() {
           <img
             src={FLAMENGO_ESCUDO_URL}
             alt="Flamengo"
+            onError={(e) => trocarParaFallback(e, FLAMENGO_ESCUDO_FALLBACK)}
             className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-[0_0_12px_rgba(220,38,38,0.5)]"
           />
           <span className="text-xs sm:text-sm font-bold text-white">Flamengo</span>
@@ -200,6 +209,7 @@ function ProximoJogoWidget() {
           <img
             src={match.opponentLogo}
             alt={match.opponent}
+            onError={(e) => trocarParaFallback(e, NEXT_MATCH.opponentLogo)}
             className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
           />
           <span className="text-xs sm:text-sm font-bold text-white">{match.opponent}</span>
