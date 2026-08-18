@@ -11,7 +11,7 @@ const FLAMENGO_ESCUDO_URL =
   'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
 const FLAMENGO_ESCUDO_FALLBACK =
   'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
-const FLAMENGO_API_ID = 1024;
+const FLAMENGO_API_ID = 127;
 
 const NEXT_MATCH = {
   opponent: 'Cruzeiro',
@@ -107,40 +107,34 @@ function ProximoJogoWidget() {
     const controlador = new AbortController();
     let ativo = true;
 
-    fetch(
-      `https://api.sportmonks.com/v3/football/schedules/teams/${FLAMENGO_API_ID}?api_token=${encodeURIComponent(key)}&include=participants;venue;league`,
-      { signal: controlador.signal }
-    )
+    fetch(`https://v3.football.api-sports.io/fixtures?team=${FLAMENGO_API_ID}&next=1`, {
+      headers: { 'x-apisports-key': key },
+      signal: controlador.signal
+    })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data) => {
         if (!ativo) return;
-        const fixtures = Array.isArray(data?.data) ? data.data : [];
-        const agora = Date.now();
-        const proxima = fixtures
-          .map((f) => ({
-            ...f,
-            inicio:
-              (Number(f.starting_at_timestamp) || 0) * 1000 ||
-              new Date(f.starting_at).getTime() ||
-              0
-          }))
-          .filter((f) => f.inicio >= agora)
-          .sort((a, b) => a.inicio - b.inicio)[0];
-        if (!proxima) return;
-        const participantes = Array.isArray(proxima.participants) ? proxima.participants : [];
-        const adversario =
-          participantes.find((p) => Number(p.id) !== FLAMENGO_API_ID) || participantes[0];
-        const venue = proxima.venue;
-        const cidade = venue?.city;
+        if (data.errors && Object.keys(data.errors).length > 0) return;
+        const partida = data.response?.[0];
+        if (!partida) return;
+        const timeCasa = partida.teams?.home;
+        const timeFora = partida.teams?.away;
+        const flaEmCasa = Number(timeCasa?.id) === FLAMENGO_API_ID;
+        const adversario = flaEmCasa ? timeFora : timeCasa;
+        const venue = partida.fixture?.venue?.name;
+        const cidade = partida.fixture?.venue?.city;
+        const dataUTC = partida.fixture?.date
+          ? new Date(partida.fixture.date).toISOString()
+          : NEXT_MATCH.date;
         setMatch({
           opponent: adversario?.name || NEXT_MATCH.opponent,
-          opponentLogo: adversario?.image_path || NEXT_MATCH.opponentLogo,
-          date: new Date(proxima.inicio).toISOString() || NEXT_MATCH.date,
-          competition: proxima.league?.name || NEXT_MATCH.competition,
-          stadium: [venue?.name, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium
+          opponentLogo: adversario?.logo || NEXT_MATCH.opponentLogo,
+          date: dataUTC,
+          competition: partida.league?.name || NEXT_MATCH.competition,
+          stadium: [venue, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium
         });
       })
       .catch((error) => {
