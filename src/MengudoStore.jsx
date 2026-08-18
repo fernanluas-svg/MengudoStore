@@ -477,7 +477,7 @@ export default function Mengudostore() {
       {/* Header / Navegação com Escudo do Mengão */}
       {/* ========================================= */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-slate-800 bg-slate-900/80 backdrop-blur transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-md transition-transform duration-300 ease-in-out ${
           headerVisivel ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
