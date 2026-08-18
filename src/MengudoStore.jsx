@@ -108,7 +108,7 @@ function ProximoJogoWidget() {
     let ativo = true;
 
     fetch(
-      `https://api.sportmonks.com/v3/football/schedules/teams/${FLAMENGO_API_ID}?api_token=${key}&include=participants;venue;league`,
+      `https://api.sportmonks.com/v3/football/schedules/teams/${FLAMENGO_API_ID}?api_token=${encodeURIComponent(key)}&include=participants;venue;league`,
       { signal: controlador.signal }
     )
       .then((res) => {
