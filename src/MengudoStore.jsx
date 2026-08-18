@@ -19,7 +19,8 @@ const NEXT_MATCH = {
     'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/Tcv9X__nIh-6wFNJPMwIXQ_500x500.png',
   date: '2026-08-19T21:30:00-03:00', // Data/Hora ISO para o Timer
   competition: 'CONMEBOL Libertadores',
-  stadium: 'Maracanã - Rio de Janeiro, RJ'
+  stadium: 'Maracanã - Rio de Janeiro, RJ',
+  flaEmCasa: true
 };
 
 function ProdutoCard({ produto }) {
@@ -134,7 +135,8 @@ function ProximoJogoWidget() {
           opponentLogo: adversario?.logo || NEXT_MATCH.opponentLogo,
           date: dataUTC,
           competition: partida.league?.name || NEXT_MATCH.competition,
-          stadium: [venue, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium
+          stadium: [venue, cidade].filter(Boolean).join(' - ') || NEXT_MATCH.stadium,
+          flaEmCasa
         });
       })
       .catch((error) => {
@@ -162,6 +164,14 @@ function ProximoJogoWidget() {
     e.currentTarget.onerror = null;
     e.currentTarget.src = fallback;
   };
+
+  const timeEsquerdo = match.flaEmCasa
+    ? { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK }
+    : { nome: match.opponent, logo: match.opponentLogo, fallback: NEXT_MATCH.opponentLogo };
+
+  const timeDireito = match.flaEmCasa
+    ? { nome: match.opponent, logo: match.opponentLogo, fallback: NEXT_MATCH.opponentLogo }
+    : { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK };
 
   return (
     <div className="bg-slate-900/80 backdrop-blur-md border border-red-600/30 rounded-2xl p-6 text-center shadow-xl">
@@ -191,26 +201,37 @@ function ProximoJogoWidget() {
       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-5">
         <div className="flex flex-col items-center gap-2 flex-1">
           <img
-            src={FLAMENGO_ESCUDO_URL}
-            alt="Flamengo"
-            onError={(e) => trocarParaFallback(e, FLAMENGO_ESCUDO_FALLBACK)}
-            className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-[0_0_12px_rgba(220,38,38,0.5)]"
+            src={timeEsquerdo.logo}
+            alt={timeEsquerdo.nome}
+            onError={(e) => trocarParaFallback(e, timeEsquerdo.fallback)}
+            className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
           />
-          <span className="text-xs sm:text-sm font-bold text-white">Flamengo</span>
+          <span className="text-xs sm:text-sm font-bold text-white">{timeEsquerdo.nome}</span>
         </div>
         <span className="text-2xl sm:text-3xl font-black text-red-500">X</span>
         <div className="flex flex-col items-center gap-2 flex-1">
           <img
-            src={match.opponentLogo}
-            alt={match.opponent}
-            onError={(e) => trocarParaFallback(e, NEXT_MATCH.opponentLogo)}
+            src={timeDireito.logo}
+            alt={timeDireito.nome}
+            onError={(e) => trocarParaFallback(e, timeDireito.fallback)}
             className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
           />
-          <span className="text-xs sm:text-sm font-bold text-white">{match.opponent}</span>
+          <span className="text-xs sm:text-sm font-bold text-white">{timeDireito.nome}</span>
         </div>
       </div>
 
       <div className="space-y-1.5 pt-4 border-t border-slate-800">
+        <div className="flex justify-center">
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
+              match.flaEmCasa
+                ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
+                : 'bg-red-600/20 text-red-400 border-red-600/30'
+            }`}
+          >
+            {match.flaEmCasa ? 'Mandante' : 'Visitante'}
+          </span>
+        </div>
         <p className="text-xs sm:text-sm font-medium text-slate-200">{match.competition}</p>
         <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center gap-1.5">
           <svg className="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
