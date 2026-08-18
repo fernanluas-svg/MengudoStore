@@ -69,25 +69,25 @@ function EquipamentoCard({ produto }) {
           loading="lazy"
           className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-2 py-1 rounded-full flex items-center gap-1 border border-slate-700">
+        <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm text-xs text-yellow-400 px-1.5 py-0.5 rounded-full flex items-center gap-1 border border-slate-700">
           ⭐ {produto.avaliacao}
         </div>
       </div>
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="text-base font-semibold text-slate-100 leading-tight group-hover:text-red-400 transition-colors">
+      <div className="p-3 sm:p-5 flex flex-col flex-1">
+        <h3 className="text-xs sm:text-sm font-semibold text-slate-100 line-clamp-2 leading-tight group-hover:text-red-400 transition-colors">
           {produto.titulo}
         </h3>
         {produto.descricao && (
-          <p className="text-sm text-slate-400 mt-2 leading-relaxed">{produto.descricao}</p>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 sm:mt-2 leading-relaxed">{produto.descricao}</p>
         )}
-        <div className="mt-auto pt-4">
+        <div className="mt-auto pt-3 sm:pt-4">
           <a
             href={produto.linkMercadoLivre}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse"
+            className="w-full flex items-center justify-center gap-1 sm:gap-2 text-xs font-bold bg-red-600 hover:bg-red-500 text-white px-2 py-2 sm:text-sm sm:px-4 sm:py-3 rounded-full transition-colors shadow-lg shadow-red-900/20 animate-btn-pulse whitespace-nowrap"
           >
-            VER OFERTA ➔
+            VER OFERTA <span className="text-[0.75em] leading-none">➔</span>
           </a>
         </div>
       </div>
@@ -100,7 +100,7 @@ const confiançaCards = [
     titulo: "Compra 100% Segura",
     descricao: "Todos os links levam para o Mercado Livre, onde sua compra é protegida.",
     icone: (
-      <svg className="w-8 h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
     )
@@ -109,7 +109,7 @@ const confiançaCards = [
     titulo: "Pagamento Seguro",
     descricao: "Pague utilizando os métodos oficiais da plataforma, com total segurança.",
     icone: (
-      <svg className="w-8 h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
       </svg>
     )
@@ -118,7 +118,7 @@ const confiançaCards = [
     titulo: "Entrega para Todo o Brasil",
     descricao: "Os produtos são enviados conforme a logística do Mercado Livre.",
     icone: (
-      <svg className="w-8 h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
       </svg>
     )
@@ -127,7 +127,7 @@ const confiançaCards = [
     titulo: "Compra com Confiança",
     descricao: "Escolha entre vendedores bem avaliados e acompanhe seu pedido diretamente pela plataforma.",
     icone: (
-      <svg className="w-8 h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     )
@@ -177,18 +177,18 @@ function SecaoConfianca() {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         {confiançaCards.map((card, i) => (
           <div
             key={card.titulo}
-            className="group bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300 animate-fade-in"
+            className="group bg-slate-900/50 border border-slate-800 rounded-xl p-3 sm:p-6 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all duration-300 animate-fade-in"
             style={{ animationDelay: `${i * 0.15}s` }}
           >
-            <div className="w-12 h-12 rounded-lg bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-600/20 group-hover:scale-110 transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.6)]">
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-center text-emerald-400 mb-2 sm:mb-4 group-hover:bg-emerald-600/20 group-hover:scale-110 transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.6)]">
               {card.icone}
             </div>
-            <h3 className="text-base font-semibold text-slate-100 mb-2">{card.titulo}</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">{card.descricao}</p>
+            <h3 className="text-xs sm:text-sm font-semibold text-slate-100 mb-2">{card.titulo}</h3>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{card.descricao}</p>
           </div>
         ))}
       </div>
@@ -206,7 +206,7 @@ function SecaoEquipamentos({ titulo, descricao, produtos }) {
           <p className="text-sm text-slate-400 mt-1">{descricao}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 max-w-5xl mx-auto">
         {produtos.map((produto) => (
           <EquipamentoCard key={produto.id} produto={produto} />
         ))}
