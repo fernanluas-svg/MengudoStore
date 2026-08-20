@@ -1,8 +1,122 @@
-{
-  "opponent": "Cruzeiro",
-  "opponentLogo": "https://ssl.gstatic.com/onebox/media/sports/logos/optimized/Tcv9X__nIh-6wFNJPMwIXQ_500x500.png",
-  "isHome": true,
-  "date": "2026-08-19T21:30:00",
-  "stadium": "Maracanã - Rio de Janeiro, RJ",
-  "competition": "CONMEBOL Libertadores"
-}
+[
+  {
+    "opponent": "Cruzeiro",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Cruzeiro_Esporte_Clube_%28logo%29.svg",
+    "isHome": false,
+    "date": "2026-08-22T20:30:00-03:00",
+    "stadium": "Mineirão - Belo Horizonte, MG",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Botafogo",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/2/22/Botafogo_de_Futebol_e_Regatas_logo.svg",
+    "isHome": true,
+    "date": "2026-08-30T16:00:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Remo",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Clube_do_Remo.svg",
+    "isHome": false,
+    "date": "2026-09-06T16:00:00-03:00",
+    "stadium": "Baenão - Belém, PA",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Corinthians",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.svg",
+    "isHome": true,
+    "date": "2026-09-12T16:00:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Red Bull Bragantino",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/9/9e/RedBullBragantino.svg",
+    "isHome": true,
+    "date": "2026-09-19T16:00:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Santos",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/1/15/Santos_Logo.svg",
+    "isHome": false,
+    "date": "2026-10-07T21:30:00-03:00",
+    "stadium": "Vila Belmiro - Santos, SP",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Fluminense",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Fluminense_FC_escudo.svg",
+    "isHome": true,
+    "date": "2026-10-10T16:00:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Bahia",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/2/2c/Esporte_Clube_Bahia.svg",
+    "isHome": false,
+    "date": "2026-10-17T16:00:00-03:00",
+    "stadium": "Arena Fonte Nova - Salvador, BA",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Atlético Mineiro",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/2/29/Atletico_mineiro_galo.svg",
+    "isHome": true,
+    "date": "2026-10-24T16:00:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Vasco da Gama",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/a/ac/CRVascodaGama.svg",
+    "isHome": false,
+    "date": "2026-10-28T21:30:00-03:00",
+    "stadium": "São Januário - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Grêmio",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/1/17/Gremio-logo.svg",
+    "isHome": true,
+    "date": "2026-11-04T21:30:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Athletico Paranaense",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Athletico_Paranaense_2018.svg",
+    "isHome": true,
+    "date": "2026-11-18T21:30:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Palmeiras",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg",
+    "isHome": false,
+    "date": "2026-11-21T16:00:00-03:00",
+    "stadium": "Allianz Parque - São Paulo, SP",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Coritiba",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/3/38/Coritiba_F.C._logo.svg",
+    "isHome": false,
+    "date": "2026-11-28T16:00:00-03:00",
+    "stadium": "Couto Pereira - Curitiba, PR",
+    "competition": "Brasileirão"
+  },
+  {
+    "opponent": "Chapecoense",
+    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Associa%C3%A7%C3%A3o_Chapecoense_de_Futebol.svg",
+    "isHome": true,
+    "date": "2026-12-02T21:30:00-03:00",
+    "stadium": "Maracanã - Rio de Janeiro, RJ",
+    "competition": "Brasileirão"
+  }
+]

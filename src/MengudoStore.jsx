@@ -6,7 +6,7 @@ import equipamentosData from './equipamentosDoCanal.json';
 import flaFemininoData from './flaFeminino.json';
 import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
-import nextMatch from './data/nextMatch.json';
+import proximosJogos from './data/nextMatch.json';
 
 const FLAMENGO_ESCUDO_URL =
   'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
@@ -66,8 +66,8 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
 }
 
 function ProximoJogoWidget() {
-  const calcularTempo = (dateStr) => {
-    const diff = new Date(dateStr).getTime() - Date.now();
+  const calcularTempo = (dateStr, agora = Date.now()) => {
+    const diff = new Date(dateStr).getTime() - agora;
     if (diff <= 0) {
       return { dias: 0, horas: 0, minutos: 0, segundos: 0, encerrado: true };
     }
@@ -80,14 +80,25 @@ function ProximoJogoWidget() {
     };
   };
 
-  const [tempo, setTempo] = useState(() => calcularTempo(nextMatch.date));
+  const [agora, setAgora] = useState(Date.now());
 
   useEffect(() => {
-    const atualizarTempo = () => setTempo(calcularTempo(nextMatch.date));
-    atualizarTempo();
+    const atualizarTempo = () => setAgora(Date.now());
     const id = setInterval(atualizarTempo, 1000);
     return () => clearInterval(id);
   }, []);
+
+  const inicioDoDia = new Date(agora);
+  inicioDoDia.setHours(0, 0, 0, 0);
+
+  const partidaAtiva =
+    proximosJogos.find((jogo) => new Date(jogo.date).getTime() >= inicioDoDia.getTime()) || null;
+
+  const tempo = partidaAtiva
+    ? calcularTempo(partidaAtiva.date, agora)
+    : { dias: 0, horas: 0, minutos: 0, segundos: 0, encerrado: true };
+
+  const partida = partidaAtiva || proximosJogos[proximosJogos.length - 1];
 
   const unidades = [
     { label: 'Dias', value: tempo.dias },
@@ -101,18 +112,18 @@ function ProximoJogoWidget() {
     e.currentTarget.src = fallback;
   };
 
-  const timeEsquerdo = nextMatch.isHome
+  const timeEsquerdo = partida.isHome
     ? { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK }
     : {
-        nome: nextMatch.opponent,
-        logo: nextMatch.opponentLogo,
+        nome: partida.opponent,
+        logo: partida.opponentLogo,
         fallback: FLAMENGO_ESCUDO_FALLBACK
       };
 
-  const timeDireito = nextMatch.isHome
+  const timeDireito = partida.isHome
     ? {
-        nome: nextMatch.opponent,
-        logo: nextMatch.opponentLogo,
+        nome: partida.opponent,
+        logo: partida.opponentLogo,
         fallback: FLAMENGO_ESCUDO_FALLBACK
       }
     : { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK };
@@ -124,9 +135,7 @@ function ProximoJogoWidget() {
         <h3 className="text-xs sm:text-sm font-bold tracking-widest text-white uppercase">Próximo Jogo do Mengão</h3>
       </div>
 
-      {tempo.encerrado ? (
-        <p className="text-sm text-slate-300 mb-4">Aguardando confirmação do próximo jogo</p>
-      ) : (
+      {partidaAtiva && !tempo.encerrado ? (
         <div className="flex justify-center gap-2 sm:gap-3 mb-5">
           {unidades.map((u) => (
             <div
@@ -140,6 +149,8 @@ function ProximoJogoWidget() {
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-sm text-slate-300 mb-4">Aguardando confirmação do próximo jogo</p>
       )}
 
       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-5">
@@ -168,15 +179,15 @@ function ProximoJogoWidget() {
         <div className="flex justify-center">
           <span
             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
-              nextMatch.isHome
+              partida.isHome
                 ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                 : 'bg-red-600/20 text-red-400 border-red-600/30'
             }`}
           >
-            {nextMatch.isHome ? 'Mandante' : 'Visitante'}
+            {partida.isHome ? 'Mandante' : 'Visitante'}
           </span>
         </div>
-        <p className="text-xs sm:text-sm font-medium text-slate-200">{nextMatch.competition}</p>
+        <p className="text-xs sm:text-sm font-medium text-slate-200">{partida.competition}</p>
         <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center gap-1.5">
           <svg className="w-4 h-4 text-green-700 shrink-0" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -185,7 +196,7 @@ function ProximoJogoWidget() {
               d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
             />
           </svg>
-          {nextMatch.stadium}
+          {partida.stadium}
         </p>
       </div>
     </div>
