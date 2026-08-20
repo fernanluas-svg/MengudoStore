@@ -1,0 +1,11 @@
+[
+  {
+    "grupo": "Grupo A",
+    "classificacao": [
+      { "posicao": 1, "time": "Flamengo", "pontos": 13, "jogos": 6, "vitorias": 4, "empates": 1, "derrotas": 1, "saldoGols": 9 },
+      { "posicao": 2, "time": "River Plate", "pontos": 11, "jogos": 6, "vitorias": 3, "empates": 2, "derrotas": 1, "saldoGols": 5 },
+      { "posicao": 3, "time": "Peñarol", "pontos": 5, "jogos": 6, "vitorias": 1, "empates": 2, "derrotas": 3, "saldoGols": -5 },
+      { "posicao": 4, "time": "Deportes Iquique", "pontos": 3, "jogos": 6, "vitorias": 0, "empates": 3, "derrotas": 3, "saldoGols": -9 }
+    ]
+  }
+]

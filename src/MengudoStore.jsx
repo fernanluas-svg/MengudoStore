@@ -4,9 +4,9 @@ import acessoriosData from './acessorios.json';
 import linhaInfantilData from './linhaInfantil.json';
 import equipamentosData from './equipamentosDoCanal.json';
 import flaFemininoData from './flaFeminino.json';
-import tacasImg from './assets/tacas.png';
 import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 import proximosJogos from './data/nextMatch.json';
+import Header from './Header.jsx';
 
 const FLAMENGO_ESCUDO_URL =
   'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
@@ -426,7 +426,6 @@ export default function Mengudostore() {
   const [seoAberto, setSeoAberta] = useState(false);
   const [faqAberto, setFaqAberta] = useState(false);
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
-  const [headerVisivel, setHeaderVisivel] = useState(true);
   const [novidadesVisivel, setNovidadesVisivel] = useState(false);
   const novidadesTituloRef = useRef(null);
 
@@ -447,22 +446,8 @@ export default function Mengudostore() {
   }, []);
 
   useEffect(() => {
-    let ultimaPosicao = window.scrollY;
-
     const aoRolar = () => {
-      const posicaoAtual = window.scrollY;
-
-      setMostrarBotaoTopo(posicaoAtual > 300);
-
-      if (posicaoAtual <= 0) {
-        setHeaderVisivel(true);
-      } else {
-        const diferenca = posicaoAtual - ultimaPosicao;
-        if (Math.abs(diferenca) > 8) {
-          setHeaderVisivel(diferenca < 0);
-        }
-      }
-      ultimaPosicao = posicaoAtual;
+      setMostrarBotaoTopo(window.scrollY > 300);
     };
     window.addEventListener('scroll', aoRolar, { passive: true });
     aoRolar();
@@ -631,52 +616,7 @@ export default function Mengudostore() {
       {/* ========================================= */}
       {/* Header / Navegação com Escudo do Mengão */}
       {/* ========================================= */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-md transition-transform duration-300 ease-in-out ${
-          headerVisivel ? 'translate-y-0' : '-translate-y-full'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          
-          {/* Container da Esquerda - Escudo, Nome e Taças */}
-          <div className="flex items-center gap-3">
-            
-            {/* Imagem do escudo */}
-            <img 
-              src="https://i.ibb.co/WvsR3rBX/Fundo-preto.png" 
-              alt="Escudo Mengudo Store" 
-              className="h-16 w-auto object-contain drop-shadow-lg"
-            />
-
-            {/* Nome da loja e Taças */}
-            <div className="flex flex-col leading-tight">
-              <div className="flex items-center gap-2">
-                <span className="text-xl md:text-3xl font-black text-white tracking-wide">
-                  MENGUDO <span className="text-red-500">STORE</span>
-                </span>
-
-                <div className="flex items-center gap-1">
-                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
-                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
-                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
-                  <img src={tacasImg} alt="Taça Libertadores" className="h-7 w-auto object-contain" />
-                </div>
-              </div>
-              
-              <span className="text-[10px] text-gray-400 tracking-widest hidden md:block">
-                Recomendações Canal do @MENGUDO1
-              </span>
-            </div>
-            
-          </div>
-
-          {/* Texto à direita (Slogan) */}
-          <p className="text-xs sm:text-sm text-slate-400 hidden sm:block">
-            As melhores ofertas e produtos do Mengão selecionados para você
-          </p>
-
-        </div>
-      </header>
+      <Header />
 
       {/* ========================================= */}
       {/* Seção Hero / Destaque */}

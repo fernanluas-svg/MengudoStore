@@ -1,0 +1,22 @@
+[
+  { "posicao": 1, "time": "Palmeiras", "pontos": 48, "jogos": 23, "vitorias": 14, "empates": 6, "derrotas": 3, "saldoGols": 21 },
+  { "posicao": 2, "time": "Flamengo", "pontos": 45, "jogos": 22, "vitorias": 13, "empates": 6, "derrotas": 3, "saldoGols": 25 },
+  { "posicao": 3, "time": "Athletico Paranaense", "pontos": 41, "jogos": 23, "vitorias": 12, "empates": 5, "derrotas": 6, "saldoGols": 11 },
+  { "posicao": 4, "time": "Fluminense", "pontos": 38, "jogos": 23, "vitorias": 10, "empates": 8, "derrotas": 5, "saldoGols": 6 },
+  { "posicao": 5, "time": "Cruzeiro", "pontos": 36, "jogos": 23, "vitorias": 10, "empates": 6, "derrotas": 7, "saldoGols": 0 },
+  { "posicao": 6, "time": "Bahia", "pontos": 34, "jogos": 23, "vitorias": 8, "empates": 10, "derrotas": 5, "saldoGols": 4 },
+  { "posicao": 7, "time": "Red Bull Bragantino", "pontos": 32, "jogos": 22, "vitorias": 9, "empates": 5, "derrotas": 8, "saldoGols": 4 },
+  { "posicao": 8, "time": "Atlético Mineiro", "pontos": 32, "jogos": 22, "vitorias": 9, "empates": 5, "derrotas": 8, "saldoGols": 3 },
+  { "posicao": 9, "time": "Corinthians", "pontos": 32, "jogos": 23, "vitorias": 8, "empates": 8, "derrotas": 7, "saldoGols": 3 },
+  { "posicao": 10, "time": "Coritiba", "pontos": 31, "jogos": 23, "vitorias": 8, "empates": 7, "derrotas": 8, "saldoGols": -2 },
+  { "posicao": 11, "time": "Botafogo", "pontos": 30, "jogos": 22, "vitorias": 8, "empates": 6, "derrotas": 8, "saldoGols": 1 },
+  { "posicao": 12, "time": "Vitória", "pontos": 29, "jogos": 23, "vitorias": 8, "empates": 5, "derrotas": 10, "saldoGols": -10 },
+  { "posicao": 13, "time": "São Paulo", "pontos": 27, "jogos": 22, "vitorias": 7, "empates": 6, "derrotas": 9, "saldoGols": 1 },
+  { "posicao": 14, "time": "Santos", "pontos": 25, "jogos": 22, "vitorias": 6, "empates": 7, "derrotas": 9, "saldoGols": -3 },
+  { "posicao": 15, "time": "Grêmio", "pontos": 25, "jogos": 22, "vitorias": 6, "empates": 7, "derrotas": 9, "saldoGols": -6 },
+  { "posicao": 16, "time": "Internacional", "pontos": 24, "jogos": 23, "vitorias": 5, "empates": 9, "derrotas": 9, "saldoGols": -4 },
+  { "posicao": 17, "time": "Mirassol", "pontos": 23, "jogos": 22, "vitorias": 6, "empates": 5, "derrotas": 11, "saldoGols": -10 },
+  { "posicao": 18, "time": "Remo", "pontos": 23, "jogos": 23, "vitorias": 5, "empates": 8, "derrotas": 10, "saldoGols": -10 },
+  { "posicao": 19, "time": "Vasco da Gama", "pontos": 22, "jogos": 22, "vitorias": 5, "empates": 7, "derrotas": 10, "saldoGols": -11 },
+  { "posicao": 20, "time": "Chapecoense", "pontos": 11, "jogos": 22, "vitorias": 1, "empates": 8, "derrotas": 13, "saldoGols": -23 }
+]
