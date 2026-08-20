@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 import unicodedata
 
 import requests
@@ -10,13 +11,10 @@ from bs4 import BeautifulSoup
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
-BOLAVIP_URL = 'https://br.bolavip.com/flamengo/confira-todos-os-jogos-do-flamengo-no-brasileirao-2026-rodada-a-rodada'
+GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
+GE_RODADAS = 38
 HEADERS = {
     'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
-}
-BOLAVIP_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-    'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8'
 }
 
 
@@ -52,6 +50,7 @@ ALIASES_EQUIPES = {
     'athletico pr': 'atletico paranaense',
     'athletico paranaense': 'atletico paranaense',
     'vasco': 'vasco da gama',
+    'bragantino': 'red bull bragantino',
 }
 
 EQUIPES_SERIE_A = {
@@ -114,40 +113,35 @@ def obter_resultados_brasileirao():
 
 def obter_resultados_fallback():
     """
-    Fonte secundária: raspa o portal esportivo Bolavip, que lista as 38 rodadas
-    do Flamengo no Brasileirão 2026 no formato "Rodada N (datas): Casa x Visitante".
+    Fonte secundária: consulta a API pública de tabela do GE (Globo Esporte),
+    percorrendo as 38 rodadas do Brasileirão para capturar os placares atualizados.
     Retorna o mesmo formato da fonte primária, com placar quando disponível.
     """
-    resp = requests.get(BOLAVIP_URL, headers=BOLAVIP_HEADERS, timeout=30)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    texto = soup.get_text(' ', strip=True)
-
     resultados = {}
-    for trecho in re.split(r'(?=Rodada\s+\d+)', texto):
-        m = re.match(r'Rodada\s+\d+.*?:\s*(.*)$', trecho, re.S)
-        if not m:
+    for rodada in range(1, GE_RODADAS + 1):
+        url = GE_API_URL.format(rodada=rodada)
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+            jogos = resp.json()
+        except Exception as e:
+            log('WARN', f'GE rodada {rodada} indisponível: {e}')
             continue
-        corpo = m.group(1)
-        for palavra in (' publicidade ', ' leia tambem ', ' veja tambem ', ' receba as ultimas '):
-            idx = corpo.lower().find(palavra)
-            if idx >= 0:
-                corpo = corpo[:idx]
-        if 'x' not in corpo.lower():
-            continue
-
-        placar = '–'
-        sm = re.search(r'(\d{1,2})\s*[xX]\s*(\d{1,2})', corpo)
-        if sm:
-            placar = f'{sm.group(1)} – {sm.group(2)}'
-            corpo = corpo.replace(sm.group(0), ' x ')
-
-        partes = [normalizar(p) for p in re.split(r'\s*x\s*', corpo, flags=re.I) if p.strip()]
-        if len(partes) >= 2 and partes[0] in EQUIPES_SERIE_A and partes[1] in EQUIPES_SERIE_A:
-            resultados[(partes[0], partes[1])] = placar
+        for jogo in jogos:
+            mandante = normalizar(jogo['equipes']['mandante']['nome_popular'])
+            visitante = normalizar(jogo['equipes']['visitante']['nome_popular'])
+            gols_mandante = jogo.get('placar_oficial_mandante')
+            gols_visitante = jogo.get('placar_oficial_visitante')
+            if gols_mandante is not None and gols_visitante is not None:
+                placar = f'{gols_mandante} – {gols_visitante}'
+            else:
+                placar = '–'
+            if mandante and visitante:
+                resultados[(mandante, visitante)] = placar
+        time.sleep(0.2)
 
     if not resultados:
-        raise RuntimeError('Nenhuma rodada encontrada no Bolavip.')
+        raise RuntimeError('Nenhuma rodada encontrada na API do GE.')
     return resultados
 
 
@@ -159,7 +153,7 @@ def chave_partida(partida):
 
 
 def atualizar_placares(matches):
-    """Atualiza status e placares usando a Wikipédia; em caso de falha, usa o Bolavip."""
+    """Atualiza status e placares usando a Wikipédia; em caso de falha, usa a API do GE (Globo Esporte)."""
     resultados = None
     origem = 'Wikipedia'
     try:
@@ -173,10 +167,10 @@ def atualizar_placares(matches):
         resultados = None
 
     if resultados is None:
-        origem = 'Bolavip'
+        origem = 'API GE'
         try:
             resultados = obter_resultados_fallback()
-            log('INFO', f'Fallback (Bolavip) ativado: {len(resultados)} rodada(s) encontrada(s).')
+            log('INFO', f'Fallback (API GE) ativado: {len(resultados)} jogo(s) encontrado(s).')
         except Exception as e:
             log('ERROR', f'Fonte secundária indisponível: {e}')
             return matches
