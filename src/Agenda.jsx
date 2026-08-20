@@ -19,9 +19,10 @@ function formatarHora(iso) {
   return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function EscudoJogo({ src, nome }) {
-  const [falhou, setFalhou] = useState(false);
-  if (falhou || !src) {
+function EscudoJogo({ src, fallback, nome }) {
+  const [indice, setIndice] = useState(0);
+  const origens = [src, fallback].filter(Boolean);
+  if (indice >= origens.length || origens.length === 0) {
     return (
       <svg
         viewBox="0 0 24 24"
@@ -38,7 +39,25 @@ function EscudoJogo({ src, nome }) {
       </svg>
     );
   }
-  return <img src={src} alt={nome} onError={() => setFalhou(true)} className="w-8 h-8 object-contain" />;
+  return (
+    <img
+      src={origens[indice]}
+      alt={nome}
+      onError={() => setIndice((i) => i + 1)}
+      className="w-8 h-8 object-contain"
+    />
+  );
+}
+
+function timesDaPartida(partida) {
+  return {
+    esquerdo: partida.isHome
+      ? { nome: 'Flamengo', src: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK }
+      : { nome: partida.opponent, src: partida.opponentLogo, fallback: null },
+    direito: partida.isHome
+      ? { nome: partida.opponent, src: partida.opponentLogo, fallback: null }
+      : { nome: 'Flamengo', src: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK },
+  };
 }
 
 function CabecalhoCard({ icone, titulo, descricao }) {
@@ -58,21 +77,24 @@ function CabecalhoCard({ icone, titulo, descricao }) {
 function CardAgenda() {
   const partidas = proximosJogos
     .filter((jogo) => jogo.status === 'SCHEDULED')
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(0, 5);
 
   return (
     <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col">
       <CabecalhoCard
         icone={<FiCalendar className="w-5 h-5" />}
         titulo="Agenda de Jogos"
-        descricao="Próximos confrontos do Mengão"
+        descricao="Os próximos 5 confrontos do Mengão"
       />
 
       {partidas.length === 0 ? (
         <p className="text-sm text-slate-400">Nenhum próximo confronto no momento.</p>
       ) : (
         <ul className="space-y-3">
-          {partidas.map((partida) => (
+          {partidas.map((partida) => {
+            const { esquerdo, direito } = timesDaPartida(partida);
+            return (
             <li
               key={partida.id}
               className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
@@ -94,16 +116,16 @@ function CardAgenda() {
 
               <div className="flex items-center justify-center gap-2 sm:gap-3">
                 <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                  <EscudoJogo src={partida.isHome ? FLAMENGO_ESCUDO_URL : partida.opponentLogo} nome="Flamengo" />
+                  <EscudoJogo src={esquerdo.src} fallback={esquerdo.fallback} nome={esquerdo.nome} />
                   <span className="text-xs font-bold text-white truncate w-full text-center">
-                    {partida.isHome ? 'Flamengo' : partida.opponent}
+                    {esquerdo.nome}
                   </span>
                 </div>
                 <span className="text-lg font-black text-red-500 shrink-0">X</span>
                 <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                  <EscudoJogo src={partida.isHome ? partida.opponentLogo : FLAMENGO_ESCUDO_FALLBACK} nome={partida.opponent} />
+                  <EscudoJogo src={direito.src} fallback={direito.fallback} nome={direito.nome} />
                   <span className="text-xs font-bold text-white truncate w-full text-center">
-                    {partida.isHome ? partida.opponent : 'Flamengo'}
+                    {direito.nome}
                   </span>
                 </div>
               </div>
@@ -115,7 +137,8 @@ function CardAgenda() {
                 <span>{partida.competition}</span>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>
@@ -125,29 +148,32 @@ function CardAgenda() {
 function CardResultados() {
   const encerradas = proximosJogos
     .filter((jogo) => jogo.status === 'FINISHED' && jogo.homeScore != null && jogo.awayScore != null)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
 
   return (
     <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col">
       <CabecalhoCard
         icone={<FiAward className="w-5 h-5" />}
         titulo="Resumo de Resultados"
-        descricao="Últimas partidas encerradas"
+        descricao="Os últimos 5 resultados do Mengão"
       />
 
       {encerradas.length === 0 ? (
-        <div className="flex flex-col items-center justify-center flex-1 py-8 text-center">
-          <FiAward className="w-10 h-10 text-slate-700 mb-3" />
-          <p className="text-sm text-slate-400">
-            Ainda não há partidas encerradas registradas.
+        <div className="flex flex-col items-center justify-center flex-1 py-12 text-center">
+          <FiAward className="w-12 h-12 text-slate-700 mb-4" />
+          <p className="text-sm text-slate-300 font-medium">
+            Nenhum resultado recente registrado.
           </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Os placares serão atualizados automaticamente após cada jogo.
+          <p className="text-xs text-slate-500 mt-2 max-w-[260px]">
+            Acompanhe os próximos confrontos ao lado! Os placares aparecerão aqui após cada jogo.
           </p>
         </div>
       ) : (
         <ul className="space-y-3">
-          {encerradas.map((partida) => (
+          {encerradas.map((partida) => {
+            const { esquerdo, direito } = timesDaPartida(partida);
+            return (
             <li
               key={partida.id}
               className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
@@ -162,23 +188,24 @@ function CardResultados() {
               </div>
               <div className="flex items-center justify-center gap-2 sm:gap-3">
                 <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                  <EscudoJogo src={partida.isHome ? FLAMENGO_ESCUDO_URL : partida.opponentLogo} nome={partida.isHome ? 'Flamengo' : partida.opponent} />
+                  <EscudoJogo src={esquerdo.src} fallback={esquerdo.fallback} nome={esquerdo.nome} />
                   <span className="text-xs font-bold text-white truncate w-full text-center">
-                    {partida.isHome ? 'Flamengo' : partida.opponent}
+                    {esquerdo.nome}
                   </span>
                 </div>
                 <span className="text-lg font-black text-white tabular-nums whitespace-nowrap">
                   {partida.homeScore} <span className="text-slate-500">x</span> {partida.awayScore}
                 </span>
                 <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                  <EscudoJogo src={partida.isHome ? partida.opponentLogo : FLAMENGO_ESCUDO_FALLBACK} nome={partida.isHome ? partida.opponent : 'Flamengo'} />
+                  <EscudoJogo src={direito.src} fallback={direito.fallback} nome={direito.nome} />
                   <span className="text-xs font-bold text-white truncate w-full text-center">
-                    {partida.isHome ? partida.opponent : 'Flamengo'}
+                    {direito.nome}
                   </span>
                 </div>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>
