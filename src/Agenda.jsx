@@ -81,7 +81,7 @@ function CardAgenda() {
     .slice(0, 5);
 
   return (
-    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col">
       <CabecalhoCard
         icone={<FiCalendar className="w-5 h-5" />}
         titulo="Agenda de Jogos"
@@ -97,7 +97,7 @@ function CardAgenda() {
             return (
             <li
               key={partida.id}
-              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
+              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4 min-h-[260px]"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
@@ -136,13 +136,7 @@ function CardAgenda() {
                 <span className="text-slate-600">•</span>
                 <span>{partida.competition}</span>
               </div>
-
-                  <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-center gap-1.5 text-xs text-slate-400 flex-wrap">
-                    <FiMapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span>{partida.stadium}</span>
-                    <span className="text-slate-600">•</span>
-                    <span>{partida.competition}</span>
-                  </div>            </li>
+            </li>
             );
           })}
         </ul>
@@ -158,7 +152,7 @@ function CardResultados() {
     .slice(0, 5);
 
   return (
-    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col">
       <CabecalhoCard
         icone={<FiAward className="w-5 h-5" />}
         titulo="Resumo de Resultados"
@@ -182,7 +176,7 @@ function CardResultados() {
             return (
             <li
               key={partida.id}
-              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
+              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4 min-h-[260px]"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
@@ -207,13 +201,7 @@ function CardResultados() {
                   <span className="text-xs font-bold text-white truncate w-full text-center">
                     {direito.nome}
                   </span>
-</div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-center gap-1.5 text-xs text-slate-400 flex-wrap">
-                <FiMapPin className="w-3.5 h-3.5 shrink-0" />
-                <span>{partida.stadium}</span>
-                <span className="text-slate-600">•</span>
-                <span>{partida.competition}</span>
+                </div>
               </div>
             </li>
             );
