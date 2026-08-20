@@ -65,6 +65,40 @@ function SecaoProdutos({ titulo, descricao, produtos }) {
   );
 }
 
+function EscudoPadrao({ alt = 'Escudo' }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-label={alt}
+      className="w-14 h-14 sm:w-16 sm:h-16 text-slate-500"
+    >
+      <path d="M12 2l8 3v6c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function EscudoTime({ logo, fallback, alt }) {
+  const [passo, setPasso] = useState(0);
+  const origens = [logo, fallback].filter(Boolean);
+  if (passo >= origens.length) {
+    return <EscudoPadrao alt={alt} />;
+  }
+  return (
+    <img
+      src={origens[passo]}
+      alt={alt}
+      onError={() => setPasso((p) => p + 1)}
+      className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
+    />
+  );
+}
+
 function ProximoJogoWidget() {
   const calcularTempo = (dateStr, agora = Date.now()) => {
     const diff = new Date(dateStr).getTime() - agora;
@@ -107,25 +141,12 @@ function ProximoJogoWidget() {
     { label: 'Seg', value: tempo.segundos }
   ];
 
-  const trocarParaFallback = (e, fallback) => {
-    e.currentTarget.onerror = null;
-    e.currentTarget.src = fallback;
-  };
-
   const timeEsquerdo = partida.isHome
     ? { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK }
-    : {
-        nome: partida.opponent,
-        logo: partida.opponentLogo,
-        fallback: FLAMENGO_ESCUDO_FALLBACK
-      };
+    : { nome: partida.opponent, logo: partida.opponentLogo, fallback: null };
 
   const timeDireito = partida.isHome
-    ? {
-        nome: partida.opponent,
-        logo: partida.opponentLogo,
-        fallback: FLAMENGO_ESCUDO_FALLBACK
-      }
+    ? { nome: partida.opponent, logo: partida.opponentLogo, fallback: null }
     : { nome: 'Flamengo', logo: FLAMENGO_ESCUDO_URL, fallback: FLAMENGO_ESCUDO_FALLBACK };
 
   return (
@@ -155,22 +176,12 @@ function ProximoJogoWidget() {
 
       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-5">
         <div className="flex flex-col items-center gap-2 flex-1">
-          <img
-            src={timeEsquerdo.logo}
-            alt={timeEsquerdo.nome}
-            onError={(e) => trocarParaFallback(e, timeEsquerdo.fallback)}
-            className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
-          />
+          <EscudoTime logo={timeEsquerdo.logo} fallback={timeEsquerdo.fallback} alt={timeEsquerdo.nome} />
           <span className="text-xs sm:text-sm font-bold text-white">{timeEsquerdo.nome}</span>
         </div>
         <span className="text-2xl sm:text-3xl font-black text-red-500">X</span>
         <div className="flex flex-col items-center gap-2 flex-1">
-          <img
-            src={timeDireito.logo}
-            alt={timeDireito.nome}
-            onError={(e) => trocarParaFallback(e, timeDireito.fallback)}
-            className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
-          />
+          <EscudoTime logo={timeDireito.logo} fallback={timeDireito.fallback} alt={timeDireito.nome} />
           <span className="text-xs sm:text-sm font-bold text-white">{timeDireito.nome}</span>
         </div>
       </div>
