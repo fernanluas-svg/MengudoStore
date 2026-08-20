@@ -97,7 +97,7 @@ function CardAgenda() {
             return (
             <li
               key={partida.id}
-              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4 min-h-[260px]"
+              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
@@ -176,7 +176,7 @@ function CardResultados() {
             return (
             <li
               key={partida.id}
-              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4 min-h-[260px]"
+              className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 sm:p-4"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
