@@ -7,7 +7,7 @@ import { FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
 import { RiTrophyLine } from 'react-icons/ri';
 
 const FLAMENGO_ESCUDO_URL =
-  'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
+  'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg';
 const FLAMENGO_ESCUDO_FALLBACK =
   'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
 
@@ -202,6 +202,12 @@ function CardResultados() {
                     {direito.nome}
                   </span>
                 </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-center gap-1.5 text-xs text-slate-400 flex-wrap">
+                <FiMapPin className="w-3.5 h-3.5 shrink-0" />
+                <span>{partida.stadium}</span>
+                <span className="text-slate-600">•</span>
+                <span>{partida.competition}</span>
               </div>
             </li>
             );
