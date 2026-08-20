@@ -13,8 +13,55 @@ JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
+TEMPORADA = 2026
 HEADERS = {
     'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
+}
+
+LOGOS_SERIE_A = {
+    'sao paulo': 'https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg',
+    'flamengo': 'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg',
+    'internacional': 'https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg',
+    'vitoria': 'https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg',
+    'mirassol': 'https://s.sde.globo.com/media/organizations/2026/07/17/MIrassol.svg',
+    'cruzeiro': 'https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg',
+    'botafogo': 'https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg',
+    'remo': 'https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg',
+    'corinthians': 'https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg',
+    'red bull bragantino': 'https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg',
+    'santos': 'https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg',
+    'fluminense': 'https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg',
+    'bahia': 'https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg',
+    'atletico mineiro': 'https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg',
+    'vasco da gama': 'https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg',
+    'gremio': 'https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg',
+    'atletico paranaense': 'https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg',
+    'palmeiras': 'https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg',
+    'coritiba': 'https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg',
+    'chapecoense': 'https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg',
+}
+
+NOMES_EXIBICAO = {
+    'sao paulo': 'São Paulo',
+    'flamengo': 'Flamengo',
+    'internacional': 'Internacional',
+    'vitoria': 'Vitória',
+    'mirassol': 'Mirassol',
+    'cruzeiro': 'Cruzeiro',
+    'botafogo': 'Botafogo',
+    'remo': 'Remo',
+    'corinthians': 'Corinthians',
+    'red bull bragantino': 'Red Bull Bragantino',
+    'santos': 'Santos',
+    'fluminense': 'Fluminense',
+    'bahia': 'Bahia',
+    'atletico mineiro': 'Atlético Mineiro',
+    'vasco da gama': 'Vasco da Gama',
+    'gremio': 'Grêmio',
+    'atletico paranaense': 'Athletico Paranaense',
+    'palmeiras': 'Palmeiras',
+    'coritiba': 'Coritiba',
+    'chapecoense': 'Chapecoense',
 }
 
 
@@ -53,13 +100,6 @@ ALIASES_EQUIPES = {
     'bragantino': 'red bull bragantino',
 }
 
-EQUIPES_SERIE_A = {
-    'sao paulo', 'flamengo', 'internacional', 'vitoria', 'mirassol',
-    'cruzeiro', 'botafogo', 'remo', 'corinthians', 'red bull bragantino',
-    'santos', 'fluminense', 'bahia', 'atletico mineiro', 'vasco da gama',
-    'gremio', 'atletico paranaense', 'palmeiras', 'coritiba', 'chapecoense',
-}
-
 
 def normalizar(texto):
     """Remove acentos, padroniza e expande apelidos para nomes canônicos."""
@@ -73,10 +113,25 @@ def normalizar(texto):
     return texto
 
 
-def obter_resultados_brasileirao():
+MESES = {
+    'janeiro': 1, 'fevereiro': 2, 'março': 3, 'abril': 4, 'maio': 5, 'junho': 6,
+    'julho': 7, 'agosto': 8, 'setembro': 9, 'outubro': 10, 'novembro': 11, 'dezembro': 12,
+}
+
+
+def _extrair_placar(texto):
+    m = re.search(r'(\d+)\s*[–-]\s*(\d+)', texto)
+    if m:
+        return int(m.group(1)), int(m.group(2))
+    return None, None
+
+
+def obter_partidas_wikipedia():
     """
-    Fonte primária: raspa a página "Temporada do Flamengo 2026" na Wikipédia.
-    Retorna um dicionário {(mandante_normalizado, visitante_normalizado): placar_texto}.
+    Fonte primária: raspa a página "Temporada do Flamengo 2026" na Wikipédia,
+    percorrendo todas as rodadas do Brasileirão (anteriores e futuras).
+    Retorna uma lista de partidas do Flamengo no formato:
+    {data, mandante, visitante, gols_mandante, gols_visitante, estadio}.
     """
     resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
     resp.raise_for_status()
@@ -90,34 +145,71 @@ def obter_resultados_brasileirao():
     if cabecalho is None:
         raise RuntimeError('Seção "Campeonato Brasileiro" não encontrada na página.')
 
-    resultados = {}
+    partidas = []
     for tabela in soup.find_all('table'):
         if tabela.find_previous('h3') is not cabecalho:
             continue
         linhas = tabela.find_all('tr')
-        if not linhas:
+        if len(linhas) < 2:
             continue
-        celulas = linhas[0].find_all(['td', 'th'])
-        if len(celulas) < 4:
+        cabecalho_linha = linhas[0].find_all(['td', 'th'])
+        detalhe_linha = linhas[1].find_all(['td', 'th'])
+        if len(cabecalho_linha) < 5:
             continue
-        mandante = normalizar(celulas[1].get_text(' ', strip=True))
-        visitante = normalizar(celulas[3].get_text(' ', strip=True))
-        placar = celulas[2].get_text(' ', strip=True)
-        if mandante and visitante:
-            resultados[(mandante, visitante)] = placar
 
-    if not resultados:
-        raise RuntimeError('Nenhuma rodada encontrada na página.')
-    return resultados
+        texto_data = cabecalho_linha[0].get_text(' ', strip=True)
+        mdata = re.match(r'(\d{1,2})\s+de\s+([a-zç]+)', texto_data, re.I)
+        if not mdata:
+            continue
+        dia = int(mdata.group(1))
+        mes = MESES.get(mdata.group(2).lower())
+        if mes is None:
+            continue
+
+        mandante = normalizar(cabecalho_linha[1].get_text(' ', strip=True))
+        visitante = normalizar(cabecalho_linha[3].get_text(' ', strip=True))
+        if mandante != 'flamengo' and visitante != 'flamengo':
+            continue
+
+        gols_m, gols_v = _extrair_placar(cabecalho_linha[2].get_text(' ', strip=True))
+
+        estadio = None
+        hora = '19:00'
+        if len(detalhe_linha) >= 5:
+            texto_hora = detalhe_linha[0].get_text(' ', strip=True)
+            mh = re.search(r'(\d{1,2}):(\d{2})', texto_hora)
+            if mh:
+                hora = f'{mh.group(1)}:{mh.group(2)}'
+            texto_estadio = detalhe_linha[4].get_text(' ', strip=True)
+            me = re.search(r'Estádio:\s*([^P]+)', texto_estadio)
+            if me:
+                estadio = me.group(1).strip()
+
+        if not estadio:
+            cidade = cabecalho_linha[4].get_text(' ', strip=True)
+            estadio = cidade if cidade and cidade != 'A definir' else 'A definir'
+
+        partidas.append({
+            'data': f'{TEMPORADA}-{mes:02d}-{dia:02d}T{hora}:00-03:00',
+            'mandante': mandante,
+            'visitante': visitante,
+            'gols_mandante': gols_m,
+            'gols_visitante': gols_v,
+            'estadio': estadio,
+        })
+
+    if not partidas:
+        raise RuntimeError('Nenhuma partida do Flamengo encontrada na página.')
+    return partidas
 
 
-def obter_resultados_fallback():
+def obter_partidas_ge():
     """
     Fonte secundária: consulta a API pública de tabela do GE (Globo Esporte),
-    percorrendo as 38 rodadas do Brasileirão para capturar os placares atualizados.
-    Retorna o mesmo formato da fonte primária, com placar quando disponível.
+    percorrendo as 38 rodadas do Brasileirão e capturando as partidas do Flamengo.
+    Retorna o mesmo formato da fonte primária, incluindo os escudos.
     """
-    resultados = {}
+    partidas = []
     for rodada in range(1, GE_RODADAS + 1):
         url = GE_API_URL.format(rodada=rodada)
         try:
@@ -130,66 +222,103 @@ def obter_resultados_fallback():
         for jogo in jogos:
             mandante = normalizar(jogo['equipes']['mandante']['nome_popular'])
             visitante = normalizar(jogo['equipes']['visitante']['nome_popular'])
-            gols_mandante = jogo.get('placar_oficial_mandante')
-            gols_visitante = jogo.get('placar_oficial_visitante')
-            if gols_mandante is not None and gols_visitante is not None:
-                placar = f'{gols_mandante} – {gols_visitante}'
-            else:
-                placar = '–'
-            if mandante and visitante:
-                resultados[(mandante, visitante)] = placar
+            if mandante != 'flamengo' and visitante != 'flamengo':
+                continue
+            data = jogo.get('data_realizacao')
+            if not data:
+                continue
+            hora = jogo.get('hora_realizacao') or '19:00'
+            sede = jogo.get('sede') or {}
+            partidas.append({
+                'data': f'{data}T{hora}:00-03:00',
+                'mandante': mandante,
+                'visitante': visitante,
+                'gols_mandante': jogo.get('placar_oficial_mandante'),
+                'gols_visitante': jogo.get('placar_oficial_visitante'),
+                'estadio': sede.get('nome_popular') or 'A definir',
+                'escudo_mandante': jogo['equipes']['mandante'].get('escudo'),
+                'escudo_visitante': jogo['equipes']['visitante'].get('escudo'),
+            })
         time.sleep(0.2)
 
-    if not resultados:
-        raise RuntimeError('Nenhuma rodada encontrada na API do GE.')
-    return resultados
+    if not partidas:
+        raise RuntimeError('Nenhuma partida do Flamengo encontrada na API do GE.')
+    return partidas
 
 
-def chave_partida(partida):
-    """Retorna a chave (mandante, visitante) esperada para uma partida da agenda."""
-    mandante = normalizar('Flamengo' if partida['isHome'] else partida['opponent'])
-    visitante = normalizar(partida['opponent'] if partida['isHome'] else 'Flamengo')
-    return (mandante, visitante)
+def montar_entrada_historica(partida):
+    """Converte uma partida encerrada em uma entrada FINISHED do nextMatch.json."""
+    if partida['mandante'] == 'flamengo':
+        isHome = True
+        opponent = partida['visitante']
+        homeScore = partida['gols_mandante']
+        awayScore = partida['gols_visitante']
+        escudo = partida.get('escudo_visitante') or LOGOS_SERIE_A.get(opponent)
+    else:
+        isHome = False
+        opponent = partida['mandante']
+        homeScore = partida['gols_mandante']
+        awayScore = partida['gols_visitante']
+        escudo = partida.get('escudo_mandante') or LOGOS_SERIE_A.get(opponent)
+
+    if not escudo:
+        escudo = LOGOS_SERIE_A['flamengo']
+
+    slug = opponent.replace(' ', '-')
+    return {
+        'id': f"{partida['data'][:10]}-{slug}",
+        'opponent': NOMES_EXIBICAO.get(opponent, opponent),
+        'opponentLogo': escudo,
+        'isHome': isHome,
+        'date': partida['data'],
+        'stadium': partida['estadio'],
+        'competition': 'Brasileirão',
+        'status': 'FINISHED',
+        'homeScore': homeScore,
+        'awayScore': awayScore,
+    }
 
 
-def atualizar_placares(matches):
-    """Atualiza status e placares usando a Wikipédia; em caso de falha, usa a API do GE (Globo Esporte)."""
-    resultados = None
-    origem = 'Wikipedia'
+def atualizar_agenda():
+    """
+    Monta a agenda completa: histórico de jogos encerrados (FINISHED) somado
+    aos próximos confrontos agendados (SCHEDULED). Usa a Wikipédia como fonte
+    primária e a API do GE (Globo Esporte) como fallback.
+    """
+    base = fetch_and_format_matches()
+    partidas = None
+    origem = None
+
     try:
-        resultados = obter_resultados_brasileirao()
-        cobertura = sum(1 for p in matches if chave_partida(p) in resultados)
-        if cobertura == 0:
-            log('WARN', 'Fonte primária não encontrou nenhum jogo da agenda.')
-            resultados = None
+        partidas = obter_partidas_wikipedia()
+        origem = 'Wikipedia'
     except Exception as e:
         log('WARN', f'Fonte primária indisponível: {e}')
-        resultados = None
-
-    if resultados is None:
-        origem = 'API GE'
         try:
-            resultados = obter_resultados_fallback()
-            log('INFO', f'Fallback (API GE) ativado: {len(resultados)} jogo(s) encontrado(s).')
-        except Exception as e:
-            log('ERROR', f'Fonte secundária indisponível: {e}')
-            return matches
+            partidas = obter_partidas_ge()
+            origem = 'API GE'
+        except Exception as e2:
+            log('ERROR', f'Fonte secundária indisponível: {e2}')
+            return base
 
-    atualizadas = 0
-    for partida in matches:
-        placar = resultados.get(chave_partida(partida))
-        if not placar:
-            continue
-        m = re.search(r'(\d+)\s*[–-]\s*(\d+)', placar)
-        if not m:
-            continue
-        partida['status'] = 'FINISHED'
-        partida['homeScore'] = int(m.group(1))
-        partida['awayScore'] = int(m.group(2))
-        atualizadas += 1
+    historico = [
+        montar_entrada_historica(p)
+        for p in partidas
+        if p['gols_mandante'] is not None and p['gols_visitante'] is not None
+    ]
 
-    log('SUCCESS', f'Placar confirmado para {atualizadas} partida(s) via {origem}.')
-    return matches
+    combinadas = historico + base
+    vistos = set()
+    resultado = []
+    for m in combinadas:
+        if m['id'] in vistos:
+            continue
+        vistos.add(m['id'])
+        resultado.append(m)
+
+    resultado.sort(key=lambda m: m['date'])
+    log('SUCCESS', f'{len(historico)} jogo(s) encerrado(s) e {len(base)} agendado(s) registrados via {origem}.')
+    return resultado
 
 
 def save_json(data):
@@ -201,6 +330,5 @@ def save_json(data):
 
 if __name__ == "__main__":
     log('INFO', 'Iniciando atualização da agenda de jogos...')
-    data = fetch_and_format_matches()
-    data = atualizar_placares(data)
+    data = atualizar_agenda()
     save_json(data)
