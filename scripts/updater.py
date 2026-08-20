@@ -1,9 +1,18 @@
 import json
 import os
+import re
+import unicodedata
+
+import requests
+from bs4 import BeautifulSoup
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
+WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
+HEADERS = {
+    'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
+}
 
 
 def fetch_and_format_matches():
@@ -27,6 +36,80 @@ def fetch_and_format_matches():
     return matches_data
 
 
+def normalizar(texto):
+    """Remove acentos e padroniza o texto para comparar nomes de equipes."""
+    texto = unicodedata.normalize('NFD', texto)
+    texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
+    texto = re.sub(r'\s+', ' ', texto).strip().lower()
+    texto = texto.replace('athletico', 'atletico')
+    return texto
+
+
+def obter_resultados_brasileirao():
+    """
+    Raspa a página "Temporada do Flamengo 2026" na Wikipédia e retorna um
+    dicionário {(mandante_normalizado, visitante_normalizado): placar_texto}.
+    """
+    resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, 'html.parser')
+
+    cabecalho = None
+    for h in soup.find_all('h3'):
+        if h.get_text(strip=True) == 'Campeonato Brasileiro':
+            cabecalho = h
+            break
+    if cabecalho is None:
+        raise RuntimeError('Seção "Campeonato Brasileiro" não encontrada na página.')
+
+    resultados = {}
+    for tabela in soup.find_all('table'):
+        if tabela.find_previous('h3') is not cabecalho:
+            continue
+        linhas = tabela.find_all('tr')
+        if not linhas:
+            continue
+        celulas = linhas[0].find_all(['td', 'th'])
+        if len(celulas) < 4:
+            continue
+        mandante = normalizar(celulas[1].get_text(' ', strip=True))
+        visitante = normalizar(celulas[3].get_text(' ', strip=True))
+        placar = celulas[2].get_text(' ', strip=True)
+        if mandante and visitante:
+            resultados[(mandante, visitante)] = placar
+
+    if not resultados:
+        raise RuntimeError('Nenhuma rodada encontrada na página.')
+    return resultados
+
+
+def atualizar_placares(matches):
+    """Atualiza status e placares das partidas com base nos resultados raspados."""
+    try:
+        resultados = obter_resultados_brasileirao()
+    except Exception as e:
+        print(f'⚠️ Erro ao consultar placares: {e}')
+        return matches
+
+    atualizadas = 0
+    for partida in matches:
+        mandante = normalizar('Flamengo' if partida['isHome'] else partida['opponent'])
+        visitante = normalizar(partida['opponent'] if partida['isHome'] else 'Flamengo')
+        placar = resultados.get((mandante, visitante))
+        if not placar:
+            continue
+        m = re.search(r'(\d+)\s*[–-]\s*(\d+)', placar)
+        if not m:
+            continue
+        partida['status'] = 'FINISHED'
+        partida['homeScore'] = int(m.group(1))
+        partida['awayScore'] = int(m.group(2))
+        atualizadas += 1
+
+    print(f'📊 Placar confirmado para {atualizadas} partida(s).')
+    return matches
+
+
 def save_json(data):
     os.makedirs(os.path.dirname(JSON_PATH), exist_ok=True)
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
@@ -37,4 +120,5 @@ def save_json(data):
 if __name__ == "__main__":
     print("🚀 Iniciando atualização da agenda de jogos...")
     data = fetch_and_format_matches()
+    data = atualizar_placares(data)
     save_json(data)
