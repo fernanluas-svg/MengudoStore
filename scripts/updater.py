@@ -10,9 +10,18 @@ from bs4 import BeautifulSoup
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
+BOLAVIP_URL = 'https://br.bolavip.com/flamengo/confira-todos-os-jogos-do-flamengo-no-brasileirao-2026-rodada-a-rodada'
 HEADERS = {
     'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
 }
+BOLAVIP_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+    'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8'
+}
+
+
+def log(nivel, mensagem):
+    print(f'[{nivel}] {mensagem}')
 
 
 def fetch_and_format_matches():
@@ -36,19 +45,39 @@ def fetch_and_format_matches():
     return matches_data
 
 
+ALIASES_EQUIPES = {
+    'atletico': 'atletico mineiro',
+    'atletico mg': 'atletico mineiro',
+    'athletico': 'atletico paranaense',
+    'athletico pr': 'atletico paranaense',
+    'athletico paranaense': 'atletico paranaense',
+    'vasco': 'vasco da gama',
+}
+
+EQUIPES_SERIE_A = {
+    'sao paulo', 'flamengo', 'internacional', 'vitoria', 'mirassol',
+    'cruzeiro', 'botafogo', 'remo', 'corinthians', 'red bull bragantino',
+    'santos', 'fluminense', 'bahia', 'atletico mineiro', 'vasco da gama',
+    'gremio', 'atletico paranaense', 'palmeiras', 'coritiba', 'chapecoense',
+}
+
+
 def normalizar(texto):
-    """Remove acentos e padroniza o texto para comparar nomes de equipes."""
+    """Remove acentos, padroniza e expande apelidos para nomes canônicos."""
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
+    texto = re.sub(r'[_-]+', ' ', texto)
     texto = re.sub(r'\s+', ' ', texto).strip().lower()
+    if texto in ALIASES_EQUIPES:
+        texto = ALIASES_EQUIPES[texto]
     texto = texto.replace('athletico', 'atletico')
     return texto
 
 
 def obter_resultados_brasileirao():
     """
-    Raspa a página "Temporada do Flamengo 2026" na Wikipédia e retorna um
-    dicionário {(mandante_normalizado, visitante_normalizado): placar_texto}.
+    Fonte primária: raspa a página "Temporada do Flamengo 2026" na Wikipédia.
+    Retorna um dicionário {(mandante_normalizado, visitante_normalizado): placar_texto}.
     """
     resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
     resp.raise_for_status()
@@ -83,19 +112,78 @@ def obter_resultados_brasileirao():
     return resultados
 
 
+def obter_resultados_fallback():
+    """
+    Fonte secundária: raspa o portal esportivo Bolavip, que lista as 38 rodadas
+    do Flamengo no Brasileirão 2026 no formato "Rodada N (datas): Casa x Visitante".
+    Retorna o mesmo formato da fonte primária, com placar quando disponível.
+    """
+    resp = requests.get(BOLAVIP_URL, headers=BOLAVIP_HEADERS, timeout=30)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    texto = soup.get_text(' ', strip=True)
+
+    resultados = {}
+    for trecho in re.split(r'(?=Rodada\s+\d+)', texto):
+        m = re.match(r'Rodada\s+\d+.*?:\s*(.*)$', trecho, re.S)
+        if not m:
+            continue
+        corpo = m.group(1)
+        for palavra in (' publicidade ', ' leia tambem ', ' veja tambem ', ' receba as ultimas '):
+            idx = corpo.lower().find(palavra)
+            if idx >= 0:
+                corpo = corpo[:idx]
+        if 'x' not in corpo.lower():
+            continue
+
+        placar = '–'
+        sm = re.search(r'(\d{1,2})\s*[xX]\s*(\d{1,2})', corpo)
+        if sm:
+            placar = f'{sm.group(1)} – {sm.group(2)}'
+            corpo = corpo.replace(sm.group(0), ' x ')
+
+        partes = [normalizar(p) for p in re.split(r'\s*x\s*', corpo, flags=re.I) if p.strip()]
+        if len(partes) >= 2 and partes[0] in EQUIPES_SERIE_A and partes[1] in EQUIPES_SERIE_A:
+            resultados[(partes[0], partes[1])] = placar
+
+    if not resultados:
+        raise RuntimeError('Nenhuma rodada encontrada no Bolavip.')
+    return resultados
+
+
+def chave_partida(partida):
+    """Retorna a chave (mandante, visitante) esperada para uma partida da agenda."""
+    mandante = normalizar('Flamengo' if partida['isHome'] else partida['opponent'])
+    visitante = normalizar(partida['opponent'] if partida['isHome'] else 'Flamengo')
+    return (mandante, visitante)
+
+
 def atualizar_placares(matches):
-    """Atualiza status e placares das partidas com base nos resultados raspados."""
+    """Atualiza status e placares usando a Wikipédia; em caso de falha, usa o Bolavip."""
+    resultados = None
+    origem = 'Wikipedia'
     try:
         resultados = obter_resultados_brasileirao()
+        cobertura = sum(1 for p in matches if chave_partida(p) in resultados)
+        if cobertura == 0:
+            log('WARN', 'Fonte primária não encontrou nenhum jogo da agenda.')
+            resultados = None
     except Exception as e:
-        print(f'⚠️ Erro ao consultar placares: {e}')
-        return matches
+        log('WARN', f'Fonte primária indisponível: {e}')
+        resultados = None
+
+    if resultados is None:
+        origem = 'Bolavip'
+        try:
+            resultados = obter_resultados_fallback()
+            log('INFO', f'Fallback (Bolavip) ativado: {len(resultados)} rodada(s) encontrada(s).')
+        except Exception as e:
+            log('ERROR', f'Fonte secundária indisponível: {e}')
+            return matches
 
     atualizadas = 0
     for partida in matches:
-        mandante = normalizar('Flamengo' if partida['isHome'] else partida['opponent'])
-        visitante = normalizar(partida['opponent'] if partida['isHome'] else 'Flamengo')
-        placar = resultados.get((mandante, visitante))
+        placar = resultados.get(chave_partida(partida))
         if not placar:
             continue
         m = re.search(r'(\d+)\s*[–-]\s*(\d+)', placar)
@@ -106,7 +194,7 @@ def atualizar_placares(matches):
         partida['awayScore'] = int(m.group(2))
         atualizadas += 1
 
-    print(f'📊 Placar confirmado para {atualizadas} partida(s).')
+    log('SUCCESS', f'Placar confirmado para {atualizadas} partida(s) via {origem}.')
     return matches
 
 
@@ -114,11 +202,11 @@ def save_json(data):
     os.makedirs(os.path.dirname(JSON_PATH), exist_ok=True)
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"✅ Agenda atualizada com sucesso em: {JSON_PATH}")
+    log('SUCCESS', f'Agenda atualizada em: {JSON_PATH}')
 
 
 if __name__ == "__main__":
-    print("🚀 Iniciando atualização da agenda de jogos...")
+    log('INFO', 'Iniciando atualização da agenda de jogos...')
     data = fetch_and_format_matches()
     data = atualizar_placares(data)
     save_json(data)
