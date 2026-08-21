@@ -326,11 +326,19 @@ function CardOdds() {
 }
 
 function LinhaJogo({ rotulo, jogo }) {
-  if (!jogo) {
+  const indefinido = !jogo || jogo.placarCasa == null || jogo.placarFora == null;
+  if (indefinido) {
     return (
       <p className="text-xs text-slate-300">
         <span className="text-slate-500">{rotulo}:</span>{' '}
         <span className="italic text-slate-500">a definir</span>
+        {jogo && jogo.data && (
+          <span className="text-slate-500">
+            {' · '}
+            {formatarData(jogo.data)}
+            {formatarHora(jogo.data) !== '00:00' ? ` ${formatarHora(jogo.data)}` : ''}
+          </span>
+        )}
       </p>
     );
   }
@@ -341,6 +349,13 @@ function LinhaJogo({ rotulo, jogo }) {
       <span className="text-slate-500"> x </span>
       <span className="font-bold text-white tabular-nums">{jogo.placarFora}</span>{' '}
       {jogo.fora}
+      {jogo.data && (
+        <span className="text-slate-500">
+          {' · '}
+          {formatarData(jogo.data)}
+          {formatarHora(jogo.data) !== '00:00' ? ` ${formatarHora(jogo.data)}` : ''}
+        </span>
+      )}
     </p>
   );
 }
@@ -348,7 +363,9 @@ function LinhaJogo({ rotulo, jogo }) {
 function CardMataMata({ confronto }) {
   const flamengoNoJogo = confronto.timeA === 'Flamengo' || confronto.timeB === 'Flamengo';
   let badge;
-  if (flamengoNoJogo) {
+  if (confronto.status === 'A_DEFINIR') {
+    badge = { texto: 'A definir', cor: 'bg-sky-500/20 text-sky-300 border-sky-500/40' };
+  } else if (flamengoNoJogo) {
     if (confronto.status === 'EM_ANDAMENTO') {
       badge = { texto: 'Em andamento', cor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' };
     } else if (confronto.classificado === 'Flamengo') {
@@ -376,7 +393,7 @@ function CardMataMata({ confronto }) {
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
-          Mata-mata
+          {confronto.fase}
         </span>
         <span
           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${badge.cor}`}
@@ -384,6 +401,14 @@ function CardMataMata({ confronto }) {
           {badge.texto}
         </span>
       </div>
+
+      {confronto.data && (
+        <p className="-mt-1 text-[11px] text-slate-400">
+          {formatarData(confronto.data)}
+          {formatarHora(confronto.data) !== '00:00' ? ` ${formatarHora(confronto.data)}` : ''}
+          {confronto.status === 'A_DEFINIR' ? ' · adversário a definir' : ''}
+        </p>
+      )}
 
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -406,9 +431,15 @@ function CardMataMata({ confronto }) {
         <LinhaJogo rotulo="Volta" jogo={confronto.volta} />
         <p className="text-xs text-slate-300">
           <span className="text-slate-500">Agregado:</span>{' '}
-          <span className="font-bold text-white tabular-nums">{confronto.agregado.timeA}</span>
-          <span className="text-slate-500"> x </span>
-          <span className="font-bold text-white tabular-nums">{confronto.agregado.timeB}</span>
+          {confronto.agregado.timeA == null || confronto.agregado.timeB == null ? (
+            <span className="italic text-slate-500">a definir</span>
+          ) : (
+            <>
+              <span className="font-bold text-white tabular-nums">{confronto.agregado.timeA}</span>
+              <span className="text-slate-500"> x </span>
+              <span className="font-bold text-white tabular-nums">{confronto.agregado.timeB}</span>
+            </>
+          )}
         </p>
       </div>
     </div>

@@ -13,6 +13,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 MATCHES_PATH = os.path.join(BASE_DIR, '../src/data/matches.json')
 LIBERTADORES_PATH = os.path.join(BASE_DIR, '../src/data/libertadores.json')
+CLASSIFICACAO_LIB_PATH = os.path.join(BASE_DIR, '../src/data/classificacaoLibertadores.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
@@ -375,109 +376,217 @@ def save_json(data, caminho=JSON_PATH):
     log('SUCCESS', f'Arquivo atualizado em: {caminho}')
 
 
-def montar_libertadores_base():
-    confrontos = [
-        {
-            'id': 'oitavas-flamengo-river-plate',
+def _iso_data_libertadores(dia, mes, hora):
+    if not dia or not mes:
+        return None
+    hh, mm = '00', '00'
+    if hora:
+        m = re.search(r'(\d{1,2}):(\d{2})', hora)
+        if m:
+            hh = m.group(1).zfill(2)
+            mm = m.group(2)
+    return f'{TEMPORADA}-{mes:02d}-{dia:02d}T{hh}:{mm}:00-03:00'
+
+
+def obter_libertadores_wikipedia():
+    """Fonte: seção 'Copa Libertadores da América' da Wikipédia (Flamengo 2026)."""
+    resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, 'html.parser')
+
+    secao = None
+    for h in soup.find_all('h3'):
+        if 'Libertadores' in h.get_text():
+            secao = h
+            break
+    if secao is None:
+        raise RuntimeError('Seção "Copa Libertadores" não encontrada na Wikipédia.')
+
+    tabelas = []
+    node = secao.find_next()
+    while node:
+        if node.name in ('h2', 'h3') and node is not secao:
+            break
+        if node.name == 'table':
+            tabelas.append(node)
+        node = node.find_next()
+
+    grupo = []
+    for t in tabelas:
+        cab = t.get_text(' ', strip=True)
+        if 'Pos' in cab and 'Equipe' in cab and 'Classificado' in cab:
+            for tr in t.find_all('tr')[1:]:
+                cells = [c.get_text(' ', strip=True) for c in tr.find_all(['td', 'th'])]
+                if len(cells) < 11:
+                    continue
+                try:
+                    pos = int(cells[0])
+                    pontos = int(cells[2])
+                    jogos = int(cells[3])
+                    v = int(cells[4])
+                    e = int(cells[5])
+                    d = int(cells[6])
+                except ValueError:
+                    continue
+                nome = NOMES_EXIBICAO.get(normalizar(cells[1]), cells[1].strip())
+                sg = cells[9].replace('+', '').replace('−', '-').replace('−', '-')
+                try:
+                    saldo = int(sg)
+                except ValueError:
+                    saldo = 0
+                grupo.append({
+                    'posicao': pos, 'time': nome, 'pontos': pontos, 'jogos': jogos,
+                    'vitorias': v, 'empates': e, 'derrotas': d, 'saldoGols': saldo,
+                })
+            break
+
+    jogos = []
+    for t in tabelas:
+        if 'collapsible' not in (t.get('class') or []):
+            continue
+        linhas = t.find_all('tr')
+        if len(linhas) < 2:
+            continue
+        primeira = [c.get_text(' ', strip=True) for c in linhas[0].find_all(['td', 'th'])]
+        if len(primeira) < 4:
+            continue
+        cabecalho = primeira[0]
+        rodada = 'Ida' if 'Ida' in cabecalho else ('Volta' if 'Volta' in cabecalho else '')
+        if rodada not in ('Ida', 'Volta'):
+            continue
+        mandante = primeira[1].strip()
+        visitante = primeira[3].strip()
+        gm, gv = _extrair_placar(primeira[2])
+        m = re.match(r'(\d{1,2})\s+de\s+([a-zçãõéíúá]+)', cabecalho, re.I)
+        if not m:
+            continue
+        dia = int(m.group(1))
+        mes = MESES.get(m.group(2).lower())
+        if not mes:
+            continue
+        segunda = [c.get_text(' ', strip=True) for c in linhas[1].find_all(['td', 'th'])]
+        hora = segunda[0] if segunda else ''
+        jogos.append({
+            'rodada': rodada, 'mandante': mandante, 'visitante': visitante,
+            'golsMandante': gm, 'golsVisitante': gv, 'dia': dia, 'mes': mes, 'hora': hora,
+        })
+
+    confrontos = _agrupar_confrontos_libertadores(jogos)
+    return grupo, confrontos
+
+
+def _agrupar_confrontos_libertadores(jogos):
+    por_par = {}
+    for j in jogos:
+        if 'flamengo' not in (normalizar(j['mandante']), normalizar(j['visitante'])):
+            continue
+        par = frozenset([normalizar(j['mandante']), normalizar(j['visitante'])])
+        por_par.setdefault(par, []).append(j)
+
+    confrontos = []
+    for par, lista in por_par.items():
+        ida = next((x for x in lista if x['rodada'] == 'Ida'), None)
+        volta = next((x for x in lista if x['rodada'] == 'Volta'), None)
+        if not ida and not volta:
+            continue
+        adv_norm = normalizar(ida['mandante']) if ida else normalizar(volta['mandante'])
+        if adv_norm == 'flamengo':
+            adv_norm = normalizar(ida['visitante']) if ida else normalizar(volta['visitante'])
+        adv_nome = NOMES_EXIBICAO.get(
+            adv_norm, 'A definir' if adv_norm == 'a definir' else adv_norm.replace('-', ' ').title()
+        )
+
+        def leg(g):
+            if not g:
+                return None
+            return {
+                'casa': g['mandante'], 'fora': g['visitante'],
+                'placarCasa': g['golsMandante'], 'placarFora': g['golsVisitante'],
+                'data': _iso_data_libertadores(g['dia'], g['mes'], g['hora']),
+            }
+
+        ida_leg = leg(ida)
+        volta_leg = leg(volta)
+
+        def fla(g):
+            if not g:
+                return None
+            return g['golsMandante'] if normalizar(g['mandante']) == 'flamengo' else g['golsVisitante']
+
+        def adv(g):
+            if not g:
+                return None
+            return g['golsVisitante'] if normalizar(g['mandante']) == 'flamengo' else g['golsMandante']
+
+        def somar(a, b):
+            return None if (a is None or b is None) else a + b
+
+        gA = somar(fla(ida), fla(volta))
+        gB = somar(adv(ida), adv(volta))
+
+        if gA is None or gB is None:
+            status = 'A_DEFINIR'
+            classificado = None
+        else:
+            status = 'DEFINIDO'
+            classificado = 'Flamengo' if gA > gB else (adv_nome if gB > gA else None)
+
+        data = None
+        for lg in (ida_leg, volta_leg):
+            if lg and lg['placarCasa'] is None:
+                data = lg['data']
+                break
+        if data is None and volta_leg:
+            data = volta_leg['data']
+        if data is None and ida_leg:
+            data = ida_leg['data']
+
+        mes_ref = (ida['mes'] if ida else (volta['mes'] if volta else 8))
+        fase = 'Oitavas de Final' if mes_ref <= 8 else 'Quartas de Final'
+
+        confrontos.append({
+            'id': f"{fase.lower().replace(' ', '-')}-flamengo-{adv_norm.replace(' ', '-')}",
             'timeA': 'Flamengo',
-            'timeB': 'River Plate',
-            'ida': {'casa': 'Flamengo', 'fora': 'River Plate', 'placarCasa': 2, 'placarFora': 0},
-            'volta': {'casa': 'River Plate', 'fora': 'Flamengo', 'placarCasa': 1, 'placarFora': 1},
-            'agregado': {'timeA': 3, 'timeB': 1},
-            'classificado': 'Flamengo',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-palmeiras-penarol',
-            'timeA': 'Palmeiras',
-            'timeB': 'Peñarol',
-            'ida': {'casa': 'Palmeiras', 'fora': 'Peñarol', 'placarCasa': 3, 'placarFora': 0},
-            'volta': {'casa': 'Peñarol', 'fora': 'Palmeiras', 'placarCasa': 0, 'placarFora': 2},
-            'agregado': {'timeA': 5, 'timeB': 0},
-            'classificado': 'Palmeiras',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-athletico-nacional',
-            'timeA': 'Athletico Paranaense',
-            'timeB': 'Nacional',
-            'ida': {'casa': 'Athletico Paranaense', 'fora': 'Nacional', 'placarCasa': 1, 'placarFora': 0},
-            'volta': {'casa': 'Nacional', 'fora': 'Athletico Paranaense', 'placarCasa': 0, 'placarFora': 1},
-            'agregado': {'timeA': 2, 'timeB': 0},
-            'classificado': 'Athletico Paranaense',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-fluminense-libertad',
-            'timeA': 'Fluminense',
-            'timeB': 'Libertad',
-            'ida': {'casa': 'Fluminense', 'fora': 'Libertad', 'placarCasa': 2, 'placarFora': 1},
-            'volta': {'casa': 'Libertad', 'fora': 'Fluminense', 'placarCasa': 0, 'placarFora': 1},
-            'agregado': {'timeA': 3, 'timeB': 1},
-            'classificado': 'Fluminense',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-cruzeiro-bolivar',
-            'timeA': 'Cruzeiro',
-            'timeB': 'Bolívar',
-            'ida': {'casa': 'Cruzeiro', 'fora': 'Bolívar', 'placarCasa': 4, 'placarFora': 0},
-            'volta': {'casa': 'Bolívar', 'fora': 'Cruzeiro', 'placarCasa': 1, 'placarFora': 2},
-            'agregado': {'timeA': 6, 'timeB': 1},
-            'classificado': 'Cruzeiro',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-internacional-boca',
-            'timeA': 'Internacional',
-            'timeB': 'Boca Juniors',
-            'ida': {'casa': 'Internacional', 'fora': 'Boca Juniors', 'placarCasa': 1, 'placarFora': 1},
-            'volta': None,
-            'agregado': {'timeA': 1, 'timeB': 1},
-            'classificado': None,
-            'status': 'EM_ANDAMENTO',
-        },
-        {
-            'id': 'oitavas-sao-paulo-olimpia',
-            'timeA': 'São Paulo',
-            'timeB': 'Olimpia',
-            'ida': {'casa': 'São Paulo', 'fora': 'Olimpia', 'placarCasa': 2, 'placarFora': 0},
-            'volta': {'casa': 'Olimpia', 'fora': 'São Paulo', 'placarCasa': 0, 'placarFora': 1},
-            'agregado': {'timeA': 3, 'timeB': 0},
-            'classificado': 'São Paulo',
-            'status': 'DEFINIDO',
-        },
-        {
-            'id': 'oitavas-botafogo-gremio',
-            'timeA': 'Botafogo',
-            'timeB': 'Grêmio',
-            'ida': {'casa': 'Botafogo', 'fora': 'Grêmio', 'placarCasa': 1, 'placarFora': 0},
-            'volta': {'casa': 'Grêmio', 'fora': 'Botafogo', 'placarCasa': 0, 'placarFora': 2},
-            'agregado': {'timeA': 3, 'timeB': 0},
-            'classificado': 'Botafogo',
-            'status': 'DEFINIDO',
-        },
-    ]
-    return {
-        'fase': 'Oitavas de Final',
-        'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
-        'confrontos': confrontos,
-    }
+            'timeB': adv_nome,
+            'fase': fase,
+            'data': data,
+            'ida': ida_leg,
+            'volta': volta_leg,
+            'agregado': {'timeA': gA, 'timeB': gB},
+            'classificado': classificado,
+            'status': status,
+        })
+    return confrontos
 
 
 def atualizar_libertadores():
-    base = montar_libertadores_base()
-    existentes = carregar_existentes(LIBERTADORES_PATH)
-    if existentes and isinstance(existentes.get('confrontos'), list):
-        por_id = {c['id']: c for c in existentes['confrontos'] if isinstance(c, dict) and 'id' in c}
-        for confronto in base['confrontos']:
-            if confronto['id'] in por_id:
-                confronto.update(por_id[confronto['id']])
-        if existentes.get('fase'):
-            base['fase'] = existentes['fase']
-    save_json(base, LIBERTADORES_PATH)
-    log('SUCCESS', f"{len(base['confrontos'])} confronto(s) de mata-mata registrados (fase: {base['fase']}).")
-    return base
+    grupo, confrontos = None, None
+    try:
+        grupo, confrontos = obter_libertadores_wikipedia()
+    except Exception as e:
+        log('WARN', f'Fonte da Libertadores indisponível ({e}); usando dados existentes.')
+
+    if grupo:
+        save_json([{'grupo': 'Fase de Grupos', 'classificacao': grupo}], CLASSIFICACAO_LIB_PATH)
+        log('SUCCESS', f'{len(grupo)} times na fase de grupos da Libertadores.')
+    else:
+        existentes = carregar_existentes(CLASSIFICACAO_LIB_PATH)
+        if existentes:
+            save_json(existentes, CLASSIFICACAO_LIB_PATH)
+
+    if confrontos:
+        dados = {
+            'fase': 'Copa Libertadores 2026',
+            'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+            'confrontos': confrontos,
+        }
+        save_json(dados, LIBERTADORES_PATH)
+        log('SUCCESS', f'{len(confrontos)} confronto(s) de mata-mata registrados.')
+    else:
+        existentes = carregar_existentes(LIBERTADORES_PATH)
+        if existentes:
+            save_json(existentes, LIBERTADORES_PATH)
+    return confrontos
 
 
 if __name__ == "__main__":
