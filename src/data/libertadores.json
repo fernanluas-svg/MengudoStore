@@ -1,0 +1,185 @@
+{
+  "fase": "Oitavas de Final",
+  "atualizadoEm": "2026-08-21",
+  "confrontos": [
+    {
+      "id": "oitavas-flamengo-river-plate",
+      "timeA": "Flamengo",
+      "timeB": "River Plate",
+      "ida": {
+        "casa": "Flamengo",
+        "fora": "River Plate",
+        "placarCasa": 2,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "River Plate",
+        "fora": "Flamengo",
+        "placarCasa": 1,
+        "placarFora": 1
+      },
+      "agregado": {
+        "timeA": 3,
+        "timeB": 1
+      },
+      "classificado": "Flamengo",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-palmeiras-penarol",
+      "timeA": "Palmeiras",
+      "timeB": "Peñarol",
+      "ida": {
+        "casa": "Palmeiras",
+        "fora": "Peñarol",
+        "placarCasa": 3,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "Peñarol",
+        "fora": "Palmeiras",
+        "placarCasa": 0,
+        "placarFora": 2
+      },
+      "agregado": {
+        "timeA": 5,
+        "timeB": 0
+      },
+      "classificado": "Palmeiras",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-athletico-nacional",
+      "timeA": "Athletico Paranaense",
+      "timeB": "Nacional",
+      "ida": {
+        "casa": "Athletico Paranaense",
+        "fora": "Nacional",
+        "placarCasa": 1,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "Nacional",
+        "fora": "Athletico Paranaense",
+        "placarCasa": 0,
+        "placarFora": 1
+      },
+      "agregado": {
+        "timeA": 2,
+        "timeB": 0
+      },
+      "classificado": "Athletico Paranaense",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-fluminense-libertad",
+      "timeA": "Fluminense",
+      "timeB": "Libertad",
+      "ida": {
+        "casa": "Fluminense",
+        "fora": "Libertad",
+        "placarCasa": 2,
+        "placarFora": 1
+      },
+      "volta": {
+        "casa": "Libertad",
+        "fora": "Fluminense",
+        "placarCasa": 0,
+        "placarFora": 1
+      },
+      "agregado": {
+        "timeA": 3,
+        "timeB": 1
+      },
+      "classificado": "Fluminense",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-cruzeiro-bolivar",
+      "timeA": "Cruzeiro",
+      "timeB": "Bolívar",
+      "ida": {
+        "casa": "Cruzeiro",
+        "fora": "Bolívar",
+        "placarCasa": 4,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "Bolívar",
+        "fora": "Cruzeiro",
+        "placarCasa": 1,
+        "placarFora": 2
+      },
+      "agregado": {
+        "timeA": 6,
+        "timeB": 1
+      },
+      "classificado": "Cruzeiro",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-internacional-boca",
+      "timeA": "Internacional",
+      "timeB": "Boca Juniors",
+      "ida": {
+        "casa": "Internacional",
+        "fora": "Boca Juniors",
+        "placarCasa": 1,
+        "placarFora": 1
+      },
+      "volta": null,
+      "agregado": {
+        "timeA": 1,
+        "timeB": 1
+      },
+      "classificado": null,
+      "status": "EM_ANDAMENTO"
+    },
+    {
+      "id": "oitavas-sao-paulo-olimpia",
+      "timeA": "São Paulo",
+      "timeB": "Olimpia",
+      "ida": {
+        "casa": "São Paulo",
+        "fora": "Olimpia",
+        "placarCasa": 2,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "Olimpia",
+        "fora": "São Paulo",
+        "placarCasa": 0,
+        "placarFora": 1
+      },
+      "agregado": {
+        "timeA": 3,
+        "timeB": 0
+      },
+      "classificado": "São Paulo",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "oitavas-botafogo-gremio",
+      "timeA": "Botafogo",
+      "timeB": "Grêmio",
+      "ida": {
+        "casa": "Botafogo",
+        "fora": "Grêmio",
+        "placarCasa": 1,
+        "placarFora": 0
+      },
+      "volta": {
+        "casa": "Grêmio",
+        "fora": "Botafogo",
+        "placarCasa": 0,
+        "placarFora": 2
+      },
+      "agregado": {
+        "timeA": 3,
+        "timeB": 0
+      },
+      "classificado": "Botafogo",
+      "status": "DEFINIDO"
+    }
+  ]
+}

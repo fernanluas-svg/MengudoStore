@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 MATCHES_PATH = os.path.join(BASE_DIR, '../src/data/matches.json')
+LIBERTADORES_PATH = os.path.join(BASE_DIR, '../src/data/libertadores.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
@@ -374,6 +375,112 @@ def save_json(data, caminho=JSON_PATH):
     log('SUCCESS', f'Arquivo atualizado em: {caminho}')
 
 
+def montar_libertadores_base():
+    confrontos = [
+        {
+            'id': 'oitavas-flamengo-river-plate',
+            'timeA': 'Flamengo',
+            'timeB': 'River Plate',
+            'ida': {'casa': 'Flamengo', 'fora': 'River Plate', 'placarCasa': 2, 'placarFora': 0},
+            'volta': {'casa': 'River Plate', 'fora': 'Flamengo', 'placarCasa': 1, 'placarFora': 1},
+            'agregado': {'timeA': 3, 'timeB': 1},
+            'classificado': 'Flamengo',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-palmeiras-penarol',
+            'timeA': 'Palmeiras',
+            'timeB': 'Peñarol',
+            'ida': {'casa': 'Palmeiras', 'fora': 'Peñarol', 'placarCasa': 3, 'placarFora': 0},
+            'volta': {'casa': 'Peñarol', 'fora': 'Palmeiras', 'placarCasa': 0, 'placarFora': 2},
+            'agregado': {'timeA': 5, 'timeB': 0},
+            'classificado': 'Palmeiras',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-athletico-nacional',
+            'timeA': 'Athletico Paranaense',
+            'timeB': 'Nacional',
+            'ida': {'casa': 'Athletico Paranaense', 'fora': 'Nacional', 'placarCasa': 1, 'placarFora': 0},
+            'volta': {'casa': 'Nacional', 'fora': 'Athletico Paranaense', 'placarCasa': 0, 'placarFora': 1},
+            'agregado': {'timeA': 2, 'timeB': 0},
+            'classificado': 'Athletico Paranaense',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-fluminense-libertad',
+            'timeA': 'Fluminense',
+            'timeB': 'Libertad',
+            'ida': {'casa': 'Fluminense', 'fora': 'Libertad', 'placarCasa': 2, 'placarFora': 1},
+            'volta': {'casa': 'Libertad', 'fora': 'Fluminense', 'placarCasa': 0, 'placarFora': 1},
+            'agregado': {'timeA': 3, 'timeB': 1},
+            'classificado': 'Fluminense',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-cruzeiro-bolivar',
+            'timeA': 'Cruzeiro',
+            'timeB': 'Bolívar',
+            'ida': {'casa': 'Cruzeiro', 'fora': 'Bolívar', 'placarCasa': 4, 'placarFora': 0},
+            'volta': {'casa': 'Bolívar', 'fora': 'Cruzeiro', 'placarCasa': 1, 'placarFora': 2},
+            'agregado': {'timeA': 6, 'timeB': 1},
+            'classificado': 'Cruzeiro',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-internacional-boca',
+            'timeA': 'Internacional',
+            'timeB': 'Boca Juniors',
+            'ida': {'casa': 'Internacional', 'fora': 'Boca Juniors', 'placarCasa': 1, 'placarFora': 1},
+            'volta': None,
+            'agregado': {'timeA': 1, 'timeB': 1},
+            'classificado': None,
+            'status': 'EM_ANDAMENTO',
+        },
+        {
+            'id': 'oitavas-sao-paulo-olimpia',
+            'timeA': 'São Paulo',
+            'timeB': 'Olimpia',
+            'ida': {'casa': 'São Paulo', 'fora': 'Olimpia', 'placarCasa': 2, 'placarFora': 0},
+            'volta': {'casa': 'Olimpia', 'fora': 'São Paulo', 'placarCasa': 0, 'placarFora': 1},
+            'agregado': {'timeA': 3, 'timeB': 0},
+            'classificado': 'São Paulo',
+            'status': 'DEFINIDO',
+        },
+        {
+            'id': 'oitavas-botafogo-gremio',
+            'timeA': 'Botafogo',
+            'timeB': 'Grêmio',
+            'ida': {'casa': 'Botafogo', 'fora': 'Grêmio', 'placarCasa': 1, 'placarFora': 0},
+            'volta': {'casa': 'Grêmio', 'fora': 'Botafogo', 'placarCasa': 0, 'placarFora': 2},
+            'agregado': {'timeA': 3, 'timeB': 0},
+            'classificado': 'Botafogo',
+            'status': 'DEFINIDO',
+        },
+    ]
+    return {
+        'fase': 'Oitavas de Final',
+        'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+        'confrontos': confrontos,
+    }
+
+
+def atualizar_libertadores():
+    base = montar_libertadores_base()
+    existentes = carregar_existentes(LIBERTADORES_PATH)
+    if existentes and isinstance(existentes.get('confrontos'), list):
+        por_id = {c['id']: c for c in existentes['confrontos'] if isinstance(c, dict) and 'id' in c}
+        for confronto in base['confrontos']:
+            if confronto['id'] in por_id:
+                confronto.update(por_id[confronto['id']])
+        if existentes.get('fase'):
+            base['fase'] = existentes['fase']
+    save_json(base, LIBERTADORES_PATH)
+    log('SUCCESS', f"{len(base['confrontos'])} confronto(s) de mata-mata registrados (fase: {base['fase']}).")
+    return base
+
+
 if __name__ == "__main__":
     log('INFO', 'Iniciando atualização da agenda de jogos...')
     atualizar_agenda()
+    atualizar_libertadores()

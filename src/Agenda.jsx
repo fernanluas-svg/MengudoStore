@@ -4,6 +4,7 @@ import proximosJogos from './data/nextMatch.json';
 import jogosEncerrados from './data/matches.json';
 import classificacaoBrasileirao from './data/classificacaoBrasileirao.json';
 import classificacaoLibertadores from './data/classificacaoLibertadores.json';
+import libertadores from './data/libertadores.json';
 import { FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
 import { RiTrophyLine } from 'react-icons/ri';
 
@@ -255,6 +256,111 @@ function CardResultados() {
   );
 }
 
+function LinhaJogo({ rotulo, jogo }) {
+  if (!jogo) {
+    return (
+      <p className="text-xs text-slate-300">
+        <span className="text-slate-500">{rotulo}:</span>{' '}
+        <span className="italic text-slate-500">a definir</span>
+      </p>
+    );
+  }
+  return (
+    <p className="text-xs text-slate-300">
+      <span className="text-slate-500">{rotulo}:</span> {jogo.casa}{' '}
+      <span className="font-bold text-white tabular-nums">{jogo.placarCasa}</span>
+      <span className="text-slate-500"> x </span>
+      <span className="font-bold text-white tabular-nums">{jogo.placarFora}</span>{' '}
+      {jogo.fora}
+    </p>
+  );
+}
+
+function CardMataMata({ confronto }) {
+  const flamengoNoJogo = confronto.timeA === 'Flamengo' || confronto.timeB === 'Flamengo';
+  let badge;
+  if (flamengoNoJogo) {
+    if (confronto.status === 'EM_ANDAMENTO') {
+      badge = { texto: 'Em andamento', cor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' };
+    } else if (confronto.classificado === 'Flamengo') {
+      badge = { texto: 'Classificado', cor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' };
+    } else {
+      badge = { texto: 'Eliminado', cor: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
+    }
+  } else if (confronto.status === 'EM_ANDAMENTO') {
+    badge = { texto: 'Em andamento', cor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' };
+  } else {
+    badge = {
+      texto: `Classificado: ${confronto.classificado}`,
+      cor: 'bg-slate-600/30 text-slate-300 border-slate-500/40',
+    };
+  }
+
+  const destaqueA = confronto.timeA === 'Flamengo';
+  const destaqueB = confronto.timeB === 'Flamengo';
+
+  return (
+    <div
+      className={`rounded-xl border p-4 flex flex-col gap-3 bg-slate-950/60 ${
+        flamengoNoJogo ? 'border-red-500/60 ring-1 ring-red-500/40' : 'border-slate-800'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+          Mata-mata
+        </span>
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${badge.cor}`}
+        >
+          {badge.texto}
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <EscudoJogo src={LOGOS_TIMES[confronto.timeA]} fallback={null} nome={confronto.timeA} className="w-7 h-7 shrink-0" />
+          <span className={`text-sm font-bold truncate ${destaqueA ? 'text-red-300' : 'text-white'}`}>
+            {confronto.timeA}
+          </span>
+        </div>
+        <span className="text-[10px] text-slate-500 font-semibold px-1">VS</span>
+        <div className="flex items-center gap-2 min-w-0 flex-1 justify-end">
+          <span className={`text-sm font-bold truncate ${destaqueB ? 'text-red-300' : 'text-white'}`}>
+            {confronto.timeB}
+          </span>
+          <EscudoJogo src={LOGOS_TIMES[confronto.timeB]} fallback={null} nome={confronto.timeB} className="w-7 h-7 shrink-0" />
+        </div>
+      </div>
+
+      <div className="space-y-1 border-t border-slate-800 pt-2">
+        <LinhaJogo rotulo="Ida" jogo={confronto.ida} />
+        <LinhaJogo rotulo="Volta" jogo={confronto.volta} />
+        <p className="text-xs text-slate-300">
+          <span className="text-slate-500">Agregado:</span>{' '}
+          <span className="font-bold text-white tabular-nums">{confronto.agregado.timeA}</span>
+          <span className="text-slate-500"> x </span>
+          <span className="font-bold text-white tabular-nums">{confronto.agregado.timeB}</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ChaveMataMata({ dados }) {
+  return (
+    <div>
+      <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
+        {dados.fase}
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {dados.confrontos.map((c) => (
+          <CardMataMata key={c.id} confronto={c} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TabelaClassificacao({ linhas }) {
   return (
     <div className="overflow-x-auto">
@@ -348,6 +454,7 @@ function CardClassificacao() {
         <TabelaClassificacao linhas={classificacaoBrasileirao} />
       ) : (
         <div className="space-y-5">
+          <ChaveMataMata dados={libertadores} />
           {classificacaoLibertadores.map((grupo) => (
             <div key={grupo.grupo}>
               <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
