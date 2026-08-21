@@ -164,6 +164,24 @@ def _extrair_array_json(texto, idx):
 # FONTE PRIMÁRIA: Flashscore / Casas de Apostas (Selenium)
 # ---------------------------------------------------------------------------
 
+CAMINHOS_CHROME = [
+    r'C:\Program Files\Google\Chrome\Application\chrome.exe',
+    r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+]
+
+
+def localizar_chrome():
+    """Tenta localizar o executável do Chrome em caminhos alternativos do
+    Windows. Retorna o caminho encontrado ou None (Selenium usará o padrão)."""
+    for caminho in CAMINHOS_CHROME:
+        if caminho and os.path.isfile(caminho):
+            return caminho
+    return None
+
+
 def _iniciar_driver_flashscore():
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service
@@ -175,6 +193,9 @@ def _iniciar_driver_flashscore():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-blink-features=AutomationControlled')
     options.add_experimental_option('useAutomationExtension', False)
+    chrome = localizar_chrome()
+    if chrome:
+        options.binary_location = chrome
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
 

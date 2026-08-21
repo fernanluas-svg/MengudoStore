@@ -26,6 +26,23 @@ CSV_PATH = os.path.join(BASE_DIR, '../src/data/odds.csv')
 FLAMENGO = 'Flamengo'
 PREFER_BOOKMAKERS = ['bet365', 'betfair']
 
+CAMINHOS_CHROME = [
+    r'C:\Program Files\Google\Chrome\Application\chrome.exe',
+    r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+]
+
+
+def localizar_chrome():
+    """Tenta localizar o executável do Chrome em caminhos alternativos do
+    Windows. Retorna o caminho encontrado ou None (Selenium usará o padrão)."""
+    for caminho in CAMINHOS_CHROME:
+        if caminho and os.path.isfile(caminho):
+            return caminho
+    return None
+
 
 def log(nivel, msg):
     print(f'[{nivel}] {msg}')
@@ -86,6 +103,9 @@ def raspar_flashscore(jogos):
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option('useAutomationExtension', False)
+        chrome = localizar_chrome()
+        if chrome:
+            options.binary_location = chrome
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
     except Exception as e:
