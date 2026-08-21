@@ -411,9 +411,8 @@ def _leg_libertadores(raw):
     }
 
 
-def obter_libertadores_ge():
-    """Fallback oficial para o chaveamento da Libertadores: raspa o JSON
-    embutido na página do ge.globo (estrutura 'secao' -> 'chave' -> 'jogos')."""
+def _secao_libertadores_ge():
+    """Retorna a lista 'secao' (chaves/jogos) embutida na página do GE."""
     resp = requests.get(GE_LIBERTADORES_URL, headers=HEADERS, timeout=30)
     resp.raise_for_status()
     t = resp.text
@@ -423,7 +422,109 @@ def obter_libertadores_ge():
     arr = _extrair_array_json(t, i + len('"secao":'))
     if not arr:
         raise RuntimeError('Não foi possível extrair o bloco "secao" do GE.')
-    secao = json.loads(arr)
+    return json.loads(arr)
+
+
+def obter_jogos_libertadores_flashscore():
+    """Fonte primária para as partidas da Libertadores via Flashscore.
+    Best-effort: retorna [] se não houver navegador/rede disponível."""
+    try:
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        from bs4 import BeautifulSoup
+    except Exception as e:
+        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+        return []
+    try:
+        driver = _iniciar_driver_flashscore()
+    except Exception as e:
+        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {type(e).__name__}')
+        return []
+    try:
+        driver.get('https://www.flashscore.com/football/copa-libertadores/')
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
+        )
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        jogos = []
+        for elem in soup.select('div.event__match'):
+            cols = elem.select('div.event__participant, span.event__time')
+            if len(cols) < 3:
+                continue
+            mandante = normalizar(cols[0].get_text(' ', strip=True))
+            visitante = normalizar(cols[1].get_text(' ', strip=True))
+            if 'flamengo' not in (mandante, visitante):
+                continue
+            texto_tempo = cols[2].get_text(' ', strip=True)
+            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
+            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
+            if not mdata:
+                continue
+            dia, mes = int(mdata.group(1)), int(mdata.group(2))
+            ano = int(mdata.group(3))
+            if ano < 100:
+                ano += 2000
+            hora = mhora.group(0) if mhora else '00:00'
+            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
+            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
+            jogos.append({
+                'data': iso,
+                'mandante': mandante,
+                'visitante': visitante,
+                'gols_mandante': gols_m,
+                'gols_visitante': gols_v,
+                'estadio': 'A definir',
+                'escudo_mandante': None,
+                'escudo_visitante': None,
+                'competition': 'Libertadores',
+            })
+        return jogos
+    except Exception as e:
+        log('ERROR', f'Falha no scraping da Libertadores no Flashscore: {type(e).__name__}')
+        return []
+    finally:
+        driver.quit()
+
+
+def obter_jogos_libertadores_ge():
+    """Fallback oficial: extrai as partidas (mandante, visitante, placar, data)
+    do Flamengo em todas as fases da Libertadores a partir do JSON embutido na
+    página do ge.globo. Retorna partidas no formato interno do consolidador de
+    agenda, com competition='Libertadores'."""
+    secao = _secao_libertadores_ge()
+    jogos = []
+    for item in secao:
+        for chave in item.get('chave', []):
+            for raw in chave.get('jogos', []):
+                equipes = raw.get('equipes') or {}
+                mandante = normalizar((equipes.get('mandante') or {}).get('nome_popular', ''))
+                visitante = normalizar((equipes.get('visitante') or {}).get('nome_popular', ''))
+                if 'flamengo' not in (mandante, visitante):
+                    continue
+                data = raw.get('data_realizacao')
+                hora = raw.get('hora_realizacao') or '00:00'
+                sede = raw.get('sede') or {}
+                jogos.append({
+                    'data': f'{data}T{hora}:00-03:00' if data else None,
+                    'mandante': mandante,
+                    'visitante': visitante,
+                    'gols_mandante': raw.get('placar_oficial_mandante'),
+                    'gols_visitante': raw.get('placar_oficial_visitante'),
+                    'estadio': sede.get('nome_popular') or 'A definir',
+                    'escudo_mandante': (equipes.get('mandante') or {}).get('escudo'),
+                    'escudo_visitante': (equipes.get('visitante') or {}).get('escudo'),
+                    'competition': 'Libertadores',
+                })
+    if not jogos:
+        raise RuntimeError('Nenhuma partida do Flamengo encontrada no GE.')
+    return jogos
+
+
+def obter_libertadores_ge():
+    """Fallback oficial para o chaveamento da Libertadores: raspa o JSON
+    embutido na página do ge.globo (estrutura 'secao' -> 'chave' -> 'jogos')."""
+    secao = _secao_libertadores_ge()
 
     confrontos = []
     for item in secao:
@@ -525,7 +626,7 @@ def montar_entrada_historica(partida):
         'isHome': isHome,
         'date': partida['data'],
         'stadium': partida['estadio'],
-        'competition': 'Brasileirão',
+        'competition': partida.get('competition', 'Brasileirão'),
         'status': 'FINISHED',
         'homeScore': homeScore,
         'awayScore': awayScore,
@@ -541,21 +642,40 @@ def atualizar_agenda():
     Se nenhuma fonte responder, reaproveita os arquivos existentes.
     """
     base = fetch_and_format_matches()
-    partidas = None
+    partidas_br = None
     origem = None
 
     try:
-        partidas = obter_partidas_flashscore()
+        partidas_br = obter_partidas_flashscore()
     except Exception as e:
         log('WARN', f'Fonte primária (Flashscore) indisponível: {e}')
 
-    if not partidas:
+    if not partidas_br:
         try:
-            partidas = obter_partidas_ge()
+            partidas_br = obter_partidas_ge()
             origem = 'GE (fallback)'
         except Exception as e2:
             log('ERROR', f'Fallback (GE) indisponível: {e2}')
-            partidas = None
+            partidas_br = None
+
+    # Libertadores (todas as fases com o Flamengo) — primário Flashscore, fallback GE
+    partidas_lib = None
+    try:
+        partidas_lib = obter_jogos_libertadores_flashscore()
+    except Exception as e:
+        log('WARN', f'Fonte primária (Flashscore) indisponível: {e}')
+
+    if not partidas_lib:
+        try:
+            partidas_lib = obter_jogos_libertadores_ge()
+            if origem is None:
+                origem = 'GE (fallback)'
+        except Exception as e2:
+            log('WARN', f'Fallback (GE/Libertadores) indisponível: {e2}')
+            partidas_lib = None
+
+    # Unifica todas as competições (Brasileirão + Libertadores + futuras fontes)
+    partidas = list(partidas_br or []) + list(partidas_lib or [])
 
     if partidas:
         historico = [
