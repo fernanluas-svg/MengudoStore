@@ -1,15 +1,15 @@
 [
   {
-    "id": "2026-08-19-bahia",
-    "opponent": "Bahia",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg",
+    "id": "2026-08-19-cruzeiro",
+    "opponent": "Cruzeiro",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/cruzeiro.svg",
     "isHome": true,
     "date": "2026-08-19T21:30:00-03:00",
     "stadium": "Maracanã",
-    "competition": "Brasileirão",
+    "competition": "Libertadores",
     "status": "FINISHED",
     "homeScore": 2,
-    "awayScore": 0
+    "awayScore": 1
   },
   {
     "id": "2026-08-16-mirassol",

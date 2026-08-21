@@ -319,13 +319,14 @@ def atualizar_agenda():
                 continue
             vistos.add(m['id'])
             todas.append(m)
-        # Preserva jogos adicionados manualmente no nextMatch.json (ex.: vitória de ontem)
-        existentes = carregar_existentes()
-        if existentes:
-            for m in existentes:
-                if m['id'] not in vistos:
-                    vistos.add(m['id'])
-                    todas.append(m)
+        # Preserva jogos adicionados manualmente (nextMatch.json e matches.json)
+        for caminho in (JSON_PATH, MATCHES_PATH):
+            extras = carregar_existentes(caminho)
+            if extras:
+                for m in extras:
+                    if m['id'] not in vistos:
+                        vistos.add(m['id'])
+                        todas.append(m)
     else:
         existentes = carregar_existentes()
         if existentes is not None:
@@ -358,9 +359,9 @@ def atualizar_agenda():
     return agenda
 
 
-def carregar_existentes():
+def carregar_existentes(caminho=JSON_PATH):
     try:
-        with open(JSON_PATH, 'r', encoding='utf-8') as f:
+        with open(caminho, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception:
         return None
