@@ -5,6 +5,8 @@ import jogosEncerrados from './data/matches.json';
 import classificacaoBrasileirao from './data/classificacaoBrasileirao.json';
 import classificacaoLibertadores from './data/classificacaoLibertadores.json';
 import libertadores from './data/libertadores.json';
+import copaDoBrasil from './data/copaDoBrasil.json';
+import carioca from './data/carioca.json';
 import odds from './data/odds.json';
 import mapaEscudos from './data/mapa_escudos.json';
 import { FiCalendar, FiMapPin, FiAward, FiTrendingUp } from 'react-icons/fi';
@@ -526,6 +528,8 @@ function CardClassificacao() {
   const abas = [
     { id: 'brasileirao', rotulo: 'Brasileirão' },
     { id: 'libertadores', rotulo: 'Libertadores' },
+    { id: 'copadobrasil', rotulo: 'Copa do Brasil' },
+    { id: 'carioca', rotulo: 'Carioca' },
   ];
 
   return (
@@ -533,10 +537,10 @@ function CardClassificacao() {
       <CabecalhoCard
         icone={<RiTrophyLine className="w-5 h-5" />}
         titulo="Tabela de Classificação"
-        descricao="Brasileirão e Libertadores"
+        descricao="Brasileirão, Libertadores, Copa do Brasil e Carioca"
       />
 
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex items-center gap-2 mb-5 flex-wrap">
         {abas.map((item) => (
           <button
             key={item.id}
@@ -552,9 +556,11 @@ function CardClassificacao() {
         ))}
       </div>
 
-      {aba === 'brasileirao' ? (
+      {aba === 'brasileirao' && (
         <TabelaClassificacao linhas={classificacaoBrasileirao} />
-      ) : (
+      )}
+
+      {aba === 'libertadores' && (
         <div className="space-y-5">
           <ChaveMataMata dados={libertadores} />
           {classificacaoLibertadores.map((grupo) => (
@@ -565,6 +571,25 @@ function CardClassificacao() {
               <TabelaClassificacao linhas={grupo.classificacao} />
             </div>
           ))}
+        </div>
+      )}
+
+      {aba === 'copadobrasil' && (
+        <div className="space-y-5">
+          <ChaveMataMata dados={copaDoBrasil} />
+          <p className="text-xs text-slate-500">
+            Estrutura de mata-mata (ida/volta, agregado e classificado). Times ainda não
+            definidos aparecem como &quot;A definir&quot;.
+          </p>
+        </div>
+      )}
+
+      {aba === 'carioca' && (
+        <div className="space-y-5">
+          <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
+            Taça Guanabara
+          </h3>
+          <TabelaClassificacao linhas={carioca} />
         </div>
       )}
     </div>

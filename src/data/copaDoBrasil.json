@@ -1,0 +1,78 @@
+{
+  "fase": "Copa do Brasil 2026",
+  "atualizadoEm": "2026-08-21",
+  "confrontos": [
+    {
+      "id": "oitavas-de-final-flamengo-internacional",
+      "timeA": "Flamengo",
+      "timeB": "Internacional",
+      "fase": "Oitavas de Final",
+      "data": "2026-08-05T21:30:00-03:00",
+      "ida": {
+        "casa": "internacional",
+        "fora": "flamengo",
+        "placarCasa": 0,
+        "placarFora": 2,
+        "data": "2026-07-29T21:30:00-03:00"
+      },
+      "volta": {
+        "casa": "flamengo",
+        "fora": "internacional",
+        "placarCasa": 3,
+        "placarFora": 1,
+        "data": "2026-08-05T21:30:00-03:00"
+      },
+      "agregado": { "timeA": 5, "timeB": 1 },
+      "classificado": "Flamengo",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "quartas-de-final-flamengo-atletico-mineiro",
+      "timeA": "Flamengo",
+      "timeB": "Atlético Mineiro",
+      "fase": "Quartas de Final",
+      "data": "2026-09-24T21:30:00-03:00",
+      "ida": {
+        "casa": "atletico mineiro",
+        "fora": "flamengo",
+        "placarCasa": 1,
+        "placarFora": 1,
+        "data": "2026-09-17T21:30:00-03:00"
+      },
+      "volta": {
+        "casa": "flamengo",
+        "fora": "atletico mineiro",
+        "placarCasa": 2,
+        "placarFora": 0,
+        "data": "2026-09-24T21:30:00-03:00"
+      },
+      "agregado": { "timeA": 3, "timeB": 1 },
+      "classificado": "Flamengo",
+      "status": "DEFINIDO"
+    },
+    {
+      "id": "semifinal-flamengo-a-definir",
+      "timeA": "Flamengo",
+      "timeB": "A definir",
+      "fase": "Semifinal",
+      "data": "2026-10-14T00:00:00-03:00",
+      "ida": {
+        "casa": "A definir",
+        "fora": "Flamengo",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-10-14T00:00:00-03:00"
+      },
+      "volta": {
+        "casa": "Flamengo",
+        "fora": "A definir",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-10-21T21:30:00-03:00"
+      },
+      "agregado": { "timeA": null, "timeB": null },
+      "classificado": null,
+      "status": "A_DEFINIR"
+    }
+  ]
+}

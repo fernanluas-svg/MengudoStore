@@ -82,7 +82,7 @@ export default function Header() {
           </NavLink>
           <NavLink to="/agenda" className={botaoNavegacao}>
             <FiCalendar className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-            <span className="hidden sm:inline">Agenda de Jogos</span>
+            <span className="hidden sm:inline">Agenda e Jogos</span>
             <span className="sm:hidden">Agenda</span>
           </NavLink>
         </nav>
