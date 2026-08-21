@@ -2,7 +2,7 @@
   {
     "id": "2026-08-22-cruzeiro",
     "opponent": "Cruzeiro",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Cruzeiro_Esporte_Clube_%28logo%29.svg/330px-Cruzeiro_Esporte_Clube_%28logo%29.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg",
     "isHome": false,
     "date": "2026-08-22T20:30:00-03:00",
     "stadium": "Mineirão - Belo Horizonte, MG",
@@ -14,7 +14,7 @@
   {
     "id": "2026-08-30-botafogo",
     "opponent": "Botafogo",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Botafogo_de_Futebol_e_Regatas_logo.svg/330px-Botafogo_de_Futebol_e_Regatas_logo.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg",
     "isHome": true,
     "date": "2026-08-30T16:00:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -26,7 +26,7 @@
   {
     "id": "2026-09-06-remo",
     "opponent": "Remo",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Clube_do_Remo.svg/330px-Clube_do_Remo.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg",
     "isHome": false,
     "date": "2026-09-06T16:00:00-03:00",
     "stadium": "Baenão - Belém, PA",
@@ -38,7 +38,7 @@
   {
     "id": "2026-09-12-corinthians",
     "opponent": "Corinthians",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/b/b4/Corinthians_simbolo.png/330px-Corinthians_simbolo.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg",
     "isHome": true,
     "date": "2026-09-12T16:00:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -50,7 +50,7 @@
   {
     "id": "2026-09-19-red-bull-bragantino",
     "opponent": "Red Bull Bragantino",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/9/9e/RedBullBragantino.png/330px-RedBullBragantino.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg",
     "isHome": true,
     "date": "2026-09-19T16:00:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -62,7 +62,7 @@
   {
     "id": "2026-10-07-santos",
     "opponent": "Santos",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Santos_Futebol_Clube_logo_%28with_stars_and_crown%29.png/330px-Santos_Futebol_Clube_logo_%28with_stars_and_crown%29.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg",
     "isHome": false,
     "date": "2026-10-07T21:30:00-03:00",
     "stadium": "Vila Belmiro - Santos, SP",
@@ -74,7 +74,7 @@
   {
     "id": "2026-10-10-fluminense",
     "opponent": "Fluminense",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Fluminense_Football_Club.svg/330px-Fluminense_Football_Club.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg",
     "isHome": true,
     "date": "2026-10-10T16:00:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -86,7 +86,7 @@
   {
     "id": "2026-10-17-bahia",
     "opponent": "Bahia",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Esporte_Clube_Bahia_logo.svg/330px-Esporte_Clube_Bahia_logo.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg",
     "isHome": false,
     "date": "2026-10-17T16:00:00-03:00",
     "stadium": "Arena Fonte Nova - Salvador, BA",
@@ -98,7 +98,7 @@
   {
     "id": "2026-10-24-atletico-mineiro",
     "opponent": "Atlético Mineiro",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Logo_of_Clube_Atl%C3%A9tico_Mineiro.svg/330px-Logo_of_Clube_Atl%C3%A9tico_Mineiro.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg",
     "isHome": true,
     "date": "2026-10-24T16:00:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -110,7 +110,7 @@
   {
     "id": "2026-10-28-vasco-da-gama",
     "opponent": "Vasco da Gama",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/8/8b/EscudoDoVascoDaGama.svg/330px-EscudoDoVascoDaGama.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg",
     "isHome": false,
     "date": "2026-10-28T21:30:00-03:00",
     "stadium": "São Januário - Rio de Janeiro, RJ",
@@ -122,7 +122,7 @@
   {
     "id": "2026-11-04-gremio",
     "opponent": "Grêmio",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Gremio_logo.svg/330px-Gremio_logo.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg",
     "isHome": true,
     "date": "2026-11-04T21:30:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -134,7 +134,7 @@
   {
     "id": "2026-11-18-athletico-paranaense",
     "opponent": "Athletico Paranaense",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Athletico_Paranaense_%28Logo_2019%29.svg/330px-Athletico_Paranaense_%28Logo_2019%29.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg",
     "isHome": true,
     "date": "2026-11-18T21:30:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",
@@ -146,7 +146,7 @@
   {
     "id": "2026-11-21-palmeiras",
     "opponent": "Palmeiras",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/SE_Palmeiras_2025_crest.png/330px-SE_Palmeiras_2025_crest.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg",
     "isHome": false,
     "date": "2026-11-21T16:00:00-03:00",
     "stadium": "Allianz Parque - São Paulo, SP",
@@ -158,7 +158,7 @@
   {
     "id": "2026-11-28-coritiba",
     "opponent": "Coritiba",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Coritiba_Foot_Ball_Club_logo.svg/330px-Coritiba_Foot_Ball_Club_logo.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg",
     "isHome": false,
     "date": "2026-11-28T16:00:00-03:00",
     "stadium": "Couto Pereira - Curitiba, PR",
@@ -170,7 +170,7 @@
   {
     "id": "2026-12-02-chapecoense",
     "opponent": "Chapecoense",
-    "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Logo_Associa%C3%A7%C3%A3o_Chapecoense_de_Futebol.svg/330px-Logo_Associa%C3%A7%C3%A3o_Chapecoense_de_Futebol.svg.png",
+    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg",
     "isHome": true,
     "date": "2026-12-02T21:30:00-03:00",
     "stadium": "Maracanã - Rio de Janeiro, RJ",

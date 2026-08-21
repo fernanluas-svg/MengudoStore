@@ -1,17 +1,5 @@
 [
   {
-    "id": "2026-08-19-cruzeiro",
-    "opponent": "Cruzeiro",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/cruzeiro.svg",
-    "isHome": true,
-    "date": "2026-08-19T21:30:00-03:00",
-    "stadium": "Maracanã",
-    "competition": "Libertadores",
-    "status": "FINISHED",
-    "homeScore": 2,
-    "awayScore": 1
-  },
-  {
     "id": "2026-08-16-mirassol",
     "opponent": "Mirassol",
     "opponentLogo": "https://s.sde.globo.com/media/organizations/2026/07/17/MIrassol.svg",
@@ -156,11 +144,11 @@
     "awayScore": 0
   },
   {
-    "id": "2026-04-11-fluminense",
+    "id": "2026-04-12-fluminense",
     "opponent": "Fluminense",
     "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg",
     "isHome": false,
-    "date": "2026-04-11T18:30:00-03:00",
+    "date": "2026-04-12T18:00:00-03:00",
     "stadium": "Maracanã",
     "competition": "Brasileirão",
     "status": "FINISHED",
@@ -221,7 +209,7 @@
     "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg",
     "isHome": false,
     "date": "2026-03-14T20:30:00-03:00",
-    "stadium": "Nilton Santos",
+    "stadium": "Nilton Santos (Engenhão)",
     "competition": "Brasileirão",
     "status": "FINISHED",
     "homeScore": 0,
@@ -269,7 +257,7 @@
     "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg",
     "isHome": false,
     "date": "2026-01-28T21:30:00-03:00",
-    "stadium": "Morumbi",
+    "stadium": "Morumbis",
     "competition": "Brasileirão",
     "status": "FINISHED",
     "homeScore": 2,

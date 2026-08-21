@@ -14,9 +14,10 @@ JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 MATCHES_PATH = os.path.join(BASE_DIR, '../src/data/matches.json')
 LIBERTADORES_PATH = os.path.join(BASE_DIR, '../src/data/libertadores.json')
 CLASSIFICACAO_LIB_PATH = os.path.join(BASE_DIR, '../src/data/classificacaoLibertadores.json')
-WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
+GE_LIBERTADORES_URL = 'https://ge.globo.com/futebol/libertadores/'
+FLASHSCORE_TEAM_URL = 'https://www.flashscore.com/team/flamengo/fixtures/'
 TEMPORADA = 2026
 HEADERS = {
     'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
@@ -75,21 +76,21 @@ def log(nivel, mensagem):
 
 def fetch_and_format_matches():
     matches_data = [
-      {"id": "2026-08-22-cruzeiro", "opponent": "Cruzeiro", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Cruzeiro_Esporte_Clube_%28logo%29.svg/330px-Cruzeiro_Esporte_Clube_%28logo%29.svg.png", "isHome": False, "date": "2026-08-22T20:30:00-03:00", "stadium": "Mineirão - Belo Horizonte, MG", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-08-30-botafogo", "opponent": "Botafogo", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Botafogo_de_Futebol_e_Regatas_logo.svg/330px-Botafogo_de_Futebol_e_Regatas_logo.svg.png", "isHome": True, "date": "2026-08-30T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-09-06-remo", "opponent": "Remo", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Clube_do_Remo.svg/330px-Clube_do_Remo.svg.png", "isHome": False, "date": "2026-09-06T16:00:00-03:00", "stadium": "Baenão - Belém, PA", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-09-12-corinthians", "opponent": "Corinthians", "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/b/b4/Corinthians_simbolo.png/330px-Corinthians_simbolo.png", "isHome": True, "date": "2026-09-12T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-09-19-red-bull-bragantino", "opponent": "Red Bull Bragantino", "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/9/9e/RedBullBragantino.png/330px-RedBullBragantino.png", "isHome": True, "date": "2026-09-19T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-10-07-santos", "opponent": "Santos", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Santos_Futebol_Clube_logo_%28with_stars_and_crown%29.png/330px-Santos_Futebol_Clube_logo_%28with_stars_and_crown%29.png", "isHome": False, "date": "2026-10-07T21:30:00-03:00", "stadium": "Vila Belmiro - Santos, SP", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-10-10-fluminense", "opponent": "Fluminense", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Fluminense_Football_Club.svg/330px-Fluminense_Football_Club.svg.png", "isHome": True, "date": "2026-10-10T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-10-17-bahia", "opponent": "Bahia", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Esporte_Clube_Bahia_logo.svg/330px-Esporte_Clube_Bahia_logo.svg.png", "isHome": False, "date": "2026-10-17T16:00:00-03:00", "stadium": "Arena Fonte Nova - Salvador, BA", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-10-24-atletico-mineiro", "opponent": "Atlético Mineiro", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Logo_of_Clube_Atl%C3%A9tico_Mineiro.svg/330px-Logo_of_Clube_Atl%C3%A9tico_Mineiro.svg.png", "isHome": True, "date": "2026-10-24T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-10-28-vasco-da-gama", "opponent": "Vasco da Gama", "opponentLogo": "https://upload.wikimedia.org/wikipedia/pt/thumb/8/8b/EscudoDoVascoDaGama.svg/330px-EscudoDoVascoDaGama.svg.png", "isHome": False, "date": "2026-10-28T21:30:00-03:00", "stadium": "São Januário - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-11-04-gremio", "opponent": "Grêmio", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Gremio_logo.svg/330px-Gremio_logo.svg.png", "isHome": True, "date": "2026-11-04T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-11-18-athletico-paranaense", "opponent": "Athletico Paranaense", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Athletico_Paranaense_%28Logo_2019%29.svg/330px-Athletico_Paranaense_%28Logo_2019%29.svg.png", "isHome": True, "date": "2026-11-18T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-11-21-palmeiras", "opponent": "Palmeiras", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/SE_Palmeiras_2025_crest.png/330px-SE_Palmeiras_2025_crest.png", "isHome": False, "date": "2026-11-21T16:00:00-03:00", "stadium": "Allianz Parque - São Paulo, SP", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-11-28-coritiba", "opponent": "Coritiba", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Coritiba_Foot_Ball_Club_logo.svg/330px-Coritiba_Foot_Ball_Club_logo.svg.png", "isHome": False, "date": "2026-11-28T16:00:00-03:00", "stadium": "Couto Pereira - Curitiba, PR", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
-      {"id": "2026-12-02-chapecoense", "opponent": "Chapecoense", "opponentLogo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Logo_Associa%C3%A7%C3%A3o_Chapecoense_de_Futebol.svg/330px-Logo_Associa%C3%A7%C3%A3o_Chapecoense_de_Futebol.svg.png", "isHome": True, "date": "2026-12-02T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None}
+      {"id": "2026-08-22-cruzeiro", "opponent": "Cruzeiro", "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg", "isHome": False, "date": "2026-08-22T20:30:00-03:00", "stadium": "Mineirão - Belo Horizonte, MG", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-08-30-botafogo", "opponent": "Botafogo", "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg", "isHome": True, "date": "2026-08-30T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-09-06-remo", "opponent": "Remo", "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg", "isHome": False, "date": "2026-09-06T16:00:00-03:00", "stadium": "Baenão - Belém, PA", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-09-12-corinthians", "opponent": "Corinthians", "opponentLogo": "https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg", "isHome": True, "date": "2026-09-12T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-09-19-red-bull-bragantino", "opponent": "Red Bull Bragantino", "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg", "isHome": True, "date": "2026-09-19T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-10-07-santos", "opponent": "Santos", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg", "isHome": False, "date": "2026-10-07T21:30:00-03:00", "stadium": "Vila Belmiro - Santos, SP", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-10-10-fluminense", "opponent": "Fluminense", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg", "isHome": True, "date": "2026-10-10T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-10-17-bahia", "opponent": "Bahia", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg", "isHome": False, "date": "2026-10-17T16:00:00-03:00", "stadium": "Arena Fonte Nova - Salvador, BA", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-10-24-atletico-mineiro", "opponent": "Atlético Mineiro", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg", "isHome": True, "date": "2026-10-24T16:00:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-10-28-vasco-da-gama", "opponent": "Vasco da Gama", "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg", "isHome": False, "date": "2026-10-28T21:30:00-03:00", "stadium": "São Januário - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-11-04-gremio", "opponent": "Grêmio", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg", "isHome": True, "date": "2026-11-04T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-11-18-athletico-paranaense", "opponent": "Athletico Paranaense", "opponentLogo": "https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg", "isHome": True, "date": "2026-11-18T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-11-21-palmeiras", "opponent": "Palmeiras", "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg", "isHome": False, "date": "2026-11-21T16:00:00-03:00", "stadium": "Allianz Parque - São Paulo, SP", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-11-28-coritiba", "opponent": "Coritiba", "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg", "isHome": False, "date": "2026-11-28T16:00:00-03:00", "stadium": "Couto Pereira - Curitiba, PR", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None},
+      {"id": "2026-12-02-chapecoense", "opponent": "Chapecoense", "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg", "isHome": True, "date": "2026-12-02T21:30:00-03:00", "stadium": "Maracanã - Rio de Janeiro, RJ", "competition": "Brasileirão", "status": "SCHEDULED", "homeScore": None, "awayScore": None}
     ]
     return matches_data
 
@@ -130,89 +131,196 @@ def _extrair_placar(texto):
     return None, None
 
 
-def obter_partidas_wikipedia():
-    """
-    Fonte primária: raspa a página "Temporada do Flamengo 2026" na Wikipédia,
-    percorrendo todas as rodadas do Brasileirão (anteriores e futuras).
-    Retorna uma lista de partidas do Flamengo no formato:
-    {data, mandante, visitante, gols_mandante, gols_visitante, estadio}.
-    """
-    resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, 'html.parser')
+def _extrair_array_json(texto, idx):
+    """Dado um índice que aponta para '[' em texto, retorna a substring do
+    array balanceado (respeitando strings/escapes)."""
+    depth = 0
+    in_str = False
+    esc = False
+    j = idx
+    while j < len(texto):
+        c = texto[j]
+        if in_str:
+            if esc:
+                esc = False
+            elif c == '\\':
+                esc = True
+            elif c == '"':
+                in_str = False
+        else:
+            if c == '"':
+                in_str = True
+            elif c == '[':
+                depth += 1
+            elif c == ']':
+                depth -= 1
+                if depth == 0:
+                    return texto[idx:j + 1]
+        j += 1
+    return None
 
-    cabecalho = None
-    for h in soup.find_all('h3'):
-        if h.get_text(strip=True) == 'Campeonato Brasileiro':
-            cabecalho = h
-            break
-    if cabecalho is None:
-        raise RuntimeError('Seção "Campeonato Brasileiro" não encontrada na página.')
+
+# ---------------------------------------------------------------------------
+# FONTE PRIMÁRIA: Flashscore / Casas de Apostas (Selenium)
+# ---------------------------------------------------------------------------
+
+def _iniciar_driver_flashscore():
+    from selenium import webdriver
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.chrome.options import Options
+    from webdriver_manager.chrome import ChromeDriverManager
+    options = Options()
+    options.add_argument('--headless=new')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_experimental_option('useAutomationExtension', False)
+    service = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=service, options=options)
+
+
+def obter_partidas_flashscore():
+    """Fonte primária: raspa as partidas (passadas e futuras) do Flamengo no
+    Flashscore via Selenium. Retorna lista de partidas no formato interno.
+    Em ambientes sem Chrome/rede retorna [] para acionar o fallback do GE."""
+    try:
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        from bs4 import BeautifulSoup
+    except Exception as e:
+        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+        return []
+
+    try:
+        driver = _iniciar_driver_flashscore()
+    except Exception as e:
+        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {e}')
+        return []
 
     partidas = []
-    for tabela in soup.find_all('table'):
-        if tabela.find_previous('h3') is not cabecalho:
-            continue
-        linhas = tabela.find_all('tr')
-        if len(linhas) < 2:
-            continue
-        cabecalho_linha = linhas[0].find_all(['td', 'th'])
-        detalhe_linha = linhas[1].find_all(['td', 'th'])
-        if len(cabecalho_linha) < 5:
-            continue
-
-        texto_data = cabecalho_linha[0].get_text(' ', strip=True)
-        mdata = re.match(r'(\d{1,2})\s+de\s+([a-zç]+)', texto_data, re.I)
-        if not mdata:
-            continue
-        dia = int(mdata.group(1))
-        mes = MESES.get(mdata.group(2).lower())
-        if mes is None:
-            continue
-
-        mandante = normalizar(cabecalho_linha[1].get_text(' ', strip=True))
-        visitante = normalizar(cabecalho_linha[3].get_text(' ', strip=True))
-        if mandante != 'flamengo' and visitante != 'flamengo':
-            continue
-
-        gols_m, gols_v = _extrair_placar(cabecalho_linha[2].get_text(' ', strip=True))
-
-        estadio = None
-        hora = '19:00'
-        if len(detalhe_linha) >= 5:
-            texto_hora = detalhe_linha[0].get_text(' ', strip=True)
-            mh = re.search(r'(\d{1,2}):(\d{2})', texto_hora)
-            if mh:
-                hora = f'{mh.group(1)}:{mh.group(2)}'
-            texto_estadio = detalhe_linha[4].get_text(' ', strip=True)
-            me = re.search(r'Estádio:\s*([^P]+)', texto_estadio)
-            if me:
-                estadio = me.group(1).strip()
-
-        if not estadio:
-            cidade = cabecalho_linha[4].get_text(' ', strip=True)
-            estadio = cidade if cidade and cidade != 'A definir' else 'A definir'
-
-        partidas.append({
-            'data': f'{TEMPORADA}-{mes:02d}-{dia:02d}T{hora}:00-03:00',
-            'mandante': mandante,
-            'visitante': visitante,
-            'gols_mandante': gols_m,
-            'gols_visitante': gols_v,
-            'estadio': estadio,
-        })
+    try:
+        driver.get(FLASHSCORE_TEAM_URL)
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
+        )
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        for elem in soup.select('div.event__match'):
+            data_id = elem.get('data-id')
+            if not data_id:
+                continue
+            cols = elem.select('div.event__participant, span.event__time')
+            if len(cols) < 3:
+                continue
+            mandante = normalizar(cols[0].get_text(' ', strip=True))
+            visitante = normalizar(cols[1].get_text(' ', strip=True))
+            if mandante != 'flamengo' and visitante != 'flamengo':
+                continue
+            texto_tempo = cols[2].get_text(' ', strip=True)
+            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
+            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
+            if not mdata:
+                continue
+            dia, mes = int(mdata.group(1)), int(mdata.group(2))
+            ano = int(mdata.group(3))
+            if ano < 100:
+                ano += 2000
+            hora = mhora.group(0) if mhora else '00:00'
+            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
+            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
+            partidas.append({
+                'data': iso,
+                'mandante': mandante,
+                'visitante': visitante,
+                'gols_mandante': gols_m,
+                'gols_visitante': gols_v,
+                'estadio': 'A definir',
+                'escudo_mandante': None,
+                'escudo_visitante': None,
+            })
+        time.sleep(0.2)
+    except Exception as e:
+        log('ERROR', f'Falha no scraping do Flashscore: {type(e).__name__}')
+        return []
+    finally:
+        driver.quit()
 
     if not partidas:
-        raise RuntimeError('Nenhuma partida do Flamengo encontrada na página.')
+        return []
     return partidas
 
 
+def obter_libertadores_flashscore():
+    """Fonte primária para o mata-mata da Libertadores via Flashscore.
+    Best-effort: retorna [] se não houver navegador/rede disponível."""
+    try:
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        from bs4 import BeautifulSoup
+    except Exception as e:
+        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+        return []
+
+    try:
+        driver = _iniciar_driver_flashscore()
+    except Exception as e:
+        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {e}')
+        return []
+
+    try:
+        driver.get('https://www.flashscore.com/football/copa-libertadores/')
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
+        )
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        encontrados = []
+        for elem in soup.select('div.event__match'):
+            cols = elem.select('div.event__participant, span.event__time')
+            if len(cols) < 3:
+                continue
+            mandante = normalizar(cols[0].get_text(' ', strip=True))
+            visitante = normalizar(cols[1].get_text(' ', strip=True))
+            if 'flamengo' not in (mandante, visitante):
+                continue
+            texto_tempo = cols[2].get_text(' ', strip=True)
+            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
+            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
+            if not mdata:
+                continue
+            dia, mes = int(mdata.group(1)), int(mdata.group(2))
+            ano = int(mdata.group(3))
+            if ano < 100:
+                ano += 2000
+            hora = mhora.group(0) if mhora else '00:00'
+            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
+            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
+            encontrados.append({
+                'data': iso,
+                'mandante': mandante,
+                'visitante': visitante,
+                'gols_mandante': gols_m,
+                'gols_visitante': gols_v,
+                'estadio': 'A definir',
+                'escudo_mandante': None,
+                'escudo_visitante': None,
+            })
+        return encontrados
+    except Exception as e:
+        log('ERROR', f'Falha no scraping da Libertadores no Flashscore: {type(e).__name__}')
+        return []
+    finally:
+        driver.quit()
+
+
+# ---------------------------------------------------------------------------
+# FALLBACK OFICIAL: ge.globo (API de tabela + página da Libertadores)
+# ---------------------------------------------------------------------------
+
 def obter_partidas_ge():
-    """
-    Fonte secundária: consulta a API pública de tabela do GE (Globo Esporte),
+    """Fallback oficial: consulta a API pública de tabela do GE (Globo Esporte),
     percorrendo as 38 rodadas do Brasileirão e capturando as partidas do Flamengo.
-    Retorna o mesmo formato da fonte primária, incluindo os escudos.
-    """
+    Retorna o formato interno, incluindo os escudos."""
     partidas = []
     for rodada in range(1, GE_RODADAS + 1):
         url = GE_API_URL.format(rodada=rodada)
@@ -231,7 +339,8 @@ def obter_partidas_ge():
             data = jogo.get('data_realizacao')
             if not data:
                 continue
-            hora = jogo.get('hora_realizacao') or '19:00'
+            data = str(data).split('T')[0]
+            hora = str(jogo.get('hora_realizacao') or '19:00').split('T')[0]
             sede = jogo.get('sede') or {}
             partidas.append({
                 'data': f'{data}T{hora}:00-03:00',
@@ -249,6 +358,125 @@ def obter_partidas_ge():
         raise RuntimeError('Nenhuma partida do Flamengo encontrada na API do GE.')
     return partidas
 
+
+def _mapear_fase(nome):
+    nome = (nome or '').lower()
+    if 'oitavas' in nome:
+        return 'Oitavas de Final'
+    if 'quartas' in nome:
+        return 'Quartas de Final'
+    if 'semifinal' in nome:
+        return 'Semifinal'
+    if 'final' in nome:
+        return 'Final'
+    return 'Oitavas de Final'
+
+
+def _leg_libertadores(raw):
+    if not raw:
+        return None
+    equipes = raw.get('equipes') or {}
+    mandante = normalizar((equipes.get('mandante') or {}).get('nome_popular', ''))
+    visitante = normalizar((equipes.get('visitante') or {}).get('nome_popular', ''))
+    data = raw.get('data_realizacao')
+    hora = raw.get('hora_realizacao') or '00:00'
+    iso = f'{data}T{hora}:00-03:00' if data else None
+    return {
+        'casa': mandante,
+        'fora': visitante,
+        'placarCasa': raw.get('placar_oficial_mandante'),
+        'placarFora': raw.get('placar_oficial_visitante'),
+        'data': iso,
+    }
+
+
+def obter_libertadores_ge():
+    """Fallback oficial para o chaveamento da Libertadores: raspa o JSON
+    embutido na página do ge.globo (estrutura 'secao' -> 'chave' -> 'jogos')."""
+    resp = requests.get(GE_LIBERTADORES_URL, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    t = resp.text
+    i = t.find('"secao":[')
+    if i == -1:
+        raise RuntimeError('Bloco "secao" da Libertadores não encontrado no GE.')
+    arr = _extrair_array_json(t, i + len('"secao":'))
+    if not arr:
+        raise RuntimeError('Não foi possível extrair o bloco "secao" do GE.')
+    secao = json.loads(arr)
+
+    confrontos = []
+    for item in secao:
+        for chave in item.get('chave', []):
+            jogos = chave.get('jogos', [])
+            if len(jogos) < 2:
+                continue
+            ida = _leg_libertadores(jogos[0])
+            volta = _leg_libertadores(jogos[1])
+            if not ida or not volta:
+                continue
+            times = {ida['casa'], ida['fora'], volta['casa'], volta['fora']}
+            if not times & {'flamengo'}:
+                continue
+
+            def fla(g):
+                return g['placarCasa'] if g['casa'] == 'flamengo' else g['placarFora']
+
+            def adv(g):
+                return g['placarFora'] if g['casa'] == 'flamengo' else g['placarCasa']
+
+            gA = None if (ida['placarCasa'] is None or volta['placarCasa'] is None) else fla(ida) + fla(volta)
+            gB = None if (ida['placarFora'] is None or volta['placarFora'] is None) else adv(ida) + adv(volta)
+
+            if 'flamengo' == ida['casa']:
+                adv_norm = ida['fora']
+            elif 'flamengo' == ida['fora']:
+                adv_norm = ida['casa']
+            elif 'flamengo' == volta['casa']:
+                adv_norm = volta['fora']
+            else:
+                adv_norm = volta['casa']
+
+            adv_nome = NOMES_EXIBICAO.get(
+                adv_norm, adv_norm.replace('-', ' ').title() if adv_norm != 'a definir' else 'A definir'
+            )
+
+            if gA is None or gB is None:
+                status = 'A_DEFINIR'
+                classificado = None
+            else:
+                status = 'DEFINIDO'
+                classificado = 'Flamengo' if gA > gB else (adv_nome if gB > gA else None)
+
+            data = None
+            for lg in (ida, volta):
+                if lg['placarCasa'] is None:
+                    data = lg['data']
+                    break
+            if data is None:
+                data = volta['data'] or ida['data']
+
+            fase = _mapear_fase(chave.get('nome'))
+            confrontos.append({
+                'id': f"{fase.lower().replace(' ', '-')}-flamengo-{adv_norm.replace(' ', '-')}",
+                'timeA': 'Flamengo',
+                'timeB': adv_nome,
+                'fase': fase,
+                'data': data,
+                'ida': ida,
+                'volta': volta,
+                'agregado': {'timeA': gA, 'timeB': gB},
+                'classificado': classificado,
+                'status': status,
+            })
+
+    if not confrontos:
+        raise RuntimeError('Nenhum confronto do Flamengo encontrado no GE.')
+    return confrontos
+
+
+# ---------------------------------------------------------------------------
+# MONTAGEM / PERSISTÊNCIA
+# ---------------------------------------------------------------------------
 
 def montar_entrada_historica(partida):
     """Converte uma partida encerrada em uma entrada FINISHED do nextMatch.json."""
@@ -288,23 +516,24 @@ def atualizar_agenda():
     Sincroniza os jogos por data:
     - Jogos encerrados (data < agora) -> matches.json (FINISHED)
     - Próximos confrontos (data >= agora) -> nextMatch.json (SCHEDULED, ativo)
-    Usa a Wikipédia como fonte primária e a API do GE como fallback. Se nenhuma
-    fonte responder, reaproveita o nextMatch.json existente para reclassificar.
+    Fonte primária: Flashscore / Casas de Apostas. Fallback oficial: ge.globo.
+    Se nenhuma fonte responder, reaproveita os arquivos existentes.
     """
     base = fetch_and_format_matches()
     partidas = None
     origem = None
 
     try:
-        partidas = obter_partidas_wikipedia()
-        origem = 'Wikipedia'
+        partidas = obter_partidas_flashscore()
     except Exception as e:
-        log('WARN', f'Fonte primária indisponível: {e}')
+        log('WARN', f'Fonte primária (Flashscore) indisponível: {e}')
+
+    if not partidas:
         try:
             partidas = obter_partidas_ge()
-            origem = 'API GE'
+            origem = 'GE (fallback)'
         except Exception as e2:
-            log('ERROR', f'Fonte secundária indisponível: {e2}')
+            log('ERROR', f'Fallback (GE) indisponível: {e2}')
             partidas = None
 
     if partidas:
@@ -321,7 +550,6 @@ def atualizar_agenda():
                 continue
             vistos.add(m['id'])
             todas.append(m)
-        # Preserva jogos adicionados manualmente (nextMatch.json e matches.json)
         for caminho in (JSON_PATH, MATCHES_PATH):
             extras = carregar_existentes(caminho)
             if extras:
@@ -376,217 +604,50 @@ def save_json(data, caminho=JSON_PATH):
     log('SUCCESS', f'Arquivo atualizado em: {caminho}')
 
 
-def _iso_data_libertadores(dia, mes, hora):
-    if not dia or not mes:
-        return None
-    hh, mm = '00', '00'
-    if hora:
-        m = re.search(r'(\d{1,2}):(\d{2})', hora)
-        if m:
-            hh = m.group(1).zfill(2)
-            mm = m.group(2)
-    return f'{TEMPORADA}-{mes:02d}-{dia:02d}T{hh}:{mm}:00-03:00'
-
-
-def obter_libertadores_wikipedia():
-    """Fonte: seção 'Copa Libertadores da América' da Wikipédia (Flamengo 2026)."""
-    resp = requests.get(WIKIPEDIA_URL, headers=HEADERS, timeout=30)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, 'html.parser')
-
-    secao = None
-    for h in soup.find_all('h3'):
-        if 'Libertadores' in h.get_text():
-            secao = h
-            break
-    if secao is None:
-        raise RuntimeError('Seção "Copa Libertadores" não encontrada na Wikipédia.')
-
-    tabelas = []
-    node = secao.find_next()
-    while node:
-        if node.name in ('h2', 'h3') and node is not secao:
-            break
-        if node.name == 'table':
-            tabelas.append(node)
-        node = node.find_next()
-
-    grupo = []
-    for t in tabelas:
-        cab = t.get_text(' ', strip=True)
-        if 'Pos' in cab and 'Equipe' in cab and 'Classificado' in cab:
-            for tr in t.find_all('tr')[1:]:
-                cells = [c.get_text(' ', strip=True) for c in tr.find_all(['td', 'th'])]
-                if len(cells) < 11:
-                    continue
-                try:
-                    pos = int(cells[0])
-                    pontos = int(cells[2])
-                    jogos = int(cells[3])
-                    v = int(cells[4])
-                    e = int(cells[5])
-                    d = int(cells[6])
-                except ValueError:
-                    continue
-                nome = NOMES_EXIBICAO.get(normalizar(cells[1]), cells[1].strip())
-                sg = cells[9].replace('+', '').replace('−', '-').replace('−', '-')
-                try:
-                    saldo = int(sg)
-                except ValueError:
-                    saldo = 0
-                grupo.append({
-                    'posicao': pos, 'time': nome, 'pontos': pontos, 'jogos': jogos,
-                    'vitorias': v, 'empates': e, 'derrotas': d, 'saldoGols': saldo,
-                })
-            break
-
-    jogos = []
-    for t in tabelas:
-        if 'collapsible' not in (t.get('class') or []):
-            continue
-        linhas = t.find_all('tr')
-        if len(linhas) < 2:
-            continue
-        primeira = [c.get_text(' ', strip=True) for c in linhas[0].find_all(['td', 'th'])]
-        if len(primeira) < 4:
-            continue
-        cabecalho = primeira[0]
-        rodada = 'Ida' if 'Ida' in cabecalho else ('Volta' if 'Volta' in cabecalho else '')
-        if rodada not in ('Ida', 'Volta'):
-            continue
-        mandante = primeira[1].strip()
-        visitante = primeira[3].strip()
-        gm, gv = _extrair_placar(primeira[2])
-        m = re.match(r'(\d{1,2})\s+de\s+([a-zçãõéíúá]+)', cabecalho, re.I)
-        if not m:
-            continue
-        dia = int(m.group(1))
-        mes = MESES.get(m.group(2).lower())
-        if not mes:
-            continue
-        segunda = [c.get_text(' ', strip=True) for c in linhas[1].find_all(['td', 'th'])]
-        hora = segunda[0] if segunda else ''
-        jogos.append({
-            'rodada': rodada, 'mandante': mandante, 'visitante': visitante,
-            'golsMandante': gm, 'golsVisitante': gv, 'dia': dia, 'mes': mes, 'hora': hora,
-        })
-
-    confrontos = _agrupar_confrontos_libertadores(jogos)
-    return grupo, confrontos
-
-
-def _agrupar_confrontos_libertadores(jogos):
-    por_par = {}
-    for j in jogos:
-        if 'flamengo' not in (normalizar(j['mandante']), normalizar(j['visitante'])):
-            continue
-        par = frozenset([normalizar(j['mandante']), normalizar(j['visitante'])])
-        por_par.setdefault(par, []).append(j)
-
-    confrontos = []
-    for par, lista in por_par.items():
-        ida = next((x for x in lista if x['rodada'] == 'Ida'), None)
-        volta = next((x for x in lista if x['rodada'] == 'Volta'), None)
-        if not ida and not volta:
-            continue
-        adv_norm = normalizar(ida['mandante']) if ida else normalizar(volta['mandante'])
-        if adv_norm == 'flamengo':
-            adv_norm = normalizar(ida['visitante']) if ida else normalizar(volta['visitante'])
-        adv_nome = NOMES_EXIBICAO.get(
-            adv_norm, 'A definir' if adv_norm == 'a definir' else adv_norm.replace('-', ' ').title()
-        )
-
-        def leg(g):
-            if not g:
-                return None
-            return {
-                'casa': g['mandante'], 'fora': g['visitante'],
-                'placarCasa': g['golsMandante'], 'placarFora': g['golsVisitante'],
-                'data': _iso_data_libertadores(g['dia'], g['mes'], g['hora']),
-            }
-
-        ida_leg = leg(ida)
-        volta_leg = leg(volta)
-
-        def fla(g):
-            if not g:
-                return None
-            return g['golsMandante'] if normalizar(g['mandante']) == 'flamengo' else g['golsVisitante']
-
-        def adv(g):
-            if not g:
-                return None
-            return g['golsVisitante'] if normalizar(g['mandante']) == 'flamengo' else g['golsMandante']
-
-        def somar(a, b):
-            return None if (a is None or b is None) else a + b
-
-        gA = somar(fla(ida), fla(volta))
-        gB = somar(adv(ida), adv(volta))
-
-        if gA is None or gB is None:
-            status = 'A_DEFINIR'
-            classificado = None
-        else:
-            status = 'DEFINIDO'
-            classificado = 'Flamengo' if gA > gB else (adv_nome if gB > gA else None)
-
-        data = None
-        for lg in (ida_leg, volta_leg):
-            if lg and lg['placarCasa'] is None:
-                data = lg['data']
-                break
-        if data is None and volta_leg:
-            data = volta_leg['data']
-        if data is None and ida_leg:
-            data = ida_leg['data']
-
-        mes_ref = (ida['mes'] if ida else (volta['mes'] if volta else 8))
-        fase = 'Oitavas de Final' if mes_ref <= 8 else 'Quartas de Final'
-
-        confrontos.append({
-            'id': f"{fase.lower().replace(' ', '-')}-flamengo-{adv_norm.replace(' ', '-')}",
-            'timeA': 'Flamengo',
-            'timeB': adv_nome,
-            'fase': fase,
-            'data': data,
-            'ida': ida_leg,
-            'volta': volta_leg,
-            'agregado': {'timeA': gA, 'timeB': gB},
-            'classificado': classificado,
-            'status': status,
-        })
-    return confrontos
-
-
 def atualizar_libertadores():
-    grupo, confrontos = None, None
+    """Atualiza o chaveamento da Libertadores.
+    Fonte primária: Flashscore / Casas de Apostas. Fallback oficial: ge.globo.
+    Rodadas futuras ainda não disponíveis na fonte são preservadas a partir do
+    arquivo existente (ex.: Quartas de Final ainda não sorteadas)."""
+    confrontos = None
     try:
-        grupo, confrontos = obter_libertadores_wikipedia()
+        confrontos = obter_libertadores_flashscore()
     except Exception as e:
-        log('WARN', f'Fonte da Libertadores indisponível ({e}); usando dados existentes.')
+        log('WARN', f'Fonte primária (Flashscore/Libertadores) indisponível: {e}')
 
-    if grupo:
-        save_json([{'grupo': 'Fase de Grupos', 'classificacao': grupo}], CLASSIFICACAO_LIB_PATH)
-        log('SUCCESS', f'{len(grupo)} times na fase de grupos da Libertadores.')
-    else:
-        existentes = carregar_existentes(CLASSIFICACAO_LIB_PATH)
-        if existentes:
-            save_json(existentes, CLASSIFICACAO_LIB_PATH)
+    if not confrontos:
+        try:
+            confrontos = obter_libertadores_ge()
+            origem = 'GE (fallback)'
+        except Exception as e2:
+            log('WARN', f'Fallback (GE/Libertadores) indisponível: {e2}')
+            confrontos = None
 
-    if confrontos:
-        dados = {
-            'fase': 'Copa Libertadores 2026',
-            'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
-            'confrontos': confrontos,
-        }
-        save_json(dados, LIBERTADORES_PATH)
-        log('SUCCESS', f'{len(confrontos)} confronto(s) de mata-mata registrados.')
-    else:
+    if not confrontos:
         existentes = carregar_existentes(LIBERTADORES_PATH)
         if existentes:
             save_json(existentes, LIBERTADORES_PATH)
-    return confrontos
+            log('WARN', 'Chaveamento da Libertadores mantido a partir dos dados existentes.')
+        return None
+
+    # Preserva rodadas futuras ausentes na fonte (merge por id, fonte tem prioridade)
+    existentes = carregar_existentes(LIBERTADORES_PATH)
+    por_id = {}
+    if isinstance(existentes, dict) and existentes.get('confrontos'):
+        for c in existentes['confrontos']:
+            por_id[c['id']] = c
+    for c in confrontos:
+        por_id[c['id']] = c
+    mesclados = list(por_id.values())
+
+    dados = {
+        'fase': 'Copa Libertadores 2026',
+        'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+        'confrontos': mesclados,
+    }
+    save_json(dados, LIBERTADORES_PATH)
+    log('SUCCESS', f'{len(mesclados)} confronto(s) de mata-mata registrados via {origem}.')
+    return mesclados
 
 
 if __name__ == "__main__":
