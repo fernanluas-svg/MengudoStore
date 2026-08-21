@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Header from './Header.jsx';
 import proximosJogos from './data/nextMatch.json';
+import jogosEncerrados from './data/matches.json';
 import classificacaoBrasileirao from './data/classificacaoBrasileirao.json';
 import classificacaoLibertadores from './data/classificacaoLibertadores.json';
 import { FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
@@ -146,7 +147,7 @@ function CardAgenda() {
 }
 
 function CardResultados() {
-  const encerradas = proximosJogos
+  const encerradas = jogosEncerrados
     .filter((jogo) => jogo.status === 'FINISHED' && jogo.homeScore != null && jogo.awayScore != null)
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);

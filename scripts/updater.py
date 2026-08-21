@@ -3,6 +3,7 @@ import os
 import re
 import time
 import unicodedata
+from datetime import datetime, timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -10,6 +11,7 @@ from bs4 import BeautifulSoup
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
+MATCHES_PATH = os.path.join(BASE_DIR, '../src/data/matches.json')
 WIKIPEDIA_URL = 'https://pt.wikipedia.org/wiki/Temporada_do_Clube_de_Regatas_do_Flamengo_de_2026'
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
@@ -281,9 +283,11 @@ def montar_entrada_historica(partida):
 
 def atualizar_agenda():
     """
-    Monta a agenda completa: histórico de jogos encerrados (FINISHED) somado
-    aos próximos confrontos agendados (SCHEDULED). Usa a Wikipédia como fonte
-    primária e a API do GE (Globo Esporte) como fallback.
+    Sincroniza os jogos por data:
+    - Jogos encerrados (data < agora) -> matches.json (FINISHED)
+    - Próximos confrontos (data >= agora) -> nextMatch.json (SCHEDULED, ativo)
+    Usa a Wikipédia como fonte primária e a API do GE como fallback. Se nenhuma
+    fonte responder, reaproveita o nextMatch.json existente para reclassificar.
     """
     base = fetch_and_format_matches()
     partidas = None
@@ -299,36 +303,76 @@ def atualizar_agenda():
             origem = 'API GE'
         except Exception as e2:
             log('ERROR', f'Fonte secundária indisponível: {e2}')
-            return base
+            partidas = None
 
-    historico = [
-        montar_entrada_historica(p)
-        for p in partidas
-        if p['gols_mandante'] is not None and p['gols_visitante'] is not None
-    ]
+    if partidas:
+        historico = [
+            montar_entrada_historica(p)
+            for p in partidas
+            if p['gols_mandante'] is not None and p['gols_visitante'] is not None
+        ]
+        combinadas = historico + base
+        vistos = set()
+        todas = []
+        for m in combinadas:
+            if m['id'] in vistos:
+                continue
+            vistos.add(m['id'])
+            todas.append(m)
+        # Preserva jogos adicionados manualmente no nextMatch.json (ex.: vitória de ontem)
+        existentes = carregar_existentes()
+        if existentes:
+            for m in existentes:
+                if m['id'] not in vistos:
+                    vistos.add(m['id'])
+                    todas.append(m)
+    else:
+        existentes = carregar_existentes()
+        if existentes is not None:
+            log('WARN', 'Fontes indisponíveis: reutilizando nextMatch.json e sincronizando por data.')
+            todas = existentes
+            origem = 'dados existentes (fallback)'
+        else:
+            log('WARN', 'Usando dados estáticos de fallback (sem acesso às fontes).')
+            todas = base
+            origem = 'fallback estático'
 
-    combinadas = historico + base
-    vistos = set()
-    resultado = []
-    for m in combinadas:
-        if m['id'] in vistos:
-            continue
-        vistos.add(m['id'])
-        resultado.append(m)
+    agora = datetime.now(timezone.utc)
+    resultados = []
+    agenda = []
+    for m in todas:
+        data = datetime.fromisoformat(m['date'])
+        if data < agora:
+            m['status'] = 'FINISHED'
+            resultados.append(m)
+        else:
+            m['status'] = 'SCHEDULED'
+            agenda.append(m)
 
-    resultado.sort(key=lambda m: m['date'])
-    log('SUCCESS', f'{len(historico)} jogo(s) encerrado(s) e {len(base)} agendado(s) registrados via {origem}.')
-    return resultado
+    resultados.sort(key=lambda x: x['date'], reverse=True)
+    agenda.sort(key=lambda x: x['date'])
+
+    save_json(agenda, JSON_PATH)
+    save_json(resultados, MATCHES_PATH)
+    log('SUCCESS', f'{len(resultados)} resultado(s) e {len(agenda)} agendado(s) registrados via {origem}.')
+    return agenda
 
 
-def save_json(data):
-    os.makedirs(os.path.dirname(JSON_PATH), exist_ok=True)
-    with open(JSON_PATH, 'w', encoding='utf-8') as f:
+def carregar_existentes():
+    try:
+        with open(JSON_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def save_json(data, caminho=JSON_PATH):
+    os.makedirs(os.path.dirname(caminho), exist_ok=True)
+    with open(caminho, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    log('SUCCESS', f'Agenda atualizada em: {JSON_PATH}')
+    log('SUCCESS', f'Arquivo atualizado em: {caminho}')
 
 
 if __name__ == "__main__":
     log('INFO', 'Iniciando atualização da agenda de jogos...')
-    data = atualizar_agenda()
-    save_json(data)
+    atualizar_agenda()
