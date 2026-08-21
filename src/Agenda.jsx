@@ -5,7 +5,8 @@ import jogosEncerrados from './data/matches.json';
 import classificacaoBrasileirao from './data/classificacaoBrasileirao.json';
 import classificacaoLibertadores from './data/classificacaoLibertadores.json';
 import libertadores from './data/libertadores.json';
-import { FiCalendar, FiMapPin, FiAward } from 'react-icons/fi';
+import odds from './data/odds.json';
+import { FiCalendar, FiMapPin, FiAward, FiTrendingUp } from 'react-icons/fi';
 import { RiTrophyLine } from 'react-icons/ri';
 
 const FLAMENGO_ESCUDO_URL =
@@ -256,6 +257,74 @@ function CardResultados() {
   );
 }
 
+function CardOdds() {
+  const jogos = [...odds.jogos].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const proximo = jogos[0];
+
+  if (!proximo || !proximo.odds) {
+    return null;
+  }
+
+  const o = proximo.odds;
+  const mandante = proximo.isHome ? 'Flamengo' : proximo.opponent;
+  const visitante = proximo.isHome ? proximo.opponent : 'Flamengo';
+  const real = proximo.source === 'flashscore';
+
+  const cotacoes = [
+    { label: '1', sub: mandante, valor: o['1'], destaque: !!proximo.isHome },
+    { label: 'X', sub: 'Empate', valor: o['X'], destaque: false },
+    { label: '2', sub: visitante, valor: o['2'], destaque: !proximo.isHome },
+  ];
+
+  return (
+    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col lg:col-span-2">
+      <CabecalhoCard
+        icone={<FiTrendingUp className="w-5 h-5" />}
+        titulo="Odds (1X2)"
+        descricao={`Próximo jogo: Flamengo x ${proximo.opponent}`}
+      />
+
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+          {formatarData(proximo.date)} • {proximo.competition}
+        </span>
+        {real && proximo.bookmaker ? (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-amber-500/15 text-amber-300 border-amber-500/30">
+            {proximo.bookmaker}
+          </span>
+        ) : (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-slate-600/30 text-slate-400 border-slate-500/30">
+            estimada
+          </span>
+        )}
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        {cotacoes.map((c) => (
+          <div
+            key={c.label}
+            className={`rounded-xl border p-3 flex flex-col items-center ${
+              c.destaque
+                ? 'border-red-500/50 bg-red-600/10'
+                : 'border-slate-800 bg-slate-950/60'
+            }`}
+          >
+            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+              {c.label}
+            </span>
+            <span className="text-xl font-black text-white tabular-nums my-0.5">
+              {c.valor != null ? c.valor : '-'}
+            </span>
+            <span className="text-[10px] text-slate-500 truncate max-w-full">
+              {c.sub}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function LinhaJogo({ rotulo, jogo }) {
   if (!jogo) {
     return (
@@ -488,6 +557,7 @@ export default function Agenda() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CardAgenda />
           <CardResultados />
+          <CardOdds />
         </div>
 
         <div className="mt-6">

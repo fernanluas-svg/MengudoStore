@@ -14,26 +14,28 @@ jobs:
       - name: Baixar repositório
         uses: actions/checkout@v3
 
+      - name: Configurar Chrome
+        uses: browser-actions/setup-chrome@v1
 
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
 
-
-      - name: Executar Script de Atualização
+      - name: Executar Script de Atualização da Agenda
         run: python scripts/updater.py
 
+      - name: Executar Scraper de Odds
+        run: python scripts/odds_scraper.py
 
       - name: Fazer Commit e Push
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add src/data/nextMatch.json src/data/matches.json src/data/libertadores.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto: Atualiza agenda de jogos via Python" && git push)
+          git add src/data/nextMatch.json src/data/matches.json src/data/libertadores.json src/data/odds.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto: Atualiza agenda e odds via Python" && git push)
