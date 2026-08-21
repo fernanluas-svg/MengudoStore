@@ -85,6 +85,24 @@ def coletar_times():
                 if t.get('time'):
                     times.add(t['time'])
 
+    car = _carregar(os.path.join(DATA_DIR, 'carioca.json'))
+    if isinstance(car, list):
+        for t in car:
+            if t.get('time'):
+                times.add(t['time'])
+
+    cdb = _carregar(os.path.join(DATA_DIR, 'copaDoBrasil.json'))
+    if isinstance(cdb, dict):
+        for c in cdb.get('confrontos', []):
+            for chave in ('timeA', 'timeB'):
+                if c.get(chave):
+                    times.add(c[chave])
+            for leg in ('ida', 'volta'):
+                leg_dados = c.get(leg) or {}
+                for lado in ('casa', 'fora'):
+                    if leg_dados.get(lado):
+                        times.add(leg_dados[lado])
+
     times.discard('A definir')
     times.add('Flamengo')
     return times
@@ -101,6 +119,22 @@ def coletar_logos_existentes():
                 logo = m.get('opponentLogo')
                 if op and isinstance(logo, str) and logo.startswith('http'):
                     logos[op] = logo
+
+    cdb = _carregar(os.path.join(DATA_DIR, 'copaDoBrasil.json'))
+    if isinstance(cdb, dict):
+        for c in cdb.get('confrontos', []):
+            for chave in ('timeA', 'timeB'):
+                nome = c.get(chave)
+                logo = c.get('escudo')
+                if nome and isinstance(logo, str) and logo.startswith('http'):
+                    logos[nome] = logo
+            for leg in ('ida', 'volta'):
+                leg_dados = c.get(leg) or {}
+                for lado in ('casa', 'fora'):
+                    chave = leg_dados.get(lado)
+                    logo = leg_dados.get(f'{lado}Escudo')
+                    if chave and isinstance(logo, str) and logo.startswith('http'):
+                        logos[chave] = logo
     return logos
 
 
@@ -274,6 +308,34 @@ def atualizar_jsons(mapa):
                         leg_dados[f'{lado}Escudo'] = mapa[chave]
         with open(caminho, 'w', encoding='utf-8') as f:
             json.dump(lib, f, ensure_ascii=False, indent=2)
+        log('SUCCESS', f'Escudos atribuídos em: {caminho}')
+
+    # carioca.json: campo "escudo" por time
+    caminho = os.path.join(DATA_DIR, 'carioca.json')
+    car = _carregar(caminho)
+    if isinstance(car, list):
+        for t in car:
+            if t.get('time') and mapa.get(t['time']):
+                t['escudo'] = mapa[t['time']]
+        with open(caminho, 'w', encoding='utf-8') as f:
+            json.dump(car, f, ensure_ascii=False, indent=2)
+        log('SUCCESS', f'Escudos atribuídos em: {caminho}')
+
+    # copaDoBrasil.json: escudo do confronto e das pernas ida/volta
+    caminho = os.path.join(DATA_DIR, 'copaDoBrasil.json')
+    cdb = _carregar(caminho)
+    if isinstance(cdb, dict):
+        for c in cdb.get('confrontos', []):
+            if c.get('timeB') and mapa.get(c['timeB']):
+                c['escudo'] = mapa[c['timeB']]
+            for leg in ('ida', 'volta'):
+                leg_dados = c.get(leg) or {}
+                for lado in ('casa', 'fora'):
+                    chave = leg_dados.get(lado)
+                    if chave and mapa.get(chave):
+                        leg_dados[f'{lado}Escudo'] = mapa[chave]
+        with open(caminho, 'w', encoding='utf-8') as f:
+            json.dump(cdb, f, ensure_ascii=False, indent=2)
         log('SUCCESS', f'Escudos atribuídos em: {caminho}')
 
 

@@ -15,9 +15,13 @@ JSON_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
 MATCHES_PATH = os.path.join(BASE_DIR, '../src/data/matches.json')
 LIBERTADORES_PATH = os.path.join(BASE_DIR, '../src/data/libertadores.json')
 CLASSIFICACAO_LIB_PATH = os.path.join(BASE_DIR, '../src/data/classificacaoLibertadores.json')
+CARIOCA_PATH = os.path.join(BASE_DIR, '../src/data/carioca.json')
+COPA_BRASIL_PATH = os.path.join(BASE_DIR, '../src/data/copaDoBrasil.json')
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
 GE_LIBERTADORES_URL = 'https://ge.globo.com/futebol/libertadores/'
+GE_CARIOCA_URL = 'https://ge.globo.com/rj/futebol/campeonato-carioca/'
+GE_COPA_BRASIL_URL = 'https://ge.globo.com/futebol/copa-do-brasil/'
 FLASHSCORE_TEAM_URL = 'https://www.flashscore.com/team/flamengo/fixtures/'
 TEMPORADA = 2026
 
@@ -315,19 +319,77 @@ def _leg_libertadores(raw):
     }
 
 
-def _secao_libertadores_ge():
-    """Retorna a lista 'secao' (chaves/jogos) embutida na página do GE."""
-    res = sc.fetch(GE_LIBERTADORES_URL, timeout=30, retries=3)
+def _secao_ge(url):
+    """Retorna a lista 'secao' (chaves/jogos) embutida na página do GE.
+    Reutilizado para a Libertadores e para a Copa do Brasil."""
+    res = sc.fetch(url, timeout=30, retries=3)
     if not res.ok:
         raise RuntimeError(f'Falha ao baixar página do GE ({res.engine}): {res.error}')
     t = res.text
     i = t.find('"secao":[')
     if i == -1:
-        raise RuntimeError('Bloco "secao" da Libertadores não encontrado no GE.')
+        raise RuntimeError('Bloco "secao" não encontrado no GE.')
     arr = _extrair_array_json(t, i + len('"secao":'))
     if not arr:
         raise RuntimeError('Não foi possível extrair o bloco "secao" do GE.')
     return json.loads(arr)
+
+
+def _secao_libertadores_ge():
+    """Retorna a lista 'secao' (chaves/jogos) embutida na página do GE."""
+    return _secao_ge(GE_LIBERTADORES_URL)
+
+
+def _extrair_objeto_json(texto, idx):
+    """Dado um índice que aponta para '{' em texto, retorna a substring do
+    objeto balanceado (respeitando strings/escapes)."""
+    depth = 0
+    in_str = False
+    esc = False
+    j = idx
+    while j < len(texto):
+        c = texto[j]
+        if in_str:
+            if esc:
+                esc = False
+            elif c == '\\':
+                esc = True
+            elif c == '"':
+                in_str = False
+        else:
+            if c == '"':
+                in_str = True
+            elif c == '{':
+                depth += 1
+            elif c == '}':
+                depth -= 1
+                if depth == 0:
+                    return texto[idx:j + 1]
+        j += 1
+    return None
+
+
+def _achar_classificacao(dados):
+    """Procura recursivamente, em um objeto do GE, uma lista de standings de
+    pontos corridos (cada item com 'pontos' e 'time'/'nome')."""
+    def busca(d):
+        if isinstance(d, dict):
+            if 'pontos' in d and ('time' in d or 'nome' in d or 'nome_popular' in d):
+                return [d]
+            for v in d.values():
+                r = busca(v)
+                if r:
+                    return r
+        elif isinstance(d, list):
+            # lista homogênea de standings?
+            if d and all(isinstance(x, dict) and 'pontos' in x for x in d[:5]):
+                return list(d)
+            for x in d:
+                r = busca(x)
+                if r:
+                    return r
+        return None
+    return busca(dados) or []
 
 
 def obter_jogos_libertadores_flashscore():
@@ -379,11 +441,10 @@ def obter_jogos_libertadores_ge():
     return jogos
 
 
-def obter_libertadores_ge():
-    """Fallback oficial para o chaveamento da Libertadores: raspa o JSON
-    embutido na página do ge.globo (estrutura 'secao' -> 'chave' -> 'jogos')."""
-    secao = _secao_libertadores_ge()
-
+def _montar_confrontos_mata_mata(secao):
+    """Constrói a lista de confrontos de ida/volta (estilo mata-mata) a partir de
+    uma estrutura 'secao' do GE (Libertadores ou Copa do Brasil). Inclui apenas
+    os confrontos que envolvem o Flamengo."""
     confrontos = []
     for item in secao:
         for chave in item.get('chave', []):
@@ -452,6 +513,80 @@ def obter_libertadores_ge():
     if not confrontos:
         raise RuntimeError('Nenhum confronto do Flamengo encontrado no GE.')
     return confrontos
+
+
+def obter_libertadores_ge():
+    """Fallback oficial para o chaveamento da Libertadores: raspa o JSON
+    embutido na página do ge.globo (estrutura 'secao' -> 'chave' -> 'jogos')."""
+    return _montar_confrontos_mata_mata(_secao_libertadores_ge())
+
+
+def obter_copa_do_brasil_flashscore():
+    """Fonte primária para a Copa do Brasil via Flashscore (best-effort).
+    Retorna [] se indisponível ou sem adversários conhecidos."""
+    res = sc.fetch('https://www.flashscore.com/football/copa-do-brasil/',
+                   timeout=30, retries=3)
+    if not res.ok:
+        log('WARN', f'Flashscore/Copa do Brasil indisponível ({res.engine}): {res.error}')
+        return []
+    return _parse_flashscore_html(res.text, 'flamengo')
+
+
+def obter_copa_do_brasil_ge():
+    """Fallback oficial para o chaveamento da Copa do Brasil: reutiliza a
+    estrutura 'secao' do ge.globo (mata-mata ida/volta)."""
+    return _montar_confrontos_mata_mata(_secao_ge(GE_COPA_BRASIL_URL))
+
+
+def obter_tabela_carioca_ge():
+    """Tenta extrair a classificação da Taça Guanabara (pontos corridos) a partir
+    do objeto 'classificacao' embutido na página do GE. Levanta RuntimeError se
+    o GE ainda não expor a tabela (ex.: temporada ainda não iniciada)."""
+    res = sc.fetch(GE_CARIOCA_URL, timeout=30, retries=3)
+    if not res.ok:
+        raise RuntimeError(f'Falha ao baixar página do GE ({res.engine}): {res.error}')
+    t = res.text
+    i = t.find('const classificacao = ')
+    if i == -1:
+        raise RuntimeError('Bloco "classificacao" do Carioca não encontrado no GE.')
+    start = t.find('{', i)
+    if start == -1:
+        raise RuntimeError('Objeto "classificacao" do Carioca inválido.')
+    obj = _extrair_objeto_json(t, start)
+    if not obj:
+        raise RuntimeError('Não foi possível extrair o objeto "classificacao" do GE.')
+    dados = json.loads(obj)
+
+    linhas_brutas = _achar_classificacao(dados)
+    if not linhas_brutas:
+        raise RuntimeError('Classificação da Taça Guanabara não disponível no GE.')
+
+    linhas = []
+    for idx, e in enumerate(linhas_brutas, start=1):
+        nome = e.get('nome') or e.get('time') or e.get('nome_popular') or 'A definir'
+        nome_norm = normalizar(nome)
+        gols_pro = e.get('gols_pro') or e.get('gp') or 0
+        gols_contra = e.get('gols_contra') or e.get('gc') or 0
+        saldo = e.get('saldo_gols') or e.get('sg')
+        if saldo is None:
+            try:
+                saldo = int(gols_pro) - int(gols_contra)
+            except Exception:
+                saldo = 0
+        linhas.append({
+            'posicao': int(e.get('posicao') or idx),
+            'time': NOMES_EXIBICAO.get(nome_norm, nome),
+            'pontos': int(e.get('pontos') or 0),
+            'jogos': int(e.get('jogos') or 0),
+            'vitorias': int(e.get('vitorias') or 0),
+            'empates': int(e.get('empates') or 0),
+            'derrotas': int(e.get('derrotas') or 0),
+            'saldoGols': int(saldo),
+        })
+
+    if not linhas:
+        raise RuntimeError('Classificação da Taça Guanabara vazia no GE.')
+    return linhas
 
 
 # ---------------------------------------------------------------------------
@@ -649,7 +784,77 @@ def atualizar_libertadores():
     return mesclados
 
 
+def atualizar_copa_do_brasil():
+    """Atualiza o chaveamento da Copa do Brasil.
+    Fonte primária: Flashscore. Fallback oficial: ge.globo (estrutura 'secao').
+    Se nenhuma fonte responder, reaproveita o arquivo existente."""
+    confrontos = None
+    try:
+        confrontos = obter_copa_do_brasil_flashscore()
+    except Exception as e:
+        log('WARN', f'Fonte primária (Flashscore/Copa do Brasil) indisponível: {e}')
+
+    if not confrontos:
+        try:
+            confrontos = obter_copa_do_brasil_ge()
+            origem = 'GE (fallback)'
+        except Exception as e2:
+            log('WARN', f'Fallback (GE/Copa do Brasil) indisponível: {e2}')
+            confrontos = None
+
+    if not confrontos:
+        existentes = carregar_existentes(COPA_BRASIL_PATH)
+        if existentes:
+            save_json(existentes, COPA_BRASIL_PATH)
+            log('WARN', 'Chaveamento da Copa do Brasil mantido a partir dos dados existentes.')
+        return None
+
+    # Preserva rodadas futuras ausentes na fonte (merge por id, fonte tem prioridade)
+    existentes = carregar_existentes(COPA_BRASIL_PATH)
+    por_id = {}
+    if isinstance(existentes, dict) and existentes.get('confrontos'):
+        for c in existentes['confrontos']:
+            por_id[c['id']] = c
+    for c in confrontos:
+        por_id[c['id']] = c
+    mesclados = list(por_id.values())
+
+    dados = {
+        'fase': 'Copa do Brasil 2026',
+        'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+        'confrontos': mesclados,
+    }
+    save_json(dados, COPA_BRASIL_PATH)
+    log('SUCCESS', f'{len(mesclados)} confronto(s) de mata-mata da Copa do Brasil registrados via {origem}.')
+    return mesclados
+
+
+def atualizar_carioca():
+    """Atualiza a tabela da Taça Guanabara (Carioca). Tenta a fonte oficial GE;
+    se o GE ainda não expõe a classificação, mantém o arquivo existente."""
+    linhas = None
+    try:
+        linhas = obter_tabela_carioca_ge()
+        origem = 'GE'
+    except Exception as e:
+        log('WARN', f'Fallback (GE/Carioca) indisponível: {e}')
+        linhas = None
+
+    if not linhas:
+        existentes = carregar_existentes(CARIOCA_PATH)
+        if existentes:
+            save_json(existentes, CARIOCA_PATH)
+            log('WARN', 'Tabela do Carioca mantida a partir dos dados existentes.')
+        return None
+
+    save_json(linhas, CARIOCA_PATH)
+    log('SUCCESS', f'{len(linhas)} time(s) na tabela do Carioca registrados via {origem}.')
+    return linhas
+
+
 if __name__ == "__main__":
     log('INFO', 'Iniciando atualização da agenda de jogos...')
     atualizar_agenda()
     atualizar_libertadores()
+    atualizar_copa_do_brasil()
+    atualizar_carioca()

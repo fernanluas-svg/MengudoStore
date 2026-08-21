@@ -1,14 +1,126 @@
 [
-  { "posicao": 1, "time": "Flamengo", "pontos": 19, "jogos": 8, "vitorias": 6, "empates": 1, "derrotas": 1, "saldoGols": 12 },
-  { "posicao": 2, "time": "Fluminense", "pontos": 17, "jogos": 8, "vitorias": 5, "empates": 2, "derrotas": 1, "saldoGols": 7 },
-  { "posicao": 3, "time": "Botafogo", "pontos": 15, "jogos": 8, "vitorias": 4, "empates": 3, "derrotas": 1, "saldoGols": 5 },
-  { "posicao": 4, "time": "Vasco da Gama", "pontos": 14, "jogos": 8, "vitorias": 4, "empates": 2, "derrotas": 2, "saldoGols": 3 },
-  { "posicao": 5, "time": "Volta Redonda", "pontos": 12, "jogos": 8, "vitorias": 3, "empates": 3, "derrotas": 2, "saldoGols": 1 },
-  { "posicao": 6, "time": "Nova Iguaçu", "pontos": 11, "jogos": 8, "vitorias": 3, "empates": 2, "derrotas": 3, "saldoGols": -1 },
-  { "posicao": 7, "time": "Boavista", "pontos": 9, "jogos": 8, "vitorias": 2, "empates": 3, "derrotas": 3, "saldoGols": -2 },
-  { "posicao": 8, "time": "Bangu", "pontos": 8, "jogos": 8, "vitorias": 2, "empates": 2, "derrotas": 4, "saldoGols": -4 },
-  { "posicao": 9, "time": "Madureira", "pontos": 7, "jogos": 8, "vitorias": 1, "empates": 4, "derrotas": 3, "saldoGols": -3 },
-  { "posicao": 10, "time": "Audax Rio", "pontos": 6, "jogos": 8, "vitorias": 1, "empates": 3, "derrotas": 4, "saldoGols": -6 },
-  { "posicao": 11, "time": "Maricá", "pontos": 5, "jogos": 8, "vitorias": 1, "empates": 2, "derrotas": 5, "saldoGols": -7 },
-  { "posicao": 12, "time": "Sampaio Corrêa-RJ", "pontos": 3, "jogos": 8, "vitorias": 0, "empates": 3, "derrotas": 5, "saldoGols": -9 }
+  {
+    "posicao": 1,
+    "time": "Flamengo",
+    "pontos": 19,
+    "jogos": 8,
+    "vitorias": 6,
+    "empates": 1,
+    "derrotas": 1,
+    "saldoGols": 12,
+    "escudo": "/escudos/flamengo.png"
+  },
+  {
+    "posicao": 2,
+    "time": "Fluminense",
+    "pontos": 17,
+    "jogos": 8,
+    "vitorias": 5,
+    "empates": 2,
+    "derrotas": 1,
+    "saldoGols": 7,
+    "escudo": "/escudos/fluminense.svg"
+  },
+  {
+    "posicao": 3,
+    "time": "Botafogo",
+    "pontos": 15,
+    "jogos": 8,
+    "vitorias": 4,
+    "empates": 3,
+    "derrotas": 1,
+    "saldoGols": 5,
+    "escudo": "/escudos/botafogo.svg"
+  },
+  {
+    "posicao": 4,
+    "time": "Vasco da Gama",
+    "pontos": 14,
+    "jogos": 8,
+    "vitorias": 4,
+    "empates": 2,
+    "derrotas": 2,
+    "saldoGols": 3,
+    "escudo": "/escudos/vasco-da-gama.svg"
+  },
+  {
+    "posicao": 5,
+    "time": "Volta Redonda",
+    "pontos": 12,
+    "jogos": 8,
+    "vitorias": 3,
+    "empates": 3,
+    "derrotas": 2,
+    "saldoGols": 1
+  },
+  {
+    "posicao": 6,
+    "time": "Nova Iguaçu",
+    "pontos": 11,
+    "jogos": 8,
+    "vitorias": 3,
+    "empates": 2,
+    "derrotas": 3,
+    "saldoGols": -1
+  },
+  {
+    "posicao": 7,
+    "time": "Boavista",
+    "pontos": 9,
+    "jogos": 8,
+    "vitorias": 2,
+    "empates": 3,
+    "derrotas": 3,
+    "saldoGols": -2
+  },
+  {
+    "posicao": 8,
+    "time": "Bangu",
+    "pontos": 8,
+    "jogos": 8,
+    "vitorias": 2,
+    "empates": 2,
+    "derrotas": 4,
+    "saldoGols": -4
+  },
+  {
+    "posicao": 9,
+    "time": "Madureira",
+    "pontos": 7,
+    "jogos": 8,
+    "vitorias": 1,
+    "empates": 4,
+    "derrotas": 3,
+    "saldoGols": -3
+  },
+  {
+    "posicao": 10,
+    "time": "Audax Rio",
+    "pontos": 6,
+    "jogos": 8,
+    "vitorias": 1,
+    "empates": 3,
+    "derrotas": 4,
+    "saldoGols": -6
+  },
+  {
+    "posicao": 11,
+    "time": "Maricá",
+    "pontos": 5,
+    "jogos": 8,
+    "vitorias": 1,
+    "empates": 2,
+    "derrotas": 5,
+    "saldoGols": -7
+  },
+  {
+    "posicao": 12,
+    "time": "Sampaio Corrêa-RJ",
+    "pontos": 3,
+    "jogos": 8,
+    "vitorias": 0,
+    "empates": 3,
+    "derrotas": 5,
+    "saldoGols": -9
+  }
 ]
