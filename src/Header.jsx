@@ -66,9 +66,19 @@ export default function Header() {
         </NavLink>
 
         <nav className="flex items-center gap-2 sm:gap-3">
-          <NavLink to="/" end className={botaoNavegacao}>
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 rounded-lg border-2 transition-all duration-200 ${
+                isActive
+                  ? 'bg-white text-slate-900 border-white shadow-[0_0_18px_rgba(255,255,255,0.4)] sm:hover:-translate-y-0.5'
+                  : 'bg-white text-slate-900 border-white sm:bg-transparent sm:text-white sm:border-white/80 sm:hover:bg-white/10 sm:hover:border-white sm:hover:shadow-[0_0_14px_rgba(255,255,255,0.25)] sm:hover:-translate-y-0.5'
+              }`
+            }
+          >
             <FiHome className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-            <span>Início</span>
+            <span className="hidden sm:inline">Início</span>
           </NavLink>
           <NavLink to="/agenda" className={botaoNavegacao}>
             <FiCalendar className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
