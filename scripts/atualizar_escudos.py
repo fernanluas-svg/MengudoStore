@@ -1,12 +1,13 @@
 import json
 import os
 import re
+import sys
 import unicodedata
+import urllib.parse as _up
 from datetime import datetime, timezone
 
-import requests
-from bs4 import BeautifulSoup
-
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import scraper_core as sc
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, '../src/data')
@@ -15,29 +16,9 @@ ESCUDOS_DIR = os.path.join(PUBLIC_DIR, 'escudos')
 MAPA_PATH = os.path.join(DATA_DIR, 'mapa_escudos.json')
 
 GE_LIBERTADORES_URL = 'https://ge.globo.com/futebol/libertadores/'
-HEADERS = {
-    'User-Agent': 'MengudoStoreBot/1.0 (busca automatizada de escudos; contato@mengudostore.com)'
-}
 
 # Ordem de prioridade das fontes (conforme definido para o projeto).
 PRIORIDADE_FONTES = ['ge', 'flashscore', 'bolavip', 'betfair', 'sportingbet']
-
-CAMINHOS_CHROME = [
-    r'C:\Program Files\Google\Chrome\Application\chrome.exe',
-    r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
-    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-]
-
-
-def localizar_chrome():
-    """Tenta localizar o executável do Chrome em caminhos alternativos do
-    Windows. Retorna o caminho encontrado ou None (Selenium usará o padrão)."""
-    for caminho in CAMINHOS_CHROME:
-        if caminho and os.path.isfile(caminho):
-            return caminho
-    return None
 
 
 def log(nivel, mensagem):
@@ -48,7 +29,7 @@ def normalizar(texto):
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
     texto = re.sub(r'[_-]+', ' ', texto)
-    texto = re.sub(r'\s+', ' ', texto).strip().lower()
+    texto = re.sub(r'[ \t\r\n]+', ' ', texto).strip().lower()
     return texto
 
 
@@ -124,151 +105,76 @@ def coletar_logos_existentes():
 
 
 # ---------------------------------------------------------------------------
-# Busca de escudos (Selenium como primário, HTTP como fallback leve)
+# Busca de escudos (fetch mimetizado + seletor adaptável de imagem)
 # ---------------------------------------------------------------------------
 
 _GE_HTML_CACHE = None
-_SELENIUM_INDISPONIVEL = False
 
 
 def _html_ge_libertadores():
     global _GE_HTML_CACHE
     if _GE_HTML_CACHE is None:
-        try:
-            r = requests.get(GE_LIBERTADORES_URL, headers=HEADERS, timeout=30)
-            r.raise_for_status()
-            _GE_HTML_CACHE = r.text
-        except Exception as e:
-            log('WARN', f'Falha ao baixar página do GE: {e}')
+        res = sc.fetch(GE_LIBERTADORES_URL, timeout=30, retries=3)
+        if res.ok:
+            _GE_HTML_CACHE = res.text
+        else:
             _GE_HTML_CACHE = ''
+            log('WARN', f'Falha ao baixar página do GE: {res.error}')
     return _GE_HTML_CACHE
 
 
 def _buscar_ge_html(nome):
-    """Extrai o escudo de um time a partir dos <img alt="Time" src="...">
-    embutidos na página da Libertadores do GE."""
+    """Extrai o escudo de um time a partir da página da Libertadores do GE,
+    usando seletor adaptável (alt/title + src de imagem)."""
     html = _html_ge_libertadores()
     if not html:
         return None
-    soup = BeautifulSoup(html, 'html.parser')
-    alvo = normalizar(nome)
-
-    def _candidatos(pred):
-        resultado = []
-        for img in soup.find_all('img'):
-            alt = normalizar(img.get('alt') or '')
-            src = img.get('src') or ''
-            if pred(alt) and 's.sde.globo.com/media/' in src:
-                resultado.append(src)
-        return resultado
-
-    # 1) correspondência exata no alt (preferindo SVG)
-    for cand in _candidatos(lambda a: a == alvo):
-        if cand.lower().endswith('.svg'):
-            return cand
-    for cand in _candidatos(lambda a: a == alvo):
-        return cand
-    # 2) correspondência parcial (ex.: "Cusco" em "Cusco FC")
-    for cand in _candidatos(lambda a: alvo and alvo in a):
-        if cand.lower().endswith('.svg'):
-            return cand
-    for cand in _candidatos(lambda a: alvo and alvo in a):
-        return cand
-    return None
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(html, 'lxml')
+    except Exception:
+        return None
+    return sc.find_shield(soup, nome)
 
 
 def _buscar_site_generico(nome, url_template):
-    """Best-effort: busca o escudo em um site de apostas/notícias via HTTP.
-    Retorna a URL da imagem ou None."""
+    """Best-effort: busca o escudo em um site de apostas/notícias via HTTP
+    mimetizado, com seletor adaptável de imagem. Retorna URL ou None."""
     try:
-        url = url_template.format(query=requests.utils.quote(nome))
-        r = requests.get(url, headers=HEADERS, timeout=20)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, 'html.parser')
-        alvo = normalizar(nome)
-        # 1) img cujo alt bate com o time e parece um escudo
-        for img in soup.find_all('img'):
-            alt = normalizar(img.get('alt') or '')
-            src = img.get('src') or ''
-            eh_imagem = bool(re.search(r'\.(svg|png|jpg|jpeg)$', src, re.I))
-            eh_escudo = bool(re.search(r'(logo|shield|escudo|crest|badge)', src, re.I))
-            if alt == alvo and eh_imagem and eh_escudo:
-                return src
-        # 2) qualquer img de escudo próxima do nome
-        for img in soup.find_all('img'):
-            src = img.get('src') or ''
-            if re.search(r'(logo|shield|escudo|crest|badge)', src, re.I) and re.search(r'\.(svg|png|jpg|jpeg)$', src, re.I):
-                return src
+        url = url_template.format(query=_up.quote(nome))
+        res = sc.fetch(url, timeout=20, retries=2)
+        if not res.ok:
+            return None
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(res.text, 'lxml')
+        return sc.find_shield(soup, nome)
     except Exception:
         return None
-    return None
 
 
-def _buscar_escudo_selenium(nome):
-    """Fonte primária: Selenium/Chrome. Retorna URL ou None quando o navegador
-    não está disponível ou a busca falha."""
-    global _SELENIUM_INDISPONIVEL
-    if _SELENIUM_INDISPONIVEL:
-        return None
+def _buscar_flashscore_shield(nome):
+    """Fonte primária: Flashscore via fetch mimetizado + find_shield adaptável."""
     try:
-        from selenium import webdriver
-        from selenium.webdriver.chrome.service import Service
-        from selenium.webdriver.chrome.options import Options
-        from webdriver_manager.chrome import ChromeDriverManager
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
+        url = 'https://www.flashscore.com/search/?q=' + _up.quote(nome)
+        res = sc.fetch(url, timeout=20, retries=2)
+        if not res.ok:
+            return None
         from bs4 import BeautifulSoup
-    except Exception as e:
-        log('WARN', f'Dependencias de Selenium indisponiveis: {type(e).__name__}')
+        soup = BeautifulSoup(res.text, 'lxml')
+        return sc.find_shield(soup, nome)
+    except Exception:
         return None
-
-    try:
-        options = Options()
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_experimental_option('useAutomationExtension', False)
-        chrome = localizar_chrome()
-        if chrome:
-            options.binary_location = chrome
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=options)
-    except Exception as e:
-        _SELENIUM_INDISPONIVEL = True
-        log('WARN', f'Navegador indisponivel para Selenium: {type(e).__name__}')
-        return None
-
-    try:
-        driver.get(f'https://www.flashscore.com/search/?q={requests.utils.quote(nome)}')
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.searchElem'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        alvo = normalizar(nome)
-        for img in soup.find_all('img'):
-            alt = normalizar(img.get('alt') or '')
-            src = img.get('src') or ''
-            if alt == alvo and 'media' in src:
-                return src
-    except Exception as e:
-        log('WARN', f'Falha na busca via Selenium: {type(e).__name__}')
-        return None
-    finally:
-        try:
-            driver.quit()
-        except Exception:
-            pass
-    return None
 
 
 def obter_url_escudo(nome):
     """Tenta, na ordem de prioridade, obter a URL do escudo do time."""
-    # Selenium (Flashscore) como fonte primária
-    url = _buscar_escudo_selenium(nome)
+    # Flashscore (fetch mimetizado) como fonte primária
+    try:
+        url = _buscar_flashscore_shield(nome)
+    except Exception:
+        url = None
     if url:
-        return url, 'flashscore (selenium)'
+        return url, 'flashscore (curl_cffi)'
 
     # Fallback leve HTTP, respeitando a prioridade das fontes
     buscas = {
@@ -293,7 +199,7 @@ def obter_url_escudo(nome):
 # ---------------------------------------------------------------------------
 
 def _extensao(url):
-    m = re.search(r'\.(svg|png|jpg|jpeg)(?:[?#].*)?$', url, re.I)
+    m = re.search(r'[.](svg|png|jpe?g)(?:[?#].*)?$', url, re.I)
     return (m.group(1).lower() if m else 'png')
 
 
@@ -304,14 +210,14 @@ def baixar_escudo(nome, url):
     arquivo = f'{slugificar(nome)}.{ext}'
     destino = os.path.join(ESCUDOS_DIR, arquivo)
     try:
-        r = requests.get(url, headers=HEADERS, timeout=30)
-        r.raise_for_status()
-        with open(destino, 'wb') as f:
-            f.write(r.content)
-        return f'/escudos/{arquivo}'
+        status, content, engine = sc.download(url, timeout=30, retries=2)
+        if status and content:
+            with open(destino, 'wb') as f:
+                f.write(content)
+            return f'/escudos/{arquivo}'
     except Exception as e:
         log('WARN', f'Falha ao baixar escudo de {nome}: {e}')
-        return None
+    return None
 
 
 def carregar_mapa():

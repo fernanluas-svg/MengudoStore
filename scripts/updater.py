@@ -1,12 +1,13 @@
 import json
 import os
 import re
+import sys
 import time
 import unicodedata
 from datetime import datetime, timezone
 
-import requests
-from bs4 import BeautifulSoup
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import scraper_core as sc
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,9 +20,6 @@ GE_RODADAS = 38
 GE_LIBERTADORES_URL = 'https://ge.globo.com/futebol/libertadores/'
 FLASHSCORE_TEAM_URL = 'https://www.flashscore.com/team/flamengo/fixtures/'
 TEMPORADA = 2026
-HEADERS = {
-    'User-Agent': 'MengudoStoreBot/1.0 (automação da agenda de jogos; contato@mengudostore.com)'
-}
 
 LOGOS_SERIE_A = {
     'sao paulo': 'https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg',
@@ -161,111 +159,68 @@ def _extrair_array_json(texto, idx):
 
 
 # ---------------------------------------------------------------------------
-# FONTE PRIMÁRIA: Flashscore / Casas de Apostas (Selenium)
+# FONTE PRIMÁRIA: Flashscore / Casas de Apostas (fetch mimetizado + adaptável)
 # ---------------------------------------------------------------------------
 
-CAMINHOS_CHROME = [
-    r'C:\Program Files\Google\Chrome\Application\chrome.exe',
-    r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
-    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-]
+KNOWN_TEAMS = set(LOGOS_SERIE_A.keys()) | set(NOMES_EXIBICAO.keys()) | {'flamengo'}
 
 
-def localizar_chrome():
-    """Tenta localizar o executável do Chrome em caminhos alternativos do
-    Windows. Retorna o caminho encontrado ou None (Selenium usará o padrão)."""
-    for caminho in CAMINHOS_CHROME:
-        if caminho and os.path.isfile(caminho):
-            return caminho
-    return None
+def _parse_flashscore_html(html, team_norm):
+    """Extrai partidas de um HTML do Flashscore usando seletores adaptáveis
+    (conteúdo: nome do time + data/placar), sem depender de classes CSS fixas.
+    Retorna lista de dicts no formato interno. Se o adversário não for um time
+    conhecido (ex.: Libertadores), a linha é ignorada com segurança."""
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(html, 'lxml')
+    except Exception as e:
+        log('WARN', f'Falha ao parsear HTML do Flashscore: {e}')
+        return []
 
-
-def _iniciar_driver_flashscore():
-    from selenium import webdriver
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.chrome.options import Options
-    from webdriver_manager.chrome import ChromeDriverManager
-    options = Options()
-    options.add_argument('--headless=new')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    options.add_experimental_option('useAutomationExtension', False)
-    chrome = localizar_chrome()
-    if chrome:
-        options.binary_location = chrome
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
+    partidas = []
+    for row in sc.find_match_rows(soup, team_norm):
+        txt = row.get_text(' ', strip=True)
+        opp = sc.extract_opponent(txt, team_norm, KNOWN_TEAMS)
+        # só considera adversários conhecidos para evitar lixo de layout novo
+        if not opp or opp not in KNOWN_TEAMS:
+            continue
+        txt_norm = sc.normalize(txt)
+        try:
+            fla_pos = txt_norm.index('flamengo')
+            opp_pos = txt_norm.index(opp)
+        except ValueError:
+            continue
+        if fla_pos < opp_pos:
+            mandante, visitante = team_norm, opp
+        else:
+            mandante, visitante = opp, team_norm
+        gols_m, gols_v = sc.extract_scores(txt)
+        iso = sc.extract_datetime(txt)
+        if not iso:
+            continue
+        partidas.append({
+            'data': iso,
+            'mandante': mandante,
+            'visitante': visitante,
+            'gols_mandante': gols_m,
+            'gols_visitante': gols_v,
+            'estadio': 'A definir',
+            'escudo_mandante': None,
+            'escudo_visitante': None,
+        })
+    return partidas
 
 
 def obter_partidas_flashscore():
     """Fonte primária: raspa as partidas (passadas e futuras) do Flamengo no
-    Flashscore via Selenium. Retorna lista de partidas no formato interno.
-    Em ambientes sem Chrome/rede retorna [] para acionar o fallback do GE."""
-    try:
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        from bs4 import BeautifulSoup
-    except Exception as e:
-        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+    Flashscore via fetch com mimetização de Chrome (curl_cffi / TLS spoofing).
+    Seletores adaptáveis mantêm a extração mesmo se o layout mudar. Sem rede
+    ou com Cloudflare bloqueando, retorna [] para acionar o fallback do GE."""
+    res = sc.fetch(FLASHSCORE_TEAM_URL, timeout=30, retries=3)
+    if not res.ok:
+        log('WARN', f'Flashscore indisponível ({res.engine}): {res.error}')
         return []
-
-    try:
-        driver = _iniciar_driver_flashscore()
-    except Exception as e:
-        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {e}')
-        return []
-
-    partidas = []
-    try:
-        driver.get(FLASHSCORE_TEAM_URL)
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        for elem in soup.select('div.event__match'):
-            data_id = elem.get('data-id')
-            if not data_id:
-                continue
-            cols = elem.select('div.event__participant, span.event__time')
-            if len(cols) < 3:
-                continue
-            mandante = normalizar(cols[0].get_text(' ', strip=True))
-            visitante = normalizar(cols[1].get_text(' ', strip=True))
-            if mandante != 'flamengo' and visitante != 'flamengo':
-                continue
-            texto_tempo = cols[2].get_text(' ', strip=True)
-            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
-            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
-            if not mdata:
-                continue
-            dia, mes = int(mdata.group(1)), int(mdata.group(2))
-            ano = int(mdata.group(3))
-            if ano < 100:
-                ano += 2000
-            hora = mhora.group(0) if mhora else '00:00'
-            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
-            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
-            partidas.append({
-                'data': iso,
-                'mandante': mandante,
-                'visitante': visitante,
-                'gols_mandante': gols_m,
-                'gols_visitante': gols_v,
-                'estadio': 'A definir',
-                'escudo_mandante': None,
-                'escudo_visitante': None,
-            })
-        time.sleep(0.2)
-    except Exception as e:
-        log('ERROR', f'Falha no scraping do Flashscore: {type(e).__name__}')
-        return []
-    finally:
-        driver.quit()
-
+    partidas = _parse_flashscore_html(res.text, 'flamengo')
     if not partidas:
         return []
     return partidas
@@ -273,65 +228,14 @@ def obter_partidas_flashscore():
 
 def obter_libertadores_flashscore():
     """Fonte primária para o mata-mata da Libertadores via Flashscore.
-    Best-effort: retorna [] se não houver navegador/rede disponível."""
-    try:
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        from bs4 import BeautifulSoup
-    except Exception as e:
-        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+    Best-effort: usa fetch mimetizado + parsing adaptável; retorna [] se não
+    houver rede ou se os adversários não forem times conhecidos."""
+    res = sc.fetch('https://www.flashscore.com/football/copa-libertadores/',
+                   timeout=30, retries=3)
+    if not res.ok:
+        log('WARN', f'Flashscore/Libertadores indisponível ({res.engine}): {res.error}')
         return []
-
-    try:
-        driver = _iniciar_driver_flashscore()
-    except Exception as e:
-        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {e}')
-        return []
-
-    try:
-        driver.get('https://www.flashscore.com/football/copa-libertadores/')
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        encontrados = []
-        for elem in soup.select('div.event__match'):
-            cols = elem.select('div.event__participant, span.event__time')
-            if len(cols) < 3:
-                continue
-            mandante = normalizar(cols[0].get_text(' ', strip=True))
-            visitante = normalizar(cols[1].get_text(' ', strip=True))
-            if 'flamengo' not in (mandante, visitante):
-                continue
-            texto_tempo = cols[2].get_text(' ', strip=True)
-            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
-            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
-            if not mdata:
-                continue
-            dia, mes = int(mdata.group(1)), int(mdata.group(2))
-            ano = int(mdata.group(3))
-            if ano < 100:
-                ano += 2000
-            hora = mhora.group(0) if mhora else '00:00'
-            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
-            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
-            encontrados.append({
-                'data': iso,
-                'mandante': mandante,
-                'visitante': visitante,
-                'gols_mandante': gols_m,
-                'gols_visitante': gols_v,
-                'estadio': 'A definir',
-                'escudo_mandante': None,
-                'escudo_visitante': None,
-            })
-        return encontrados
-    except Exception as e:
-        log('ERROR', f'Falha no scraping da Libertadores no Flashscore: {type(e).__name__}')
-        return []
-    finally:
-        driver.quit()
+    return _parse_flashscore_html(res.text, 'flamengo')
 
 
 # ---------------------------------------------------------------------------
@@ -346,9 +250,9 @@ def obter_partidas_ge():
     for rodada in range(1, GE_RODADAS + 1):
         url = GE_API_URL.format(rodada=rodada)
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=30)
-            resp.raise_for_status()
-            jogos = resp.json()
+            jogos = sc.fetch_json(url, timeout=30, retries=2)
+            if not isinstance(jogos, list):
+                raise RuntimeError('resposta vazia/inválida do GE')
         except Exception as e:
             log('WARN', f'GE rodada {rodada} indisponível: {e}')
             continue
@@ -413,9 +317,10 @@ def _leg_libertadores(raw):
 
 def _secao_libertadores_ge():
     """Retorna a lista 'secao' (chaves/jogos) embutida na página do GE."""
-    resp = requests.get(GE_LIBERTADORES_URL, headers=HEADERS, timeout=30)
-    resp.raise_for_status()
-    t = resp.text
+    res = sc.fetch(GE_LIBERTADORES_URL, timeout=30, retries=3)
+    if not res.ok:
+        raise RuntimeError(f'Falha ao baixar página do GE ({res.engine}): {res.error}')
+    t = res.text
     i = t.find('"secao":[')
     if i == -1:
         raise RuntimeError('Bloco "secao" da Libertadores não encontrado no GE.')
@@ -427,64 +332,17 @@ def _secao_libertadores_ge():
 
 def obter_jogos_libertadores_flashscore():
     """Fonte primária para as partidas da Libertadores via Flashscore.
-    Best-effort: retorna [] se não houver navegador/rede disponível."""
-    try:
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        from bs4 import BeautifulSoup
-    except Exception as e:
-        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+    Best-effort: usa fetch mimetizado + parsing adaptável; retorna [] se não
+    houver rede ou se os adversários não forem times conhecidos."""
+    res = sc.fetch('https://www.flashscore.com/football/copa-libertadores/',
+                   timeout=30, retries=3)
+    if not res.ok:
+        log('WARN', f'Flashscore/Libertadores indisponível ({res.engine}): {res.error}')
         return []
-    try:
-        driver = _iniciar_driver_flashscore()
-    except Exception as e:
-        log('WARN', f'Nao foi possivel iniciar o navegador para o Flashscore: {type(e).__name__}')
-        return []
-    try:
-        driver.get('https://www.flashscore.com/football/copa-libertadores/')
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        jogos = []
-        for elem in soup.select('div.event__match'):
-            cols = elem.select('div.event__participant, span.event__time')
-            if len(cols) < 3:
-                continue
-            mandante = normalizar(cols[0].get_text(' ', strip=True))
-            visitante = normalizar(cols[1].get_text(' ', strip=True))
-            if 'flamengo' not in (mandante, visitante):
-                continue
-            texto_tempo = cols[2].get_text(' ', strip=True)
-            mdata = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{2,4})', texto_tempo)
-            mhora = re.search(r'(\d{1,2}):(\d{2})', texto_tempo)
-            if not mdata:
-                continue
-            dia, mes = int(mdata.group(1)), int(mdata.group(2))
-            ano = int(mdata.group(3))
-            if ano < 100:
-                ano += 2000
-            hora = mhora.group(0) if mhora else '00:00'
-            iso = f'{ano}-{mes:02d}-{dia:02d}T{hora}:00-03:00'
-            gols_m, gols_v = _extrair_placar(elem.get_text(' ', strip=True))
-            jogos.append({
-                'data': iso,
-                'mandante': mandante,
-                'visitante': visitante,
-                'gols_mandante': gols_m,
-                'gols_visitante': gols_v,
-                'estadio': 'A definir',
-                'escudo_mandante': None,
-                'escudo_visitante': None,
-                'competition': 'Libertadores',
-            })
-        return jogos
-    except Exception as e:
-        log('ERROR', f'Falha no scraping da Libertadores no Flashscore: {type(e).__name__}')
-        return []
-    finally:
-        driver.quit()
+    partidas = _parse_flashscore_html(res.text, 'flamengo')
+    for p in partidas:
+        p['competition'] = 'Libertadores'
+    return partidas
 
 
 def obter_jogos_libertadores_ge():

@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 """
 odds_scraper.py - Raspa as odds (Match Odds / Probabilidades 1X2) dos próximos
-jogos do Flamengo, baseado nos módulos do Fut Python Trader (FlashScore Scraper).
+jogos do Flamengo.
 
-Abordagem (espelhada do repositório futpythontrader/YouTube):
-  - Selenium + webdriver-manager para dirigir o FlashScore (flashscore.com).
-  - Extração das odds 1X2 (Vitória Mandante "1", Empate "X", Vitória Visitante "2")
-    e seleção da casa de apostas preferencial (Bet365 > Betfair > primeira).
-  - Fallback: se não houver navegador/rede (ex.: ambiente sem Chrome), gera odds
+Abordagem moderna (anti-bot + adaptável):
+  - Fetch com mimetização de Chrome real (curl_cffi / TLS spoofing) em vez de
+    Selenium/Requests convencionais, driblando Cloudflare/Flashscore sem
+    depender de um navegador headless (sem timeout de boot do Chrome).
+  - Extração de odds por HEURÍSTICA DE CONTEÚDO (3 números decimais 1X2 em um
+    mesmo bloco) em vez de classes CSS fixas (ex.: div.ui-table.oddsCell__odds),
+    mantendo a leitura mesmo que o layout do Flashscore mude.
+  - Fallback: se não houver rede/Cloudflare bloquear, gera odds
     representativas a partir de src/data/nextMatch.json, marcando fonte="fallback".
 
 Saída: src/data/odds.json (formatado) + src/data/odds.csv (via pandas).
@@ -16,7 +19,11 @@ Saída: src/data/odds.json (formatado) + src/data/odds.csv (via pandas).
 
 import json
 import os
+import sys
 from datetime import datetime, timezone
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import scraper_core as sc
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NEXT_MATCH_PATH = os.path.join(BASE_DIR, '../src/data/nextMatch.json')
@@ -25,23 +32,6 @@ CSV_PATH = os.path.join(BASE_DIR, '../src/data/odds.csv')
 
 FLAMENGO = 'Flamengo'
 PREFER_BOOKMAKERS = ['bet365', 'betfair']
-
-CAMINHOS_CHROME = [
-    r'C:\Program Files\Google\Chrome\Application\chrome.exe',
-    r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
-    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-]
-
-
-def localizar_chrome():
-    """Tenta localizar o executável do Chrome em caminhos alternativos do
-    Windows. Retorna o caminho encontrado ou None (Selenium usará o padrão)."""
-    for caminho in CAMINHOS_CHROME:
-        if caminho and os.path.isfile(caminho):
-            return caminho
-    return None
 
 
 def log(nivel, msg):
@@ -86,138 +76,40 @@ def odds_fallback(jogos):
 
 
 def raspar_flashscore(jogos):
-    """Tenta scraping real no FlashScore. Retorna lista de dicts ou [] se falhar."""
-    try:
-        from selenium import webdriver
-        from selenium.webdriver.chrome.service import Service
-        from selenium.webdriver.chrome.options import Options
-        from webdriver_manager.chrome import ChromeDriverManager
-    except Exception as e:
-        log('WARN', f'Dependencias de scraping indisponiveis: {e}')
+    """Tenta extração adaptável de odds no FlashScore via fetch mimetizado.
+    Retorna lista de dicts ou [] se não houver conteúdo (Cloudflare/sem JS)."""
+    res = sc.fetch('https://www.flashscore.com/team/flamengo/fixtures/',
+                   timeout=30, retries=3)
+    if not res.ok:
+        log('WARN', f'Flashscore indisponível ({res.engine}): {res.error}')
         return []
-
     try:
-        options = Options()
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_experimental_option('useAutomationExtension', False)
-        chrome = localizar_chrome()
-        if chrome:
-            options.binary_location = chrome
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=options)
-    except Exception as e:
-        log('WARN', f'Nao foi possivel iniciar o navegador: {e}')
-        return []
-
-    try:
-        ids = obter_ids_proximos_flamengo(driver)
-        if not ids:
-            log('WARN', 'Nenhum id de partida do Flamengo descoberto no FlashScore.')
-            return []
-
-        entradas = []
-        for mid in ids:
-            odds = extrair_odds_1x2(driver, mid)
-            if odds:
-                entradas.append(odds)
-        return entradas
-    except Exception as e:
-        log('ERROR', f'Falha no scraping do FlashScore: {e}')
-        return []
-    finally:
-        driver.quit()
-
-
-def obter_ids_proximos_flamengo(driver):
-    """Best-effort: coleta ids das proximas partidas do Flamengo no FlashScore."""
-    try:
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
         from bs4 import BeautifulSoup
-
-        driver.get('https://www.flashscore.com/team/flamengo/fixtures/')
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.event__match'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        return [
-            elem.get('data-id')
-            for elem in soup.select('div.event__match')
-            if elem.get('data-id')
-        ]
-    except Exception:
+        soup = BeautifulSoup(res.text, 'lxml')
+    except Exception as e:
+        log('WARN', f'Falha ao parsear Flashscore: {e}')
         return []
 
-
-def extrair_odds_1x2(driver, match_id):
-    """Extrai odds 1X2 FT de uma partida (baseado no Fut Python Trader)."""
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    from bs4 import BeautifulSoup
-
-    url = f'https://www.flashscore.com/match/{match_id}/#/match-summary/odds/1x2/full-time'
-    driver.get(url)
-    try:
-        WebDriverWait(driver, 12).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ui-table.oddsCell__odds'))
-        )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        table = soup.select_one('div.ui-table.oddsCell__odds')
-        if not table:
-            return None
-
-        odds_lista = []
-        for linha in table.select('div.ui-table__row'):
-            logo = linha.select_one('div.wcl-bookmakerLogo_4IUU0 a img')
-            if not logo:
-                continue
-            casa = (logo.get('title') or logo.get('alt', '')).strip()
-            celulas = linha.select('a.oddsCell__odd')
-            if len(celulas) < 3:
-                continue
-            try:
-                o1 = o2 = ox = None
-                for i, celula in enumerate(celulas[:3]):
-                    if celula.select('span.oddsCell__lineThrough'):
-                        continue
-                    span = celula.select_one('span')
-                    if not span:
-                        continue
-                    valor = float(span.text.strip().replace(',', '.'))
-                    if i == 0:
-                        o1 = valor
-                    elif i == 1:
-                        ox = valor
-                    elif i == 2:
-                        o2 = valor
-                if o1 or ox or o2:
-                    odds_lista.append({'Bookmaker': casa, 'Odd_1': o1, 'Odd_X': ox, 'Odd_2': o2})
-            except Exception:
-                continue
-
-        melhor = escolher_melhor_casa(odds_lista)
-        if not melhor:
-            return None
-
-        return {
-            'matchIdFlashscore': match_id,
+    entradas = []
+    # Seletor adaptável: blocos com 3 números decimais (1X2) no mesmo texto,
+    # independente da classe da tabela (ui-table, wcl-*, etc.).
+    for tag, numbers, txt in sc.find_odds_rows(soup):
+        if len(numbers) < 3:
+            continue
+        o1, ox, o2 = numbers[0], numbers[1], numbers[2]
+        resto = sc.normalize(txt)
+        for n in numbers:
+            resto = resto.replace(str(n), ' ')
+        casa = ' '.join([w for w in resto.split() if len(w) > 2])[:50] or 'desconhecida'
+        entradas.append({
+            'matchIdFlashscore': None,
             'home': None,
             'away': None,
-            'odds': {
-                '1': melhor.get('Odd_1'),
-                'X': melhor.get('Odd_X'),
-                '2': melhor.get('Odd_2'),
-            },
-            'bookmaker': melhor.get('Bookmaker'),
+            'odds': {'1': o1, 'X': ox, '2': o2},
+            'bookmaker': casa,
             'source': 'flashscore',
-        }
-    except Exception:
-        return None
+        })
+    return entradas
 
 
 def mesclar_com_metadata(scraped, jogos):
@@ -289,7 +181,7 @@ def main():
     if entradas:
         fonte = 'flashscore'
         entradas = mesclar_com_metadata(entradas, jogos)
-        log('SUCCESS', f'Scraping real concluido: {len(entradas)} jogo(s).')
+        log('SUCCESS', f'Scraping concluido: {len(entradas)} jogo(s).')
     else:
         log('WARN', 'Usando odds representativas (fallback) a partir do nextMatch.json.')
         entradas = odds_fallback(jogos)
