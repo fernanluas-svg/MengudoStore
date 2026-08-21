@@ -12,6 +12,42 @@ const FLAMENGO_ESCUDO_URL =
 const FLAMENGO_ESCUDO_FALLBACK =
   'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
 
+const LOGOS_TIMES = {
+  'Palmeiras': 'https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg',
+  'Flamengo': 'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg',
+  'Athletico Paranaense': 'https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg',
+  'Fluminense': 'https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg',
+  'Cruzeiro': 'https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg',
+  'Bahia': 'https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg',
+  'Red Bull Bragantino': 'https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg',
+  'Atlético Mineiro': 'https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg',
+  'Corinthians': 'https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg',
+  'Coritiba': 'https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg',
+  'Botafogo': 'https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg',
+  'Vitória': 'https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg',
+  'São Paulo': 'https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg',
+  'Santos': 'https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg',
+  'Grêmio': 'https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg',
+  'Internacional': 'https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg',
+  'Mirassol': 'https://s.sde.globo.com/media/organizations/2026/07/17/MIrassol.svg',
+  'Remo': 'https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg',
+  'Vasco da Gama': 'https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg',
+  'Chapecoense': 'https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg',
+};
+
+function estiloZona(posicao) {
+  if (posicao >= 1 && posicao <= 4) {
+    return { bg: 'bg-cyan-500/10 hover:bg-cyan-500/20', borda: 'border-cyan-400' };
+  }
+  if (posicao >= 5 && posicao <= 6) {
+    return { bg: 'bg-cyan-300/10 hover:bg-cyan-300/20', borda: 'border-cyan-200' };
+  }
+  if (posicao >= 7 && posicao <= 16) {
+    return { bg: 'bg-slate-700/25 hover:bg-slate-700/35', borda: 'border-slate-500' };
+  }
+  return { bg: 'bg-rose-500/10 hover:bg-rose-500/20', borda: 'border-rose-400' };
+}
+
 function formatarData(iso) {
   return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 }
@@ -20,7 +56,7 @@ function formatarHora(iso) {
   return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function EscudoJogo({ src, fallback, nome }) {
+function EscudoJogo({ src, fallback, nome, className = 'w-8 h-8' }) {
   const [indice, setIndice] = useState(0);
   const origens = [src, fallback].filter(Boolean);
   if (indice >= origens.length || origens.length === 0) {
@@ -32,7 +68,7 @@ function EscudoJogo({ src, fallback, nome }) {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="w-8 h-8 text-slate-500"
+        className={`${className} text-slate-500`}
         aria-label={nome}
       >
         <path d="M12 2l8 3v6c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3z" />
@@ -45,7 +81,7 @@ function EscudoJogo({ src, fallback, nome }) {
       src={origens[indice]}
       alt={nome}
       onError={() => setIndice((i) => i + 1)}
-      className="w-8 h-8 object-contain"
+      className={`${className} object-contain`}
     />
   );
 }
@@ -238,17 +274,28 @@ function TabelaClassificacao({ linhas }) {
         <tbody>
           {linhas.map((linha) => {
             const destaque = linha.time === 'Flamengo';
+            const { bg, borda } = estiloZona(linha.posicao);
             return (
               <tr
                 key={linha.posicao}
-                className={
+                className={`${bg} ${
                   destaque
-                    ? 'bg-red-600/15 border-y border-red-600/30 text-red-200 font-semibold'
-                    : 'border-b border-slate-800/60 text-slate-300 hover:bg-slate-800/40 transition-colors'
-                }
+                    ? 'ring-1 ring-inset ring-red-500/60 text-red-200 font-semibold'
+                    : 'text-slate-300'
+                } border-b border-slate-800/60 transition-colors`}
               >
-                <td className="py-2 pl-2">{linha.posicao}</td>
-                <td className="py-2">{linha.time}</td>
+                <td className={`py-2 pl-2 font-semibold border-l-2 ${borda}`}>{linha.posicao}</td>
+                <td className="py-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <EscudoJogo
+                      src={LOGOS_TIMES[linha.time]}
+                      fallback={null}
+                      nome={linha.time}
+                      className="w-7 h-7 shrink-0"
+                    />
+                    <span className="truncate">{linha.time}</span>
+                  </div>
+                </td>
                 <td className="py-2 text-center font-bold">{linha.pontos}</td>
                 <td className="py-2 text-center hidden sm:table-cell">{linha.jogos}</td>
                 <td className="py-2 text-center hidden md:table-cell">{linha.vitorias}</td>
