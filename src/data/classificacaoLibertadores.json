@@ -10,7 +10,8 @@
         "vitorias": 5,
         "empates": 1,
         "derrotas": 0,
-        "saldoGols": 12
+        "saldoGols": 12,
+        "escudo": "/escudos/flamengo.png"
       },
       {
         "posicao": 2,
@@ -20,7 +21,8 @@
         "vitorias": 2,
         "empates": 3,
         "derrotas": 1,
-        "saldoGols": 1
+        "saldoGols": 1,
+        "escudo": "/escudos/estudiantes.png"
       },
       {
         "posicao": 3,
@@ -30,7 +32,8 @@
         "vitorias": 2,
         "empates": 1,
         "derrotas": 3,
-        "saldoGols": 0
+        "saldoGols": 0,
+        "escudo": "/escudos/independiente-medellin.png"
       },
       {
         "posicao": 4,
@@ -40,7 +43,8 @@
         "vitorias": 0,
         "empates": 1,
         "derrotas": 5,
-        "saldoGols": 0
+        "saldoGols": 0,
+        "escudo": "/escudos/cusco.png"
       }
     ]
   }

@@ -13,21 +13,26 @@
         "fora": "flamengo",
         "placarCasa": 1,
         "placarFora": 1,
-        "data": "2026-08-12T21:30:00-03:00"
+        "data": "2026-08-12T21:30:00-03:00",
+        "casaEscudo": "/escudos/cruzeiro.svg",
+        "foraEscudo": "/escudos/flamengo.png"
       },
       "volta": {
         "casa": "flamengo",
         "fora": "cruzeiro",
         "placarCasa": 2,
         "placarFora": 1,
-        "data": "2026-08-19T21:30:00-03:00"
+        "data": "2026-08-19T21:30:00-03:00",
+        "casaEscudo": "/escudos/flamengo.png",
+        "foraEscudo": "/escudos/cruzeiro.svg"
       },
       "agregado": {
         "timeA": 3,
         "timeB": 2
       },
       "classificado": "Flamengo",
-      "status": "DEFINIDO"
+      "status": "DEFINIDO",
+      "escudo": "/escudos/cruzeiro.svg"
     },
     {
       "id": "quartas-de-final-flamengo-a-definir",
@@ -40,14 +45,16 @@
         "fora": "Flamengo",
         "placarCasa": null,
         "placarFora": null,
-        "data": "2026-09-08T00:00:00-03:00"
+        "data": "2026-09-08T00:00:00-03:00",
+        "foraEscudo": "/escudos/flamengo.png"
       },
       "volta": {
         "casa": "Flamengo",
         "fora": "A definir",
         "placarCasa": null,
         "placarFora": null,
-        "data": "2026-09-17T21:30:00-03:00"
+        "data": "2026-09-17T21:30:00-03:00",
+        "casaEscudo": "/escudos/flamengo.png"
       },
       "agregado": {
         "timeA": null,

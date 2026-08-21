@@ -2,7 +2,7 @@
   {
     "id": "2026-08-16-mirassol",
     "opponent": "Mirassol",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2026/07/17/MIrassol.svg",
+    "opponentLogo": "/escudos/mirassol.svg",
     "isHome": false,
     "date": "2026-08-16T18:30:00-03:00",
     "stadium": "Maião",
@@ -14,7 +14,7 @@
   {
     "id": "2026-08-09-vitoria",
     "opponent": "Vitória",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg",
+    "opponentLogo": "/escudos/vitoria.svg",
     "isHome": true,
     "date": "2026-08-09T19:30:00-03:00",
     "stadium": "Maracanã",
@@ -26,7 +26,7 @@
   {
     "id": "2026-07-29-internacional",
     "opponent": "Internacional",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg",
+    "opponentLogo": "/escudos/internacional.svg",
     "isHome": false,
     "date": "2026-07-29T19:30:00-03:00",
     "stadium": "Beira-Rio",
@@ -38,7 +38,7 @@
   {
     "id": "2026-07-26-sao-paulo",
     "opponent": "São Paulo",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg",
+    "opponentLogo": "/escudos/sao-paulo.svg",
     "isHome": true,
     "date": "2026-07-26T18:30:00-03:00",
     "stadium": "Maracanã",
@@ -50,7 +50,7 @@
   {
     "id": "2026-07-22-chapecoense",
     "opponent": "Chapecoense",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg",
+    "opponentLogo": "/escudos/chapecoense.svg",
     "isHome": false,
     "date": "2026-07-22T21:30:00-03:00",
     "stadium": "Arena Condá",
@@ -62,7 +62,7 @@
   {
     "id": "2026-05-30-coritiba",
     "opponent": "Coritiba",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg",
+    "opponentLogo": "/escudos/coritiba.svg",
     "isHome": true,
     "date": "2026-05-30T16:00:00-03:00",
     "stadium": "Maracanã",
@@ -74,7 +74,7 @@
   {
     "id": "2026-05-23-palmeiras",
     "opponent": "Palmeiras",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg",
+    "opponentLogo": "/escudos/palmeiras.svg",
     "isHome": true,
     "date": "2026-05-23T21:00:00-03:00",
     "stadium": "Maracanã",
@@ -86,7 +86,7 @@
   {
     "id": "2026-05-17-atletico-paranaense",
     "opponent": "Athletico Paranaense",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg",
+    "opponentLogo": "/escudos/athletico-paranaense.svg",
     "isHome": false,
     "date": "2026-05-17T19:30:00-03:00",
     "stadium": "Arena da Baixada",
@@ -98,7 +98,7 @@
   {
     "id": "2026-05-10-gremio",
     "opponent": "Grêmio",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg",
+    "opponentLogo": "/escudos/gremio.svg",
     "isHome": false,
     "date": "2026-05-10T19:30:00-03:00",
     "stadium": "Arena do Grêmio",
@@ -110,7 +110,7 @@
   {
     "id": "2026-05-03-vasco-da-gama",
     "opponent": "Vasco da Gama",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg",
+    "opponentLogo": "/escudos/vasco-da-gama.svg",
     "isHome": true,
     "date": "2026-05-03T16:00:00-03:00",
     "stadium": "Maracanã",
@@ -122,7 +122,7 @@
   {
     "id": "2026-04-26-atletico-mineiro",
     "opponent": "Atlético Mineiro",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg",
+    "opponentLogo": "/escudos/atletico-mineiro.svg",
     "isHome": false,
     "date": "2026-04-26T20:30:00-03:00",
     "stadium": "Arena MRV",
@@ -134,7 +134,7 @@
   {
     "id": "2026-04-19-bahia",
     "opponent": "Bahia",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg",
+    "opponentLogo": "/escudos/bahia.svg",
     "isHome": true,
     "date": "2026-04-19T19:30:00-03:00",
     "stadium": "Maracanã",
@@ -146,7 +146,7 @@
   {
     "id": "2026-04-12-fluminense",
     "opponent": "Fluminense",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg",
+    "opponentLogo": "/escudos/fluminense.svg",
     "isHome": false,
     "date": "2026-04-12T18:00:00-03:00",
     "stadium": "Maracanã",
@@ -158,7 +158,7 @@
   {
     "id": "2026-04-05-santos",
     "opponent": "Santos",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg",
+    "opponentLogo": "/escudos/santos.svg",
     "isHome": true,
     "date": "2026-04-05T17:30:00-03:00",
     "stadium": "Maracanã",
@@ -170,7 +170,7 @@
   {
     "id": "2026-04-02-red-bull-bragantino",
     "opponent": "Red Bull Bragantino",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg",
+    "opponentLogo": "/escudos/red-bull-bragantino.svg",
     "isHome": false,
     "date": "2026-04-02T21:30:00-03:00",
     "stadium": "Cícero de Souza Marques",
@@ -182,7 +182,7 @@
   {
     "id": "2026-03-22-corinthians",
     "opponent": "Corinthians",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg",
+    "opponentLogo": "/escudos/corinthians.svg",
     "isHome": false,
     "date": "2026-03-22T20:30:00-03:00",
     "stadium": "Neo Química Arena",
@@ -194,7 +194,7 @@
   {
     "id": "2026-03-19-remo",
     "opponent": "Remo",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg",
+    "opponentLogo": "/escudos/remo.svg",
     "isHome": true,
     "date": "2026-03-19T20:00:00-03:00",
     "stadium": "Maracanã",
@@ -206,7 +206,7 @@
   {
     "id": "2026-03-14-botafogo",
     "opponent": "Botafogo",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg",
+    "opponentLogo": "/escudos/botafogo.svg",
     "isHome": false,
     "date": "2026-03-14T20:30:00-03:00",
     "stadium": "Nilton Santos (Engenhão)",
@@ -218,7 +218,7 @@
   {
     "id": "2026-03-11-cruzeiro",
     "opponent": "Cruzeiro",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg",
+    "opponentLogo": "/escudos/cruzeiro.svg",
     "isHome": true,
     "date": "2026-03-11T21:30:00-03:00",
     "stadium": "Maracanã",
@@ -230,7 +230,7 @@
   {
     "id": "2026-02-10-vitoria",
     "opponent": "Vitória",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg",
+    "opponentLogo": "/escudos/vitoria.svg",
     "isHome": false,
     "date": "2026-02-10T21:30:00-03:00",
     "stadium": "Barradão",
@@ -242,7 +242,7 @@
   {
     "id": "2026-02-04-internacional",
     "opponent": "Internacional",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg",
+    "opponentLogo": "/escudos/internacional.svg",
     "isHome": true,
     "date": "2026-02-04T19:00:00-03:00",
     "stadium": "Maracanã",
@@ -254,7 +254,7 @@
   {
     "id": "2026-01-28-sao-paulo",
     "opponent": "São Paulo",
-    "opponentLogo": "https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg",
+    "opponentLogo": "/escudos/sao-paulo.svg",
     "isHome": false,
     "date": "2026-01-28T21:30:00-03:00",
     "stadium": "Morumbis",

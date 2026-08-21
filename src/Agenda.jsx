@@ -6,6 +6,7 @@ import classificacaoBrasileirao from './data/classificacaoBrasileirao.json';
 import classificacaoLibertadores from './data/classificacaoLibertadores.json';
 import libertadores from './data/libertadores.json';
 import odds from './data/odds.json';
+import mapaEscudos from './data/mapa_escudos.json';
 import { FiCalendar, FiMapPin, FiAward, FiTrendingUp } from 'react-icons/fi';
 import { RiTrophyLine } from 'react-icons/ri';
 
@@ -15,6 +16,7 @@ const FLAMENGO_ESCUDO_FALLBACK =
   'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
 
 const LOGOS_TIMES = {
+  ...mapaEscudos,
   'Palmeiras': 'https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg',
   'Flamengo': 'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg',
   'Athletico Paranaense': 'https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg',
