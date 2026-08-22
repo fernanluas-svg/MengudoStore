@@ -622,10 +622,11 @@ export default function Mengudostore() {
       <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden pt-28">
         
         {/* Imagem estática de fundo (Urubu Rei) */}
-        <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/uruburei-bg.jpg')" }}
-        ></div>
+        <img
+          src="/uruburei-bg.jpg"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          alt="Torcida do Flamengo"
+        />
 
         {/* Overlay suave para legibilidade */}
         <div className="absolute inset-0 bg-black/40"></div>
