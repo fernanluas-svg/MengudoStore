@@ -632,6 +632,9 @@ export default function Mengudostore() {
           className="absolute inset-0 w-full h-full object-cover"
         ></video>
 
+        {/* Sombreamento escuro para garantir contraste */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
+
         {/* Luz Neon Vermelha no Fundo */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-red-600/30 rounded-full blur-[120px]"></div>
 
