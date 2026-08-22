@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-08-21",
+  "atualizadoEm": "2026-08-22",
   "fonte": "fallback",
   "jogos": [
     {
@@ -33,6 +33,21 @@
       "source": "fallback"
     },
     {
+      "id": "2026-09-02-mirassol",
+      "opponent": "Mirassol",
+      "isHome": true,
+      "date": "2026-09-02T19:30:00-03:00",
+      "competition": "Brasileirão",
+      "odds": {
+        "1": 1.7,
+        "X": 3.4,
+        "2": 5.5
+      },
+      "bookmaker": "fallback",
+      "matchIdFlashscore": null,
+      "source": "fallback"
+    },
+    {
       "id": "2026-09-06-remo",
       "opponent": "Remo",
       "isHome": false,
@@ -48,10 +63,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-09-12-corinthians",
+      "id": "2026-09-13-corinthians",
       "opponent": "Corinthians",
       "isHome": true,
-      "date": "2026-09-12T16:00:00-03:00",
+      "date": "2026-09-13T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -63,10 +78,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-09-19-red-bull-bragantino",
+      "id": "2026-09-20-red-bull-bragantino",
       "opponent": "Red Bull Bragantino",
       "isHome": true,
-      "date": "2026-09-19T16:00:00-03:00",
+      "date": "2026-09-20T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -81,7 +96,7 @@
       "id": "2026-10-07-santos",
       "opponent": "Santos",
       "isHome": false,
-      "date": "2026-10-07T21:30:00-03:00",
+      "date": "2026-10-07T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 2.6,
@@ -93,10 +108,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-10-10-fluminense",
+      "id": "2026-10-11-fluminense",
       "opponent": "Fluminense",
       "isHome": true,
-      "date": "2026-10-10T16:00:00-03:00",
+      "date": "2026-10-11T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -108,10 +123,25 @@
       "source": "fallback"
     },
     {
-      "id": "2026-10-17-bahia",
+      "id": "semifinal-flamengo-a-definir-ida",
+      "opponent": "a definir",
+      "isHome": false,
+      "date": "2026-10-14T00:00:00-03:00",
+      "competition": "Copa do Brasil",
+      "odds": {
+        "1": 2.6,
+        "X": 3.2,
+        "2": 2.7
+      },
+      "bookmaker": "fallback",
+      "matchIdFlashscore": null,
+      "source": "fallback"
+    },
+    {
+      "id": "2026-10-18-bahia",
       "opponent": "Bahia",
       "isHome": false,
-      "date": "2026-10-17T16:00:00-03:00",
+      "date": "2026-10-18T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 2.6,
@@ -123,10 +153,25 @@
       "source": "fallback"
     },
     {
-      "id": "2026-10-24-atletico-mineiro",
+      "id": "semifinal-flamengo-a-definir-volta",
+      "opponent": "a definir",
+      "isHome": true,
+      "date": "2026-10-21T21:30:00-03:00",
+      "competition": "Copa do Brasil",
+      "odds": {
+        "1": 1.7,
+        "X": 3.4,
+        "2": 5.5
+      },
+      "bookmaker": "fallback",
+      "matchIdFlashscore": null,
+      "source": "fallback"
+    },
+    {
+      "id": "2026-10-25-atlético-mineiro",
       "opponent": "Atlético Mineiro",
       "isHome": true,
-      "date": "2026-10-24T16:00:00-03:00",
+      "date": "2026-10-25T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -141,7 +186,7 @@
       "id": "2026-10-28-vasco-da-gama",
       "opponent": "Vasco da Gama",
       "isHome": false,
-      "date": "2026-10-28T21:30:00-03:00",
+      "date": "2026-10-28T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 2.6,
@@ -153,10 +198,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-11-04-gremio",
+      "id": "2026-11-04-grêmio",
       "opponent": "Grêmio",
       "isHome": true,
-      "date": "2026-11-04T21:30:00-03:00",
+      "date": "2026-11-04T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -171,7 +216,7 @@
       "id": "2026-11-18-athletico-paranaense",
       "opponent": "Athletico Paranaense",
       "isHome": true,
-      "date": "2026-11-18T21:30:00-03:00",
+      "date": "2026-11-18T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,
@@ -183,10 +228,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-11-21-palmeiras",
+      "id": "2026-11-22-palmeiras",
       "opponent": "Palmeiras",
       "isHome": false,
-      "date": "2026-11-21T16:00:00-03:00",
+      "date": "2026-11-22T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 2.6,
@@ -198,10 +243,10 @@
       "source": "fallback"
     },
     {
-      "id": "2026-11-28-coritiba",
+      "id": "2026-11-29-coritiba",
       "opponent": "Coritiba",
       "isHome": false,
-      "date": "2026-11-28T16:00:00-03:00",
+      "date": "2026-11-29T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 2.6,
@@ -216,7 +261,7 @@
       "id": "2026-12-02-chapecoense",
       "opponent": "Chapecoense",
       "isHome": true,
-      "date": "2026-12-02T21:30:00-03:00",
+      "date": "2026-12-02T19:00:00-03:00",
       "competition": "Brasileirão",
       "odds": {
         "1": 1.7,

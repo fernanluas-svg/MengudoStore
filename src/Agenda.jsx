@@ -12,15 +12,13 @@ import mapaEscudos from './data/mapa_escudos.json';
 import { FiCalendar, FiMapPin, FiAward, FiTrendingUp } from 'react-icons/fi';
 import { RiTrophyLine } from 'react-icons/ri';
 
-const FLAMENGO_ESCUDO_URL =
-  'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg';
-const FLAMENGO_ESCUDO_FALLBACK =
-  'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
+const FLAMENGO_ESCUDO_URL = '/escudos/flamengo.png';
+const FLAMENGO_ESCUDO_FALLBACK = '/escudos/flamengo.png';
 
 const LOGOS_TIMES = {
   ...mapaEscudos,
   'Palmeiras': 'https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg',
-  'Flamengo': 'https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg',
+  'Flamengo': '/escudos/flamengo.png',
   'Athletico Paranaense': 'https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg',
   'Fluminense': 'https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg',
   'Cruzeiro': 'https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg',
@@ -119,7 +117,7 @@ function CabecalhoCard({ icone, titulo, descricao }) {
 
 function CardAgenda() {
   const partidas = proximosJogos
-    .filter((jogo) => jogo.status === 'SCHEDULED')
+    .filter((jogo) => ['SCHEDULED', 'AGENDADO'].includes(jogo.status))
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .slice(0, 5);
 

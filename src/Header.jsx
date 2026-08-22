@@ -43,7 +43,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
         <NavLink to="/" className="flex items-center gap-3">
           <img
-            src="https://i.ibb.co/WvsR3rBX/Fundo-preto.png"
+            src="/mengudo-logo.png"
             alt="Escudo Mengudo Store"
             className="h-16 w-auto object-contain drop-shadow-lg"
           />

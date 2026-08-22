@@ -17,6 +17,7 @@ LIBERTADORES_PATH = os.path.join(BASE_DIR, '../src/data/libertadores.json')
 CLASSIFICACAO_LIB_PATH = os.path.join(BASE_DIR, '../src/data/classificacaoLibertadores.json')
 CARIOCA_PATH = os.path.join(BASE_DIR, '../src/data/carioca.json')
 COPA_BRASIL_PATH = os.path.join(BASE_DIR, '../src/data/copaDoBrasil.json')
+ODDS_PATH = os.path.join(BASE_DIR, '../src/data/odds.json')
 GE_API_URL = 'https://api.globoesporte.globo.com/tabela/d1a37fa4-e948-43a6-ba53-ab24ab3a45b1/fase/fase-unica-campeonato-brasileiro-2026/rodada/{rodada}/jogos/'
 GE_RODADAS = 38
 GE_LIBERTADORES_URL = 'https://ge.globo.com/futebol/libertadores/'
@@ -908,6 +909,105 @@ def normalizar_copa(cdb):
 # MONTAGEM / PERSISTÊNCIA
 # ---------------------------------------------------------------------------
 
+def _converter_para_entrada(partida):
+    """Converte uma partida interna (qualquer competição) para o schema do
+    nextMatch.json. O status é definido pelo chamador conforme data/placar."""
+    mandante = normalizar(partida.get('mandante') or '')
+    visitante = normalizar(partida.get('visitante') or '')
+    is_home = (mandante == 'flamengo')
+    opponent = visitante if is_home else mandante
+    home_score = partida.get('gols_mandante')
+    away_score = partida.get('gols_visitante')
+    escudo = (
+        partida.get('escudo_visitante') if is_home else partida.get('escudo_mandante')
+    ) or LOGOS_SERIE_A.get(opponent)
+    if not escudo:
+        escudo = LOGOS_SERIE_A['flamengo']
+    slug = NOMES_EXIBICAO.get(opponent, opponent).lower().replace(' ', '-')
+    return {
+        'id': partida.get('id') or f"{(partida.get('data') or '')[:10]}-{slug}",
+        'opponent': NOMES_EXIBICAO.get(opponent, opponent),
+        'opponentLogo': escudo,
+        'isHome': is_home,
+        'date': partida['data'],
+        'stadium': partida.get('estadio') or (
+            'Maracanã - Rio de Janeiro, RJ' if is_home else 'A definir'
+        ),
+        'competition': partida.get('competition', 'Brasileirão'),
+        'status': 'AGENDADO',
+        'homeScore': home_score,
+        'awayScore': away_score,
+        'odds': None,
+    }
+
+
+def _partidas_de_copa():
+    """Extrai as partidas do Flamengo (ida/volta) do chaveamento da Copa do Brasil."""
+    dados = carregar_existentes(COPA_BRASIL_PATH)
+    out = []
+    if not isinstance(dados, dict):
+        return out
+    for c in dados.get('confrontos', []):
+        for leg_nome in ('ida', 'volta'):
+            leg = c.get(leg_nome)
+            if not isinstance(leg, dict):
+                continue
+            casa = normalizar(leg.get('casa') or '')
+            fora = normalizar(leg.get('fora') or '')
+            if 'flamengo' not in (casa, fora):
+                continue
+            is_home = casa == 'flamengo'
+            adv = fora if is_home else casa
+            esc_adv = (
+                leg.get('foraEscudo') if is_home else leg.get('casaEscudo')
+            ) or LOGOS_SERIE_A.get(adv)
+            out.append({
+                'id': f"{c.get('id')}-{leg_nome}",
+                'mandante': casa,
+                'visitante': fora,
+                'gols_mandante': leg.get('placarCasa'),
+                'gols_visitante': leg.get('placarFora'),
+                'data': leg.get('data'),
+                'estadio': 'Maracanã - Rio de Janeiro, RJ' if is_home else 'A definir',
+                'escudo_mandante': leg.get('casaEscudo'),
+                'escudo_visitante': leg.get('foraEscudo'),
+                'competition': 'Copa do Brasil',
+            })
+    return out
+
+
+def _partidas_de_carioca():
+    """Extrai os jogos do Flamengo no Carioca (estadual) a partir da classificação."""
+    dados = carregar_existentes(CARIOCA_PATH)
+    out = []
+    jogos = []
+    if isinstance(dados, dict):
+        jogos = dados.get('flamengoJogos', [])
+    for j in jogos:
+        mandante = normalizar(j.get('mandante') or '')
+        visitante = normalizar(j.get('visitante') or '')
+        if 'flamengo' not in (mandante, visitante):
+            continue
+        is_home = mandante == 'flamengo'
+        adv = visitante if is_home else mandante
+        adv_nome = NOMES_EXIBICAO.get(adv, adv.replace('-', ' ').title())
+        out.append({
+            'id': j.get('id') or f"{(j.get('data') or '')[:10]}-{adv_nome.replace(' ', '-')}",
+            'mandante': mandante,
+            'visitante': visitante,
+            'gols_mandante': j.get('placarMandante'),
+            'gols_visitante': j.get('placarVisitante'),
+            'data': j.get('data'),
+            'estadio': j.get('estadio') or (
+                'Maracanã - Rio de Janeiro, RJ' if is_home else 'A definir'
+            ),
+            'escudo_mandante': LOGOS_SERIE_A.get(mandante),
+            'escudo_visitante': LOGOS_SERIE_A.get(visitante),
+            'competition': 'Campeonato Carioca',
+        })
+    return out
+
+
 def montar_entrada_historica(partida):
     """Converte uma partida encerrada em uma entrada FINISHED do nextMatch.json."""
     if partida['mandante'] == 'flamengo':
@@ -943,16 +1043,17 @@ def montar_entrada_historica(partida):
 
 def atualizar_agenda():
     """
-    Sincroniza os jogos por data:
-    - Jogos encerrados (data < agora) -> matches.json (FINISHED)
-    - Próximos confrontos (data >= agora) -> nextMatch.json (SCHEDULED, ativo)
-    Fonte primária: Flashscore / Casas de Apostas. Fallback oficial: ge.globo.
-    Se nenhuma fonte responder, reaproveita os arquivos existentes.
+    Gera e reescreve o nextMatch.json automaticamente a cada execução,
+    considerando TODAS as competições (Brasileirão, Libertadores, Copa do Brasil
+    e Campeonato Carioca):
+    - Jogos encerrados -> matches.json (FINISHED)
+    - Próximos confrontos -> nextMatch.json (AGENDADO, ordenados; o primeiro
+      elemento é a próxima partida mais próxima da data atual)
+    Fonte primária: Flashscore. Fallback oficial: ge.globo. Chaveamentos e
+    estadual vêm dos respectivos arquivos JSON locais.
     """
-    base = fetch_and_format_matches()
     partidas_br = None
     origem = None
-
     try:
         partidas_br = obter_partidas_flashscore()
     except Exception as e:
@@ -966,12 +1067,11 @@ def atualizar_agenda():
             log('ERROR', f'Fallback (GE) indisponível: {e2}')
             partidas_br = None
 
-    # Libertadores (todas as fases com o Flamengo) — primário Flashscore, fallback GE
     partidas_lib = None
     try:
         partidas_lib = obter_jogos_libertadores_flashscore()
     except Exception as e:
-        log('WARN', f'Fonte primária (Flashscore) indisponível: {e}')
+        log('WARN', f'Fonte primária (Flashscore/Libertadores) indisponível: {e}')
 
     if not partidas_lib:
         try:
@@ -982,60 +1082,95 @@ def atualizar_agenda():
             log('WARN', f'Fallback (GE/Libertadores) indisponível: {e2}')
             partidas_lib = None
 
-    # Unifica todas as competições (Brasileirão + Libertadores + futuras fontes)
-    partidas = list(partidas_br or []) + list(partidas_lib or [])
+    copa = _partidas_de_copa()
+    carioca = _partidas_de_carioca()
 
-    if partidas:
-        historico = [
-            montar_entrada_historica(p)
-            for p in partidas
-            if p['gols_mandante'] is not None and p['gols_visitante'] is not None
-        ]
-        combinadas = historico + base
-        vistos = set()
-        todas = []
-        for m in combinadas:
-            if m['id'] in vistos:
-                continue
-            vistos.add(m['id'])
-            todas.append(m)
-        for caminho in (JSON_PATH, MATCHES_PATH):
-            extras = carregar_existentes(caminho)
-            if extras:
-                for m in extras:
-                    if m['id'] not in vistos:
-                        vistos.add(m['id'])
-                        todas.append(m)
-    else:
+    partidas = list(partidas_br or []) + list(partidas_lib or []) + copa + carioca
+
+    if not partidas:
         existentes = carregar_existentes()
         if existentes is not None:
-            log('WARN', 'Fontes indisponíveis: reutilizando nextMatch.json e sincronizando por data.')
-            todas = existentes
-            origem = 'dados existentes (fallback)'
-        else:
-            log('WARN', 'Usando dados estáticos de fallback (sem acesso às fontes).')
-            todas = base
-            origem = 'fallback estático'
+            log('WARN', 'Fontes indisponíveis: reutilizando nextMatch.json existente.')
+            save_json(existentes, JSON_PATH)
+            return None
+        log('WARN', 'Sem acesso às fontes e sem dados existentes: nada a atualizar.')
+        return None
 
     agora = datetime.now(timezone.utc)
     resultados = []
     agenda = []
-    for m in todas:
-        data = datetime.fromisoformat(m['date'])
-        if data < agora:
-            m['status'] = 'FINISHED'
-            resultados.append(m)
+    for p in partidas:
+        if not p.get('data'):
+            continue
+        ent = _converter_para_entrada(p)
+        try:
+            data = datetime.fromisoformat(p['data'])
+        except Exception:
+            continue
+        jogado = (
+            p.get('gols_mandante') is not None
+            and p.get('gols_visitante') is not None
+        )
+        if data < agora or jogado:
+            ent['status'] = 'FINISHED'
+            resultados.append(ent)
         else:
-            m['status'] = 'SCHEDULED'
-            agenda.append(m)
+            ent['status'] = 'AGENDADO'
+            agenda.append(ent)
 
     resultados.sort(key=lambda x: x['date'], reverse=True)
     agenda.sort(key=lambda x: x['date'])
 
+    def _dedup(lista):
+        vistos = set()
+        out = []
+        for m in lista:
+            if m['id'] in vistos:
+                continue
+            vistos.add(m['id'])
+            out.append(m)
+        return out
+
+    resultados = _dedup(resultados)
+    agenda = _dedup(agenda)
+
     save_json(agenda, JSON_PATH)
     save_json(resultados, MATCHES_PATH)
-    log('SUCCESS', f'{len(resultados)} resultado(s) e {len(agenda)} agendado(s) registrados via {origem}.')
+    log('SUCCESS', f'{len(resultados)} resultado(s) e {len(agenda)} agendado(s) registrados via {origem or "arquivos locais"}.')
     return agenda
+
+
+def atualizar_odds():
+    """Gera as odds (via odds_scraper) e anexa o campo 'odds' ao nextMatch.json."""
+    try:
+        import odds_scraper
+        odds_scraper.main()
+    except Exception as e:
+        log('WARN', f'Falha ao gerar odds: {e}')
+        return
+
+    try:
+        with open(ODDS_PATH, encoding='utf-8') as f:
+            odds_data = json.load(f)
+    except Exception:
+        return
+
+    por_id = {}
+    for j in odds_data.get('jogos', []):
+        if j.get('id'):
+            por_id[j['id']] = j.get('odds')
+
+    agenda = carregar_existentes(JSON_PATH)
+    if not isinstance(agenda, list):
+        return
+    alterado = False
+    for m in agenda:
+        if m.get('id') in por_id:
+            m['odds'] = por_id[m['id']]
+            alterado = True
+    if alterado:
+        save_json(agenda, JSON_PATH)
+        log('SUCCESS', f'Odds anexadas a {len(por_id)} jogo(s) no nextMatch.json.')
 
 
 def carregar_existentes(caminho=JSON_PATH):
@@ -1235,3 +1370,4 @@ if __name__ == "__main__":
     atualizar_libertadores()
     atualizar_copa_do_brasil()
     atualizar_carioca()
+    atualizar_odds()

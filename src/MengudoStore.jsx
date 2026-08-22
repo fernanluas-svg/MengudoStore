@@ -8,10 +8,8 @@ import NovidadesCarrossel from './NovidadesCarrossel.jsx';
 import proximosJogos from './data/nextMatch.json';
 import Header from './Header.jsx';
 
-const FLAMENGO_ESCUDO_URL =
-  'https://ssl.gstatic.com/onebox/media/sports/logos/optimized/orE554NToSkH6nuwofe7Yg_500x500.png';
-const FLAMENGO_ESCUDO_FALLBACK =
-  'https://upload.wikimedia.org/wikipedia/commons/2/2e/Flamengo_braz_logo.svg';
+const FLAMENGO_ESCUDO_URL = '/escudos/flamengo.png';
+const FLAMENGO_ESCUDO_FALLBACK = '/escudos/flamengo.png';
 
 function ProdutoCard({ produto }) {
   return (
@@ -767,7 +765,7 @@ export default function Mengudostore() {
         <div className="flex flex-col items-center justify-center gap-6">
           <div className="flex items-center gap-4">
             <img
-              src="https://i.ibb.co/WvsR3rBX/Fundo-preto.png"
+              src="/mengudo-logo.png"
               alt="Canal do Mengudo"
               className="h-16 w-auto object-contain"
             />

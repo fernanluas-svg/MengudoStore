@@ -41,7 +41,7 @@ def log(nivel, msg):
 def carregar_jogos_flamengo():
     with open(NEXT_MATCH_PATH, 'r', encoding='utf-8') as f:
         jogos = json.load(f)
-    return [j for j in jogos if j.get('status') == 'SCHEDULED']
+    return [j for j in jogos if j.get('status') in ('SCHEDULED', 'AGENDADO')]
 
 
 def escolher_melhor_casa(odds_lista):
