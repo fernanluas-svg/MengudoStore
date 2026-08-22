@@ -621,16 +621,11 @@ export default function Mengudostore() {
       {/* ========================================= */}
       <div className="relative bg-black text-white py-16 px-6 sm:px-12 overflow-hidden pt-28">
         
-        {/* Vídeo de fundo da Nação Rubro-Negra */}
-        <video
-          src="/hero-bg.mp4"
-          poster="/hero.png"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        ></video>
+        {/* Imagem estática de fundo (Maracanã) */}
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
+          style={{ backgroundImage: "url('/hero.png')" }}
+        ></div>
 
         {/* Luz Neon Vermelha no Fundo */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 h-72 bg-red-600/30 rounded-full blur-[120px]"></div>
