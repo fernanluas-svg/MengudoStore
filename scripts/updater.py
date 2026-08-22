@@ -34,6 +34,7 @@ ESPN_CARIOCA_URL = 'https://www.espn.com.br/futebol/classificacao/_/liga/bra.cam
 FERJ_CARIOCA_URL = 'https://www.fferj.com.br/campeonato-carioca/'
 LANCE_TABELAS_URL = 'https://www.lance.com.br/tabelas/'
 LANCE_COPA_BRASIL_URL = 'https://www.lance.com.br/tabelas/'
+ESPN_CARIOCA_SCOREBOARD = 'https://site.api.espn.com/apis/site/v2/sports/soccer/bra.camp.carioca/scoreboard?dates=2026'
 
 # Ordem de prioridade das fontes (a primeira que retornar dados válidos vence;
 # ge.globo é o fallback principal confiável, depois ESPN, depois Flashscore/outros).
@@ -563,6 +564,108 @@ def obter_copa_do_brasil_ge():
     return _montar_confrontos_mata_mata(_secao_ge(GE_COPA_BRASIL_URL))
 
 
+def _leg_cdb(raw):
+    """Converte um jogo da 'secao' do ge.globo (Copa do Brasil) para o formato
+    interno de uma perna (ida/volta) do chaveamento."""
+    if not raw:
+        return None
+    eq = raw.get('equipes') or {}
+    mandante = normalizar((eq.get('mandante') or {}).get('nome_popular', ''))
+    visitante = normalizar((eq.get('visitante') or {}).get('nome_popular', ''))
+    if not mandante or not visitante:
+        return None
+    data = raw.get('data_realizacao')
+    hora = raw.get('hora_realizacao') or '00:00'
+    iso = f'{data}T{hora}:00-03:00' if data else None
+    return {
+        'casa': mandante,
+        'fora': visitante,
+        'placarCasa': raw.get('placar_oficial_mandante'),
+        'placarFora': raw.get('placar_oficial_visitante'),
+        'data': iso,
+        'casaEscudo': (eq.get('mandante') or {}).get('escudo'),
+        'foraEscudo': (eq.get('visitante') or {}).get('escudo'),
+    }
+
+
+def _mapear_fase_cdb(nome):
+    nome = (nome or '').lower()
+    if 'oitavas' in nome:
+        return 'Oitavas de Final'
+    if 'quartas' in nome:
+        return 'Quartas de Final'
+    if 'semifinal' in nome:
+        return 'Semifinal'
+    if 'final' in nome:
+        return 'Final'
+    return nome
+
+
+def _montar_bracket_completo(secao):
+    """Constrói o chaveamento COMPLETO da Copa do Brasil a partir de um bloco
+    'secao' do ge.globo, contemplando TODAS as fases atuais e TODOS os times que
+    seguem na disputa (não apenas os jogos do Flamengo). Retorna [] se vazio."""
+    confrontos = []
+    for item in secao or []:
+        for chave in item.get('chave', []):
+            jogos = chave.get('jogos', [])
+            if len(jogos) < 2:
+                continue
+            ida = _leg_cdb(jogos[0])
+            volta = _leg_cdb(jogos[1])
+            if not ida or not volta:
+                continue
+
+            timeA_norm = ida['casa']
+            timeB_norm = ida['fora']
+            timeA = NOMES_EXIBICAO.get(timeA_norm, timeA_norm.replace('-', ' ').title())
+            timeB = NOMES_EXIBICAO.get(timeB_norm, timeB_norm.replace('-', ' ').title())
+
+            ida_ok = ida['placarCasa'] is not None and ida['placarFora'] is not None
+            volta_ok = volta['placarCasa'] is not None and volta['placarFora'] is not None
+
+            gA = gB = None
+            classificado = None
+            if ida_ok and volta_ok:
+                if volta['casa'] == timeA_norm:
+                    gA = ida['placarCasa'] + volta['placarCasa']
+                    gB = ida['placarFora'] + volta['placarFora']
+                else:
+                    gA = ida['placarCasa'] + volta['placarFora']
+                    gB = ida['placarFora'] + volta['placarCasa']
+                status = 'ENCERRADO'
+                classificado = timeA if gA > gB else (timeB if gB > gA else None)
+            else:
+                status = 'EM_ANDAMENTO' if (ida_ok or volta_ok) else 'A_DEFINIR'
+
+            confrontos.append({
+                'id': f"cdb-{chave.get('id')}",
+                'timeA': timeA,
+                'timeB': timeB,
+                'fase': _mapear_fase_cdb(chave.get('nome')),
+                'data': ida['data'] or volta['data'],
+                'ida': ida,
+                'volta': volta,
+                'agregado': {'timeA': gA, 'timeB': gB},
+                'classificado': classificado,
+                'status': status,
+                'escudo': LOGOS_SERIE_A.get(timeB_norm) or LOGOS_SERIE_A.get(timeA_norm),
+            })
+    return confrontos
+
+
+def obter_copa_do_brasil_ge_completo():
+    """Fonte primária: chaveamento COMPLETO da Copa do Brasil via bloco 'secao'
+    do ge.globo (todas as fases atuais e todos os times ainda na disputa). Retorna
+    [] se o ge.globo estiver indisponível."""
+    try:
+        secao = _secao_ge(GE_COPA_BRASIL_URL)
+    except Exception as e:
+        log('WARN', f'Fonte ge.globo (Copa do Brasil) indisponível: {e}')
+        return []
+    return _montar_bracket_completo(secao)
+
+
 def obter_tabela_carioca_ge():
     """Tenta extrair a classificação da Taça Guanabara (pontos corridos) a partir
     do objeto 'classificacao' embutido na página do GE. Levanta RuntimeError se
@@ -724,6 +827,89 @@ def obter_tabela_carioca_lance():
     if not html:
         return []
     return _parse_tabela_classificacao_html(html)
+
+
+def obter_carioca_espn():
+    """Fonte ESPN (scoreboard JSON) para a Taça Guanabara: calcula a classificação
+    REAL a partir dos resultados dos jogos de 2026 e extrai os jogos do Flamengo.
+    Retorna a tupla (classificacao, flamengo_jogos). Nunca lança exceção."""
+    from collections import defaultdict
+    try:
+        r = sc.fetch(ESPN_CARIOCA_SCOREBOARD, timeout=30, retries=2)
+        if not r.ok:
+            return [], []
+        data = json.loads(r.text)
+    except Exception as e:
+        log('WARN', f'ESPN (Carioca) indisponível: {e}')
+        return [], []
+
+    stand = defaultdict(lambda: {'p': 0, 'j': 0, 'v': 0, 'e': 0, 'd': 0, 'gp': 0, 'gc': 0})
+    fla_jogos = []
+    for ev in data.get('events', []):
+        comp = ev.get('competitions', [{}])[0]
+        if comp.get('status', {}).get('type', {}).get('state') != 'post':
+            continue
+        cs = comp.get('competitors', [])
+        if len(cs) != 2:
+            continue
+        a, b = cs
+        ta = normalizar(a.get('team', {}).get('displayName', ''))
+        tb = normalizar(b.get('team', {}).get('displayName', ''))
+        if not ta or not tb:
+            continue
+        try:
+            sa = int(a.get('score'))
+            sb = int(b.get('score'))
+        except (TypeError, ValueError):
+            continue
+        data_iso = ev.get('date')
+
+        for me, adv, ms, os_ in [(ta, tb, sa, sb), (tb, ta, sb, sa)]:
+            s = stand[me]
+            s['j'] += 1
+            s['gp'] += ms
+            s['gc'] += os_
+            if ms > os_:
+                s['v'] += 1
+                s['p'] += 3
+            elif ms == os_:
+                s['e'] += 1
+                s['p'] += 1
+            else:
+                s['d'] += 1
+
+        if 'flamengo' in (ta, tb):
+            is_home = (ta == 'flamengo')
+            mandante_norm = ta if is_home else tb
+            visitante_norm = tb if is_home else ta
+            opponent_norm = visitante_norm if is_home else mandante_norm
+            fla_jogos.append({
+                'mandante': NOMES_EXIBICAO.get(mandante_norm, mandante_norm.replace('-', ' ').title()),
+                'visitante': NOMES_EXIBICAO.get(visitante_norm, visitante_norm.replace('-', ' ').title()),
+                'placarMandante': sa if is_home else sb,
+                'placarVisitante': sb if is_home else sa,
+                'data': data_iso,
+                'isHome': is_home,
+                'adversario': NOMES_EXIBICAO.get(opponent_norm, opponent_norm.replace('-', ' ').title()),
+                'adversarioLogo': LOGOS_SERIE_A.get(opponent_norm),
+            })
+
+    if not stand:
+        return [], []
+    rank = sorted(stand.items(), key=lambda x: (-x[1]['p'], -(x[1]['gp'] - x[1]['gc']), -x[1]['gp']))
+    classificacao = []
+    for i, (nm, s) in enumerate(rank, 1):
+        classificacao.append({
+            'posicao': i,
+            'time': NOMES_EXIBICAO.get(nm, nm.replace('-', ' ').title()),
+            'pontos': s['p'],
+            'jogos': s['j'],
+            'vitorias': s['v'],
+            'empates': s['e'],
+            'derrotas': s['d'],
+            'saldoGols': s['gp'] - s['gc'],
+        })
+    return classificacao, fla_jogos
 
 
 def _secao_para_jogos_flamengo(secao, competition):
@@ -1238,12 +1424,13 @@ def atualizar_libertadores():
 def atualizar_copa_do_brasil():
     """Atualiza o chaveamento da Copa do Brasil.
 
-    Ordem de fontes (primeira que retornar dados válidos vence):
-    ge.globo (fallback principal) -> ESPN Brasil -> Lance! -> Flashscore. Partidas passadas do Flamengo são normalizadas para
-    status 'ENCERRADO' com placares finais e o time classificado. Se nenhuma fonte
-    responder, reaproveita o arquivo existente (também normalizado)."""
+    Fonte primária: ge.globo (bloco 'secao' completo, com todas as fases atuais e
+    todos os times ainda na disputa). Quando há dados reais, o arquivo é
+    SOBRESCRITO integralmente (não mescla com o mock antigo). Fontes alternativas
+    (ESPN/Lance/Flashscore) são consultadas como fallback. Se nenhuma fonte
+    responder, reaproveita o arquivo existente (normalizado)."""
     fontes = [
-        ('ge.globo', obter_copa_do_brasil_ge),
+        ('ge.globo', obter_copa_do_brasil_ge_completo),
         ('ESPN Brasil', obter_copa_do_brasil_espn),
         ('Lance!', obter_copa_do_brasil_lance),
         ('Flashscore', obter_copa_do_brasil_flashscore),
@@ -1273,17 +1460,8 @@ def atualizar_copa_do_brasil():
             return existentes.get('confrontos')
         return None
 
-    # Preserva rodadas futuras ausentes na fonte (merge por id, fonte tem prioridade)
-    existentes = carregar_existentes(COPA_BRASIL_PATH)
-    por_id = {}
-    if isinstance(existentes, dict) and existentes.get('confrontos'):
-        for c in existentes['confrontos']:
-            por_id[c['id']] = c
-    for c in confrontos:
-        por_id[c['id']] = c
-    mesclados = list(por_id.values())
-    mesclados = normalizar_copa({'fase': 'Copa do Brasil 2026', 'confrontos': mesclados})['confrontos']
-
+    # Fonte real disponível: sobrescreve o arquivo inteiro (sem mesclar com mock antigo)
+    mesclados = normalizar_copa({'fase': 'Copa do Brasil 2026', 'confrontos': confrontos})['confrontos']
     dados = {
         'fase': 'Copa do Brasil 2026',
         'atualizadoEm': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
@@ -1317,11 +1495,12 @@ def _mesclar_jogos(existentes, novos):
 def atualizar_carioca():
     """Atualiza a classificação da Taça Guanabara (Carioca) e os jogos do Flamengo.
 
-    Ordem de fontes (primeira que retornar dados válidos vence):
-    ge.globo (fallback principal) -> ESPN Brasil -> FERJ -> Lance!. Os jogos do
-    Flamengo no estadual são enriquecidos a partir do ge.globo (best-effort),
-    independentemente da fonte da classificação. Se nenhuma fonte responder,
-    reaproveita o arquivo existente."""
+    Fontes de classificação (primeira que retornar dados válidos vence):
+    ge.globo -> ESPN Brasil (HTML) -> FERJ -> Lance!. Se nenhuma das anteriores
+    responder, calcula a classificação REAL a partir dos resultados de 2026
+    disponíveis no scoreboard da ESPN (bra.camp.carioca). Os jogos do Flamengo no
+    estadual são enriquecidos a partir dessa mesma fonte ESPN (best-effort). Se
+    nenhuma fonte responder, reaproveita o arquivo existente."""
     fontes = [
         ('ge.globo', obter_tabela_carioca_ge),
         ('ESPN Brasil', obter_tabela_carioca_espn),
@@ -1343,24 +1522,35 @@ def atualizar_carioca():
             break
         log('WARN', f'Fonte {nome} (Carioca) não retornou dados.')
 
-    # Jogos do Flamengo no estadual (ge.globo, best-effort) — sempre tentado
-    jogos = []
-    try:
-        jogos = obter_jogos_flamengo_carioca_ge()
-    except Exception as e:
-        log('WARN', f'Jogos do Flamengo no Carioca indisponíveis: {e}')
+    # Fonte ESPN scoreboard: classificação real calculada a partir dos resultados
+    flamengo_jogos = []
+    if not linhas:
+        try:
+            linhas, flamengo_jogos = obter_carioca_espn()
+            if linhas:
+                origem = 'ESPN (resultados 2026)'
+                log('INFO', 'Carioca: tabela calculada via ESPN (resultados reais 2026).')
+        except Exception as e:
+            log('WARN', f'ESPN (Carioca scoreboard) indisponível: {e}')
+
+    # Jogos do Flamengo no estadual (se ainda não obtidos da ESPN)
+    if not flamengo_jogos:
+        try:
+            flamengo_jogos = obter_jogos_flamengo_carioca_ge()
+        except Exception as e:
+            log('WARN', f'Jogos do Flamengo no Carioca indisponíveis: {e}')
 
     if not linhas:
         existentes = carregar_existentes(CARIOCA_PATH)
         if existentes:
             classificacao = existentes['classificacao'] if isinstance(existentes, dict) else existentes
             jogos_existentes = existentes.get('flamengoJogos') if isinstance(existentes, dict) else []
-            jogos = _mesclar_jogos(jogos_existentes, jogos)
+            jogos = _mesclar_jogos(jogos_existentes, flamengo_jogos)
             _salvar_carioca(classificacao, jogos, 'dados existentes (fallback)')
             return classificacao
         return None
 
-    _salvar_carioca(linhas, jogos, origem)
+    _salvar_carioca(linhas, flamengo_jogos, origem)
     return linhas
 
 

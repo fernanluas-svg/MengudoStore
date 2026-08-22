@@ -1,99 +1,134 @@
 {
   "fase": "Copa do Brasil 2026",
-  "atualizadoEm": "2026-08-21",
+  "atualizadoEm": "2026-08-22",
   "confrontos": [
     {
-      "id": "oitavas-de-final-flamengo-internacional",
-      "timeA": "Flamengo",
-      "timeB": "Internacional",
-      "fase": "Oitavas de Final",
-      "data": "2026-08-05T21:30:00-03:00",
+      "id": "cdb-75976",
+      "timeA": "Internacional",
+      "timeB": "Grêmio",
+      "fase": "Quartas de Final",
+      "data": "2026-08-27T20:00:00-03:00",
       "ida": {
         "casa": "internacional",
-        "fora": "flamengo",
-        "placarCasa": 0,
-        "placarFora": 2,
-        "data": "2026-07-29T21:30:00-03:00",
-        "casaEscudo": "/escudos/internacional.svg",
-        "foraEscudo": "/escudos/flamengo.png"
+        "fora": "gremio",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-08-27T20:00:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg"
       },
       "volta": {
-        "casa": "flamengo",
+        "casa": "gremio",
         "fora": "internacional",
-        "placarCasa": 3,
-        "placarFora": 1,
-        "data": "2026-08-05T21:30:00-03:00",
-        "casaEscudo": "/escudos/flamengo.png",
-        "foraEscudo": "/escudos/internacional.svg"
-      },
-      "agregado": {
-        "timeA": 5,
-        "timeB": 1
-      },
-      "classificado": "Flamengo",
-      "status": "ENCERRADO",
-      "escudo": "/escudos/internacional.svg"
-    },
-    {
-      "id": "quartas-de-final-flamengo-atletico-mineiro",
-      "timeA": "Flamengo",
-      "timeB": "Atlético Mineiro",
-      "fase": "Quartas de Final",
-      "data": "2026-09-24T21:30:00-03:00",
-      "ida": {
-        "casa": "atletico mineiro",
-        "fora": "flamengo",
-        "placarCasa": 1,
-        "placarFora": 1,
-        "data": "2026-09-17T21:30:00-03:00",
-        "casaEscudo": "/escudos/atletico-mineiro.svg",
-        "foraEscudo": "/escudos/flamengo.png"
-      },
-      "volta": {
-        "casa": "flamengo",
-        "fora": "atletico mineiro",
-        "placarCasa": 2,
-        "placarFora": 0,
-        "data": "2026-09-24T21:30:00-03:00",
-        "casaEscudo": "/escudos/flamengo.png",
-        "foraEscudo": "/escudos/atletico-mineiro.svg"
-      },
-      "agregado": {
-        "timeA": 3,
-        "timeB": 1
-      },
-      "classificado": "Flamengo",
-      "status": "ENCERRADO",
-      "escudo": "/escudos/atletico-mineiro.svg"
-    },
-    {
-      "id": "semifinal-flamengo-a-definir",
-      "timeA": "Flamengo",
-      "timeB": "A definir",
-      "fase": "Semifinal",
-      "data": "2026-10-14T00:00:00-03:00",
-      "ida": {
-        "casa": "A definir",
-        "fora": "Flamengo",
         "placarCasa": null,
         "placarFora": null,
-        "data": "2026-10-14T00:00:00-03:00",
-        "foraEscudo": "/escudos/flamengo.png"
-      },
-      "volta": {
-        "casa": "Flamengo",
-        "fora": "A definir",
-        "placarCasa": null,
-        "placarFora": null,
-        "data": "2026-10-21T21:30:00-03:00",
-        "casaEscudo": "/escudos/flamengo.png"
+        "data": "2026-09-03T20:00:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg"
       },
       "agregado": {
         "timeA": null,
         "timeB": null
       },
       "classificado": null,
-      "status": "A_DEFINIR"
+      "status": "A_DEFINIR",
+      "escudo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg"
+    },
+    {
+      "id": "cdb-75977",
+      "timeA": "Cruzeiro",
+      "timeB": "Atlético Mineiro",
+      "fase": "Quartas de Final",
+      "data": "2026-08-25T21:00:00-03:00",
+      "ida": {
+        "casa": "cruzeiro",
+        "fora": "atletico mineiro",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-08-25T21:00:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg"
+      },
+      "volta": {
+        "casa": "atletico mineiro",
+        "fora": "cruzeiro",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-09-01T21:00:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg"
+      },
+      "agregado": {
+        "timeA": null,
+        "timeB": null
+      },
+      "classificado": null,
+      "status": "A_DEFINIR",
+      "escudo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg"
+    },
+    {
+      "id": "cdb-75978",
+      "timeA": "Vasco da Gama",
+      "timeB": "Vitória",
+      "fase": "Quartas de Final",
+      "data": "2026-08-26T21:30:00-03:00",
+      "ida": {
+        "casa": "vasco da gama",
+        "fora": "vitoria",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-08-26T21:30:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg"
+      },
+      "volta": {
+        "casa": "vitoria",
+        "fora": "vasco da gama",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-09-02T21:30:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg"
+      },
+      "agregado": {
+        "timeA": null,
+        "timeB": null
+      },
+      "classificado": null,
+      "status": "A_DEFINIR",
+      "escudo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg"
+    },
+    {
+      "id": "cdb-75979",
+      "timeA": "Palmeiras",
+      "timeB": "Santos",
+      "fase": "Quartas de Final",
+      "data": "2026-08-26T21:30:00-03:00",
+      "ida": {
+        "casa": "palmeiras",
+        "fora": "santos",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-08-26T21:30:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg"
+      },
+      "volta": {
+        "casa": "santos",
+        "fora": "palmeiras",
+        "placarCasa": null,
+        "placarFora": null,
+        "data": "2026-09-02T21:30:00-03:00",
+        "casaEscudo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg",
+        "foraEscudo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg"
+      },
+      "agregado": {
+        "timeA": null,
+        "timeB": null
+      },
+      "classificado": null,
+      "status": "A_DEFINIR",
+      "escudo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg"
     }
   ]
 }
