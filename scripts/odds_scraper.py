@@ -589,8 +589,17 @@ def salvar(jogos, fonte):
         'fonte': fonte,
         'jogos': jogos,
     }
+    def _sanitizar(obj):
+        if isinstance(obj, dict):
+            return {k: _sanitizar(v) for k, v in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return [_sanitizar(v) for v in obj]
+        if isinstance(obj, float) and (obj != obj or obj in (float('inf'), float('-inf'))):
+            return None
+        return obj
+
     with open(ODDS_PATH, 'w', encoding='utf-8') as f:
-        json.dump(conteudo, f, ensure_ascii=False, indent=2)
+        json.dump(_sanitizar(conteudo), f, ensure_ascii=False, indent=2, allow_nan=False)
     log('SUCCESS', f'Arquivo gerado em: {ODDS_PATH} ({len(jogos)} jogo(s), fonte={fonte})')
 
     try:

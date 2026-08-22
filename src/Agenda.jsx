@@ -363,6 +363,9 @@ function LinhaJogo({ rotulo, jogo }) {
 }
 
 function CardMataMata({ confronto }) {
+  if (!confronto || typeof confronto !== 'object') {
+    return null;
+  }
   const flamengoNoJogo = confronto.timeA === 'Flamengo' || confronto.timeB === 'Flamengo';
   let badge;
   if (confronto.status === 'A_DEFINIR') {
@@ -433,7 +436,7 @@ function CardMataMata({ confronto }) {
         <LinhaJogo rotulo="Volta" jogo={confronto.volta} />
         <p className="text-xs text-slate-300">
           <span className="text-slate-500">Agregado:</span>{' '}
-          {confronto.agregado.timeA == null || confronto.agregado.timeB == null ? (
+          {confronto.agregado?.timeA == null || confronto.agregado?.timeB == null ? (
             <span className="italic text-slate-500">a definir</span>
           ) : (
             <>
@@ -449,14 +452,20 @@ function CardMataMata({ confronto }) {
 }
 
 function ChaveMataMata({ dados }) {
+  const confrontos = dados?.confrontos ?? [];
+  if (!confrontos.length) {
+    return (
+      <p className="text-sm text-slate-400">Nenhum confronto disponível no momento.</p>
+    );
+  }
   return (
     <div>
       <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
-        {dados.fase}
+        {dados?.fase || 'Mata-mata'}
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {dados.confrontos.map((c) => (
-          <CardMataMata key={c.id} confronto={c} />
+        {confrontos.map((c) => (
+          <CardMataMata key={c?.id ?? Math.random()} confronto={c} />
         ))}
       </div>
     </div>
@@ -587,9 +596,9 @@ function CardClassificacao() {
           <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
             Taça Guanabara
           </h3>
-          <TabelaClassificacao linhas={carioca.classificacao || carioca} />
+          <TabelaClassificacao linhas={carioca?.classificacao || []} />
 
-          {Array.isArray(carioca.flamengoJogos) && carioca.flamengoJogos.length > 0 && (
+          {Array.isArray(carioca?.flamengoJogos) && carioca.flamengoJogos.length > 0 && (
             <div>
               <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
                 Jogos do Flamengo no Estadual

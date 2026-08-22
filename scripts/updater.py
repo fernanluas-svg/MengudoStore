@@ -1368,10 +1368,24 @@ def carregar_existentes(caminho=JSON_PATH):
         return None
 
 
+def _sanitizar_para_json(obj):
+    """Converte recursivamente valores inválidos em JSON (NaN/Infinity) para
+    None, garantindo que o arquivo final seja um JSON válido e não quebre o
+    `npm run build` (que importa esses arquivos)."""
+    if isinstance(obj, dict):
+        return {k: _sanitizar_para_json(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_sanitizar_para_json(v) for v in obj]
+    if isinstance(obj, float) and (obj != obj or obj in (float('inf'), float('-inf'))):
+        return None
+    return obj
+
+
 def save_json(data, caminho=JSON_PATH):
     os.makedirs(os.path.dirname(caminho), exist_ok=True)
+    data = _sanitizar_para_json(data)
     with open(caminho, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        json.dump(data, f, ensure_ascii=False, indent=2, allow_nan=False)
     log('SUCCESS', f'Arquivo atualizado em: {caminho}')
 
 

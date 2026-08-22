@@ -10,8 +10,8 @@
       "competition": "Brasileirão",
       "odds": {
         "1": 2.3,
-        "X": 3.35,
-        "2": 3.1
+        "X": 3.25,
+        "2": 3.2
       },
       "bookmaker": "DraftKings",
       "source": "ESPN (DraftKings)"
@@ -115,20 +115,6 @@
       "source": "fallback"
     },
     {
-      "id": "semifinal-flamengo-a-definir-ida",
-      "opponent": "a definir",
-      "isHome": false,
-      "date": "2026-10-14T00:00:00-03:00",
-      "competition": "Copa do Brasil",
-      "odds": {
-        "1": 2.6,
-        "X": 3.2,
-        "2": 2.7
-      },
-      "bookmaker": "fallback",
-      "source": "fallback"
-    },
-    {
       "id": "2026-10-18-bahia",
       "opponent": "Bahia",
       "isHome": false,
@@ -138,20 +124,6 @@
         "1": 2.6,
         "X": 3.2,
         "2": 2.7
-      },
-      "bookmaker": "fallback",
-      "source": "fallback"
-    },
-    {
-      "id": "semifinal-flamengo-a-definir-volta",
-      "opponent": "a definir",
-      "isHome": true,
-      "date": "2026-10-21T21:30:00-03:00",
-      "competition": "Copa do Brasil",
-      "odds": {
-        "1": 1.7,
-        "X": 3.4,
-        "2": 5.5
       },
       "bookmaker": "fallback",
       "source": "fallback"
