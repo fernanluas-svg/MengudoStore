@@ -589,7 +589,56 @@ function CardClassificacao() {
           <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
             Taça Guanabara
           </h3>
-          <TabelaClassificacao linhas={carioca} />
+          <TabelaClassificacao linhas={carioca.classificacao || carioca} />
+
+          {Array.isArray(carioca.flamengoJogos) && carioca.flamengoJogos.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2">
+                Jogos do Flamengo no Estadual
+              </h3>
+              <div className="space-y-2">
+                {carioca.flamengoJogos.map((j, i) => {
+                  const encerrado = j.placarMandante != null && j.placarVisitante != null;
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <EscudoJogo
+                          src={j.isHome ? LOGOS_TIMES['Flamengo'] : j.adversarioLogo}
+                          fallback={null}
+                          nome={j.isHome ? 'Flamengo' : j.adversario}
+                          className="w-6 h-6 shrink-0"
+                        />
+                        <span className="text-sm font-semibold truncate text-white">
+                          {j.mandante}
+                        </span>
+                        <span className="text-slate-500 text-xs">x</span>
+                        <span className="text-sm font-semibold truncate text-white">
+                          {j.visitante}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {encerrado ? (
+                          <span className="font-bold text-white tabular-nums text-sm">
+                            {j.placarMandante} x {j.placarVisitante}
+                          </span>
+                        ) : (
+                          <span className="text-xs italic text-slate-500">a definir</span>
+                        )}
+                        {j.data && (
+                          <span className="text-[11px] text-slate-400">
+                            {formatarData(j.data)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

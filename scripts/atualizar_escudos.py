@@ -90,6 +90,10 @@ def coletar_times():
         for t in car:
             if t.get('time'):
                 times.add(t['time'])
+    elif isinstance(car, dict):
+        for t in car.get('classificacao', []):
+            if t.get('time'):
+                times.add(t['time'])
 
     cdb = _carregar(os.path.join(DATA_DIR, 'copaDoBrasil.json'))
     if isinstance(cdb, dict):
@@ -310,11 +314,18 @@ def atualizar_jsons(mapa):
             json.dump(lib, f, ensure_ascii=False, indent=2)
         log('SUCCESS', f'Escudos atribuídos em: {caminho}')
 
-    # carioca.json: campo "escudo" por time
+    # carioca.json: campo "escudo" por time (aceita lista ou objeto com classificacao)
     caminho = os.path.join(DATA_DIR, 'carioca.json')
     car = _carregar(caminho)
     if isinstance(car, list):
         for t in car:
+            if t.get('time') and mapa.get(t['time']):
+                t['escudo'] = mapa[t['time']]
+        with open(caminho, 'w', encoding='utf-8') as f:
+            json.dump(car, f, ensure_ascii=False, indent=2)
+        log('SUCCESS', f'Escudos atribuídos em: {caminho}')
+    elif isinstance(car, dict):
+        for t in car.get('classificacao', []):
             if t.get('time') and mapa.get(t['time']):
                 t['escudo'] = mapa[t['time']]
         with open(caminho, 'w', encoding='utf-8') as f:
