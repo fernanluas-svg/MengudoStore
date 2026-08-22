@@ -29,24 +29,25 @@ TEMPORADA = 2026
 # ---------------------------------------------------------------------------
 # NOVAS FONTES DE RASPAGEM (com fallback para o ge.globo)
 # ---------------------------------------------------------------------------
-ESPN_COPA_BRASIL_URL = 'https://www.espn.com.br/futebol/liga/_/nome/bra.copa_do_brasil'
-ESPN_CARIOCA_URL = 'https://www.espn.com.br/futebol/liga/_/nome/bra.camp.carioca'
+ESPN_COPA_BRASIL_URL = 'https://www.espn.com.br/futebol/calendario/_/liga/bra.copa_do_brasil'
+ESPN_CARIOCA_URL = 'https://www.espn.com.br/futebol/classificacao/_/liga/bra.camp.carioca'
 FERJ_CARIOCA_URL = 'https://www.fferj.com.br/campeonato-carioca/'
 LANCE_TABELAS_URL = 'https://www.lance.com.br/tabelas/'
 LANCE_COPA_BRASIL_URL = 'https://www.lance.com.br/tabelas/'
 
 # Ordem de prioridade das fontes (a primeira que retornar dados válidos vence;
-# ge.globo é mantido como fallback principal confiável).
+# ge.globo é o fallback principal confiável, depois ESPN, depois Flashscore/outros).
 ORDEM_FONTES_CARIOCA = [
+    ('ge.globo', GE_CARIOCA_URL),
     ('ESPN Brasil', ESPN_CARIOCA_URL),
     ('FERJ', FERJ_CARIOCA_URL),
     ('Lance!', LANCE_TABELAS_URL),
-    ('ge.globo', GE_CARIOCA_URL),
 ]
 ORDEM_FONTES_COPA = [
+    ('ge.globo', GE_COPA_BRASIL_URL),
     ('ESPN Brasil', ESPN_COPA_BRASIL_URL),
     ('Lance!', LANCE_COPA_BRASIL_URL),
-    ('ge.globo', GE_COPA_BRASIL_URL),
+    ('Flashscore', 'https://www.flashscore.com/football/copa-do-brasil/'),
 ]
 
 LOGOS_SERIE_A = {
@@ -1238,15 +1239,14 @@ def atualizar_copa_do_brasil():
     """Atualiza o chaveamento da Copa do Brasil.
 
     Ordem de fontes (primeira que retornar dados válidos vence):
-    ESPN Brasil -> Lance! -> ge.globo (fallback principal). O Flashscore permanece
-    como tentativa adicional. Partidas passadas do Flamengo são normalizadas para
+    ge.globo (fallback principal) -> ESPN Brasil -> Lance! -> Flashscore. Partidas passadas do Flamengo são normalizadas para
     status 'ENCERRADO' com placares finais e o time classificado. Se nenhuma fonte
     responder, reaproveita o arquivo existente (também normalizado)."""
     fontes = [
+        ('ge.globo', obter_copa_do_brasil_ge),
         ('ESPN Brasil', obter_copa_do_brasil_espn),
         ('Lance!', obter_copa_do_brasil_lance),
         ('Flashscore', obter_copa_do_brasil_flashscore),
-        ('ge.globo', obter_copa_do_brasil_ge),
     ]
     confrontos = None
     origem = None
@@ -1318,15 +1318,15 @@ def atualizar_carioca():
     """Atualiza a classificação da Taça Guanabara (Carioca) e os jogos do Flamengo.
 
     Ordem de fontes (primeira que retornar dados válidos vence):
-    ESPN Brasil -> FERJ -> Lance! -> ge.globo (fallback principal). Os jogos do
+    ge.globo (fallback principal) -> ESPN Brasil -> FERJ -> Lance!. Os jogos do
     Flamengo no estadual são enriquecidos a partir do ge.globo (best-effort),
     independentemente da fonte da classificação. Se nenhuma fonte responder,
     reaproveita o arquivo existente."""
     fontes = [
+        ('ge.globo', obter_tabela_carioca_ge),
         ('ESPN Brasil', obter_tabela_carioca_espn),
         ('FERJ', obter_tabela_carioca_ferj),
         ('Lance!', obter_tabela_carioca_lance),
-        ('ge.globo', obter_tabela_carioca_ge),
     ]
     linhas = None
     origem = None
