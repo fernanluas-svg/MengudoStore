@@ -1,6 +1,6 @@
 {
   "atualizadoEm": "2026-08-22",
-  "fonte": "fallback",
+  "fonte": "ESPN (DraftKings)",
   "jogos": [
     {
       "id": "2026-08-22-cruzeiro",
@@ -9,13 +9,12 @@
       "date": "2026-08-22T20:30:00-03:00",
       "competition": "Brasileirão",
       "odds": {
-        "1": 2.6,
-        "X": 3.2,
-        "2": 2.7
+        "1": 2.3,
+        "X": 3.35,
+        "2": 3.1
       },
-      "bookmaker": "fallback",
-      "matchIdFlashscore": null,
-      "source": "fallback"
+      "bookmaker": "DraftKings",
+      "source": "ESPN (DraftKings)"
     },
     {
       "id": "2026-08-30-botafogo",
@@ -29,7 +28,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -44,7 +42,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -59,7 +56,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -74,7 +70,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -89,7 +84,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -104,7 +98,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -119,7 +112,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -134,7 +126,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -149,7 +140,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -164,7 +154,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -179,7 +168,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -194,7 +182,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -209,7 +196,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -224,7 +210,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -239,7 +224,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -254,7 +238,6 @@
         "2": 2.7
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     },
     {
@@ -269,7 +252,6 @@
         "2": 5.5
       },
       "bookmaker": "fallback",
-      "matchIdFlashscore": null,
       "source": "fallback"
     }
   ]
